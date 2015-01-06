@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='../digraph/index.html'>digraph</a><a class='mod ' href='../graph/index.html'>graph</a><a class='mod current' href='../ograph/index.html'>ograph</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='../struct.BreadthFirst.html'>BreadthFirst</a><a class='struct ' href='../struct.DepthFirst.html'>DepthFirst</a><a class='struct ' href='../struct.MinScored.html'>MinScored</a><a class='struct ' href='../struct.Node.html'>Node</a><a class='struct ' href='../struct.NodeCell.html'>NodeCell</a><a class='struct ' href='../struct.Ptr.html'>Ptr</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='../trait.GraphNeighbors.html'>GraphNeighbors</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='../fn.dijkstra.html'>dijkstra</a></div>
+        <p class='location'><a href='../index.html'>petgraph</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='../digraph/index.html'>digraph</a><a class='mod ' href='../graph/index.html'>graph</a><a class='mod current' href='../ograph/index.html'>ograph</a><a class='mod ' href='../unionfind/index.html'>unionfind</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='../struct.BreadthFirst.html'>BreadthFirst</a><a class='struct ' href='../struct.DepthFirst.html'>DepthFirst</a><a class='struct ' href='../struct.MinScored.html'>MinScored</a><a class='struct ' href='../struct.Node.html'>Node</a><a class='struct ' href='../struct.NodeCell.html'>NodeCell</a><a class='struct ' href='../struct.Ptr.html'>Ptr</a><a class='struct ' href='../struct.Undirected.html'>Undirected</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='../enum.EdgeDirection.html'>EdgeDirection</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='../trait.GraphNeighbors.html'>GraphNeighbors</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='../fn.dijkstra.html'>dijkstra</a></div>
     </section>
 
     <nav class="sub">
@@ -44,7 +44,7 @@
 <h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>petgraph</a>::<wbr><a class='mod' href=''>ograph</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-2191' href='../../src/petgraph/ograph.rs.html#1-399'>[src]</a></span></h1>
+        </span><a id='src-2378' href='../../src/petgraph/ograph.rs.html#1-789'>[src]</a></span></h1>
 <h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                     <tr>
@@ -66,9 +66,29 @@
                     </tr>
                 
                     <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.EdgesBoth.html'
+                               title='petgraph::ograph::EdgesBoth'>EdgesBoth</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.EdgesMut.html'
+                               title='petgraph::ograph::EdgesMut'>EdgesMut</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.Neighbors.html'
                                title='petgraph::ograph::Neighbors'>Neighbors</a></td>
-                        <td class='docblock short'></td>
+                        <td class='docblock short'><p>Iterator over the neighbors of a node.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.NeighborsBoth.html'
+                               title='petgraph::ograph::NeighborsBoth'>NeighborsBoth</a></td>
+                        <td class='docblock short'><p>Iterator over the neighbors of a node.</p>
+</td>
                     </tr>
                 
                     <tr>
@@ -89,19 +109,34 @@
                         <td class='docblock short'><p><strong>OGraph&lt;N, E&gt;</strong> is a directed graph using an adjacency list representation.</p>
 </td>
                     </tr>
-                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.WithoutEdges.html'
+                               title='petgraph::ograph::WithoutEdges'>WithoutEdges</a></td>
+                        <td class='docblock short'><p>An iterator over either the nodes without edges to them or from them.</p>
+</td>
+                    </tr>
+                </table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
 <table>
                     <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='enum' href='enum.Pair.html'
-                               title='petgraph::ograph::Pair'>Pair</a></td>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='constant' href='constant.EDGE_END.html'
+                               title='petgraph::ograph::EDGE_END'>EDGE_END</a></td>
                         <td class='docblock short'></td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                     <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.index_twice.html'
-                               title='petgraph::ograph::index_twice'>index_twice</a></td>
-                        <td class='docblock short'></td>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.min_spanning_tree.html'
+                               title='petgraph::ograph::min_spanning_tree'>min_spanning_tree</a></td>
+                        <td class='docblock short'><p>Return a <em>Minimum Spanning Tree</em> of a graph.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.toposort.html'
+                               title='petgraph::ograph::toposort'>toposort</a></td>
+                        <td class='docblock short'><p>Perform a topological sort of the graph.</p>
+</td>
                     </tr>
                 </table></section>
     <section id='search' class="content hidden"></section>

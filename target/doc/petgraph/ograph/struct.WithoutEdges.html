@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `Neighbors` struct in crate `petgraph`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, Neighbors">
+    <meta name="description" content="API documentation for the Rust `WithoutEdges` struct in crate `petgraph`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, WithoutEdges">
 
-    <title>petgraph::ograph::Neighbors - Rust</title>
+    <title>petgraph::ograph::WithoutEdges - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>ograph</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Edge.html'>Edge</a><a class='struct ' href='struct.EdgeIndex.html'>EdgeIndex</a><a class='struct ' href='struct.Edges.html'>Edges</a><a class='struct ' href='struct.EdgesBoth.html'>EdgesBoth</a><a class='struct ' href='struct.EdgesMut.html'>EdgesMut</a><a class='struct current' href='struct.Neighbors.html'>Neighbors</a><a class='struct ' href='struct.NeighborsBoth.html'>NeighborsBoth</a><a class='struct ' href='struct.Node.html'>Node</a><a class='struct ' href='struct.NodeIndex.html'>NodeIndex</a><a class='struct ' href='struct.OGraph.html'>OGraph</a><a class='struct ' href='struct.WithoutEdges.html'>WithoutEdges</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.min_spanning_tree.html'>min_spanning_tree</a><a class='fn ' href='fn.toposort.html'>toposort</a></div>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>ograph</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Edge.html'>Edge</a><a class='struct ' href='struct.EdgeIndex.html'>EdgeIndex</a><a class='struct ' href='struct.Edges.html'>Edges</a><a class='struct ' href='struct.EdgesBoth.html'>EdgesBoth</a><a class='struct ' href='struct.EdgesMut.html'>EdgesMut</a><a class='struct ' href='struct.Neighbors.html'>Neighbors</a><a class='struct ' href='struct.NeighborsBoth.html'>NeighborsBoth</a><a class='struct ' href='struct.Node.html'>Node</a><a class='struct ' href='struct.NodeIndex.html'>NodeIndex</a><a class='struct ' href='struct.OGraph.html'>OGraph</a><a class='struct current' href='struct.WithoutEdges.html'>WithoutEdges</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.min_spanning_tree.html'>min_spanning_tree</a><a class='fn ' href='fn.toposort.html'>toposort</a></div>
     </section>
 
     <nav class="sub">
@@ -41,16 +41,14 @@
     </nav>
 
     <section id='main' class="content struct">
-<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>ograph</a>::<wbr><a class='struct' href=''>Neighbors</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>ograph</a>::<wbr><a class='struct' href=''>WithoutEdges</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-5700' href='../../src/petgraph/ograph.rs.html#603-607'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct Neighbors&lt;'a, E: 'a&gt; {
+        </span><a id='src-5330' href='../../src/petgraph/ograph.rs.html#493-496'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct WithoutEdges&lt;'a, N: 'a&gt; {
     // some fields omitted
-}</pre><div class='docblock'><p>Iterator over the neighbors of a node.</p>
-
-<p>Iterator element type is <strong>NodeIndex</strong>.</p>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Unstable' title='Unstable: just split up for object safety'></a><code>impl&lt;'a, E&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Iterator.html' title='core::iter::Iterator'>Iterator</a> for <a class='struct' href='../../petgraph/ograph/struct.Neighbors.html' title='petgraph::ograph::Neighbors'>Neighbors</a>&lt;'a, E&gt;</code></h3><div class='impl-items'><h4 id='assoc_type.Item' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type Item = <a class='struct' href='../../petgraph/ograph/struct.NodeIndex.html' title='petgraph::ograph::NodeIndex'>NodeIndex</a></code></h4>
+}</pre><div class='docblock'><p>An iterator over either the nodes without edges to them or from them.</p>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><a class='stability Unstable' title='Unstable: just split up for object safety'></a><code>impl&lt;'a, N: 'a&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/iter/trait.Iterator.html' title='core::iter::Iterator'>Iterator</a> for <a class='struct' href='../../petgraph/ograph/struct.WithoutEdges.html' title='petgraph::ograph::WithoutEdges'>WithoutEdges</a>&lt;'a, N&gt;</code></h3><div class='impl-items'><h4 id='assoc_type.Item' class='type'><a class='stability Unmarked' title='No stability level'></a><code>type Item = <a class='struct' href='../../petgraph/ograph/struct.NodeIndex.html' title='petgraph::ograph::NodeIndex'>NodeIndex</a></code></h4>
 <h4 id='method.next' class='method'><a class='stability Unstable' title='Unstable: just split up for object safety'></a><code>fn <a href='#method.next' class='fnname'>next</a>(&amp;mut self) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../petgraph/ograph/struct.NodeIndex.html' title='petgraph::ograph::NodeIndex'>NodeIndex</a>&gt;</code></h4>
 <h4 id='method.size_hint' class='tymethod'><a class='stability Unstable' title='Unstable: just split up for object safety'></a><code>fn <a href='#tymethod.size_hint' class='fnname'>size_hint</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a href='http://doc.rust-lang.org/nightly/std/primitive.uint.html'>uint</a>, <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.uint.html'>uint</a>&gt;)</a></code></h4>
 </div></section>
