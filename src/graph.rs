@@ -3,11 +3,13 @@ use std::collections::HashMap;
 use std::iter::Map;
 use std::collections::hash_map::{
     Keys,
+};
+use std::collections::hash_map::Entry::{
     Occupied,
     Vacant,
 };
 use std::slice::{
-    Items,
+    Iter,
 };
 use std::fmt;
 
@@ -22,7 +24,7 @@ use std::fmt;
 ///
 /// The node type must implement **PartialOrd** so that the implementation can
 /// properly order the pair (**a**, **b**) for an edge connecting any two nodes **a** and **b**.
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct Graph<N: Eq + Hash, E> {
     nodes: HashMap<N, Vec<N>>,
     edges: HashMap<(N, N), E>,
@@ -44,7 +46,7 @@ fn edge_key<N: Copy + PartialOrd>(a: N, b: N) -> (N, N)
 #[inline]
 fn copy<N: Copy>(n: &N) -> N { *n }
 
-impl<N, E> Graph<N, E> where N: Copy + PartialOrd + Eq + Hash
+impl<N, E> Graph<N, E> where N: Copy + Clone + PartialOrd + Eq + Hash
 {
     /// Create a new **Graph**.
     pub fn new() -> Graph<N, E>
@@ -57,9 +59,9 @@ impl<N, E> Graph<N, E> where N: Copy + PartialOrd + Eq + Hash
 
     /// Add node **n** to the graph.
     pub fn add_node(&mut self, n: N) -> N {
-        match self.nodes.entry(n) {
+        match self.nodes.entry(&n) {
             Occupied(_) => {}
-            Vacant(ent) => { ent.set(Vec::new()); }
+            Vacant(ent) => { ent.insert(Vec::new()); }
         }
         n
     }
@@ -90,13 +92,13 @@ impl<N, E> Graph<N, E> where N: Copy + PartialOrd + Eq + Hash
     pub fn add_edge(&mut self, a: N, b: N, edge: E) -> bool
     {
         // Use PartialOrd to order the edges
-        match self.nodes.entry(a) {
+        match self.nodes.entry(&a) {
             Occupied(ent) => { ent.into_mut().push(b); }
-            Vacant(ent) => { ent.set(vec![b]); }
+            Vacant(ent) => { ent.insert(vec![b]); }
         }
-        match self.nodes.entry(b) {
+        match self.nodes.entry(&b) {
             Occupied(ent) => { ent.into_mut().push(a); }
-            Vacant(ent) => { ent.set(vec![a]); }
+            Vacant(ent) => { ent.insert(vec![a]); }
         }
         self.edges.insert(edge_key(a, b), edge).is_none()
     }
@@ -148,7 +150,7 @@ impl<N, E> Graph<N, E> where N: Copy + PartialOrd + Eq + Hash
             match self.nodes.get(&from) {
                 Some(neigh) => neigh.iter(),
                 None => [].iter(),
-            }.map(copy)
+            }.map(copy as fn(&N) -> N)
         }
     }
 
@@ -202,17 +204,19 @@ pub struct Nodes<'a, N: 'a> {
     iter: Keys<'a, N, Vec<N>>
 }
 
-impl<'a, N: 'a> Iterator<&'a N> for Nodes<'a, N>
+impl<'a, N: 'a> Iterator for Nodes<'a, N>
 {
+    type Item = &'a N;
     iterator_methods!(&'a N);
 }
 
 pub struct Neighbors<'a, N: 'a> {
-    iter: Map<&'a N, N, Items<'a, N>, fn(&N) -> N>,
+    iter: Map<&'a N, N, Iter<'a, N>, fn(&N) -> N>,
 }
 
-impl<'a, N> Iterator<N> for Neighbors<'a, N>
+impl<'a, N> Iterator for Neighbors<'a, N>
 {
+    type Item = N;
     iterator_methods!(N);
 }
 
@@ -222,9 +226,10 @@ pub struct Edges<'a, N: 'a + Copy + PartialOrd + Eq + Hash, E: 'a> {
     pub iter: Neighbors<'a, N>,
 }
 
-impl<'a, N, E> Iterator<(N, &'a E)> for Edges<'a, N, E>
+impl<'a, N, E> Iterator for Edges<'a, N, E>
     where N: 'a + Copy + PartialOrd + Eq + Hash, E: 'a
 {
+    type Item = (N, &'a E);
     fn next(&mut self) -> Option<(N, &'a E)>
     {
         match self.iter.next() {

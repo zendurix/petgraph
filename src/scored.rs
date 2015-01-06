@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 
 /// **MinScored\<K, T\>** holds a score **K** and a scored object **T** in
 /// a pair for use with a **BinaryHeap**.
@@ -8,16 +9,17 @@
 ///
 /// **Note:** MinScored implements a total order (**Ord**), so that it is possible
 /// to use float types as scores.
+#[derive(Copy, Clone, Show)]
 pub struct MinScored<K, T>(pub K, pub T);
 
-impl<K: PartialEq, T> PartialEq for MinScored<K, T> {
+impl<K: PartialOrd, T> PartialEq for MinScored<K, T> {
     #[inline]
     fn eq(&self, other: &MinScored<K, T>) -> bool {
-        self.0 == other.0
+        self.cmp(other) == Ordering::Equal
     }
 }
 
-impl<K: PartialEq, T> Eq for MinScored<K, T> {}
+impl<K: PartialOrd, T> Eq for MinScored<K, T> {}
 
 impl<K: PartialOrd, T> PartialOrd for MinScored<K, T> {
     #[inline]
@@ -26,26 +28,26 @@ impl<K: PartialOrd, T> PartialOrd for MinScored<K, T> {
     }
 }
 
-impl<K: PartialOrd + PartialEq, T> Ord for MinScored<K, T> {
+impl<K: PartialOrd, T> Ord for MinScored<K, T> {
     #[inline]
     fn cmp(&self, other: &MinScored<K, T>) -> Ordering {
         let a = &self.0;
         let b = &other.0;
         if a == b {
-            Equal
+            Ordering::Equal
         } else if a < b {
-            Greater
+            Ordering::Greater
         } else if a > b {
-            Less
+            Ordering::Less
         } else {
             // these are the NaN cases
             if a != a && b != b {
-                Equal
+                Ordering::Equal
             } else if a != a {
             // Order NaN less, so that it is last in the MinScore order
-                Less
+                Ordering::Less
             } else {
-                Greater
+                Ordering::Greater
             }
         }
     }

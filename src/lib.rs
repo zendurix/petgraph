@@ -1,35 +1,55 @@
+#![feature(old_orphan_check)]
+#![feature(associated_types)]
 #![feature(slicing_syntax)]
 #![feature(macro_rules)]
 #![feature(default_type_params)]
 extern crate test;
 
 use std::default::Default;
+use std::cmp::Ordering;
 use std::cell::Cell;
 use std::hash::{Writer, Hash};
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::RingBuf;
 use std::collections::BinaryHeap;
-use std::collections::hash_map::{
+use std::collections::hash_map::Entry::{
     Occupied,
     Vacant,
 };
 use std::fmt;
+use std::ops::{Add, Deref};
 
 pub use scored::MinScored;
 pub use digraph::DiGraph;
 pub use graph::Graph;
 pub use ograph::OGraph;
+pub use self::EdgeDirection::{Outgoing, Incoming};
 mod scored;
 pub mod digraph;
 pub mod graph;
 pub mod ograph;
 
+pub mod unionfind;
+
+// Index into the NodeIndex and EdgeIndex arrays
+/// Edge direction
+#[derive(Copy, Clone, Show, PartialEq)]
+pub enum EdgeDirection {
+    /// A **Outgoing** edge is an outward edge *from* the current node.
+    Outgoing = 0,
+    /// An **Incoming** edge is an inbound edge *to* the current node.
+    Incoming = 1
+}
+
 /// A reference that is hashed and compared by its pointer value.
-#[deriving(Clone)]
 pub struct Ptr<'b, T: 'b>(pub &'b T);
 
 impl<'b, T> Copy for Ptr<'b, T> {}
+impl<'b, T> Clone for Ptr<'b, T>
+{
+    fn clone(&self) -> Self { *self }
+}
 
 fn ptreq<T>(a: &T, b: &T) -> bool {
     a as *const _ == b as *const _
@@ -60,7 +80,8 @@ impl<'b, T> Ord for Ptr<'b, T>
     }
 }
 
-impl<'b, T> Deref<T> for Ptr<'b, T> {
+impl<'b, T> Deref for Ptr<'b, T> {
+    type Target = T;
     fn deref<'a>(&'a self) -> &'a T {
         self.0
     }
@@ -85,12 +106,12 @@ impl<'b, T: fmt::Show> fmt::Show for Ptr<'b, T> {
 
 pub fn dijkstra<'a,
                 Graph, N, K,
-                F, Edges>(graph: &'a Graph, start: N, mut edges: F) -> Vec<(N, K)>
+                F, Edges>(graph: &'a Graph, start: N, mut edges: F) -> HashMap<N, K>
 where
-    N: Copy + Eq + Hash + fmt::Show,
-    K: Default + Add<K, K> + Copy + PartialOrd + fmt::Show,
+    N: Copy + Clone + Eq + Hash + fmt::Show,
+    K: Default + Add<Output=K> + Copy + PartialOrd + fmt::Show,
     F: FnMut(&'a Graph, N) -> Edges,
-    Edges: Iterator<(N, K)>,
+    Edges: Iterator<Item=(N, K)>,
 {
     let mut visited = HashSet::new();
     let mut scores = HashMap::new();
@@ -113,7 +134,7 @@ where
                 continue
             }
             let mut next_score = node_score + edge;
-            match scores.entry(next) {
+            match scores.entry(&next) {
                 Occupied(ent) => if next_score < *ent.get() {
                     *ent.into_mut() = next_score;
                     predecessor.insert(next, node);
@@ -121,7 +142,7 @@ where
                     next_score = *ent.get();
                 },
                 Vacant(ent) => {
-                    ent.set(next_score);
+                    ent.insert(next_score);
                     predecessor.insert(next, node);
                 }
             }
@@ -130,15 +151,16 @@ where
         visited.insert(node);
     }
     println!("{}", predecessor);
-    scores.into_iter().collect()
+    scores
 }
 
-#[deriving(Show)]
+#[derive(Show)]
 pub struct Node<T>(pub T);
 
 pub struct NodeCell<T: Copy>(pub Cell<T>);
 
-impl<T: Copy> Deref<Cell<T>> for NodeCell<T> {
+impl<T: Copy> Deref for NodeCell<T> {
+    type Target = Cell<T>;
     #[inline]
     fn deref(&self) -> &Cell<T> {
         &self.0
@@ -152,38 +174,54 @@ impl<T: Copy + fmt::Show> fmt::Show for NodeCell<T> {
 }
 
 /// A graph trait for accessing the neighbors iterator **I**.
-pub trait GraphNeighbors<'a, N, I> {
-    fn neighbors(&'a self, n: N) -> I;
+pub trait GraphNeighbors<'a, N> {
+    type Iter: Iterator<Item=N>;
+    fn neighbors(&'a self, n: N) -> Self::Iter;
 }
 
-impl<'a, N, E> GraphNeighbors<'a, N, graph::Neighbors<'a, N>> for Graph<N, E>
-where N: Copy + PartialOrd + Hash + Eq
+impl<'a, N: 'a, E> GraphNeighbors<'a, N> for Graph<N, E>
+where N: Copy + Clone + PartialOrd + Hash + Eq
 {
+    type Iter = graph::Neighbors<'a, N>;
     fn neighbors(&'a self, n: N) -> graph::Neighbors<'a, N>
     {
         Graph::neighbors(self, n)
     }
 }
 
-impl<'a, N, E> GraphNeighbors<'a, N, digraph::Neighbors<'a, N, E>> for DiGraph<N, E>
-where N: Copy + Hash + Eq
+impl<'a, N: 'a, E: 'a> GraphNeighbors<'a, N> for DiGraph<N, E>
+where N: Copy + Clone + Hash + Eq
 {
+    type Iter = digraph::Neighbors<'a, N, E>;
     fn neighbors(&'a self, n: N) -> digraph::Neighbors<'a, N, E>
     {
         DiGraph::neighbors(self, n)
     }
 }
 
-impl<'a, N, E> GraphNeighbors<'a, ograph::NodeIndex, ograph::Neighbors<'a, N, E>> for OGraph<N, E>
+impl<'a, N, E> GraphNeighbors<'a, ograph::NodeIndex> for OGraph<N, E>
 {
-    fn neighbors(&'a self, n: ograph::NodeIndex) -> ograph::Neighbors<'a, N, E>
+    type Iter = ograph::Neighbors<'a, E>;
+    fn neighbors(&'a self, n: ograph::NodeIndex) -> ograph::Neighbors<'a, E>
     {
-        OGraph::neighbors(self, n)
+        OGraph::neighbors(self, n, EdgeDirection::Outgoing)
+    }
+}
+
+/// Wrapper type for walking the graph as if it is undirected
+pub struct Undirected<G>(pub G);
+
+impl<'a, 'b, N, E> GraphNeighbors<'a, ograph::NodeIndex> for Undirected<&'b OGraph<N, E>>
+{
+    type Iter = ograph::NeighborsBoth<'a, E>;
+    fn neighbors(&'a self, n: ograph::NodeIndex) -> ograph::NeighborsBoth<'a, E>
+    {
+        OGraph::neighbors_both(self.0, n)
     }
 }
 
 /// A breadth first traversal of a graph.
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct BreadthFirst<'a, G, N>
     where
         G: 'a,
@@ -194,11 +232,10 @@ pub struct BreadthFirst<'a, G, N>
     pub visited: HashSet<N>,
 }
 
-impl<'a, G, N, NIter> BreadthFirst<'a, G, N>
+impl<'a, G, N> BreadthFirst<'a, G, N>
     where
-        G: 'a + GraphNeighbors<'a, N, NIter>,
+        G: 'a + GraphNeighbors<'a, N>,
         N: Copy + Eq + Hash,
-        NIter: Iterator<N>,
 {
     pub fn new(graph: &'a G, start: N) -> BreadthFirst<'a, G, N>
     {
@@ -212,12 +249,13 @@ impl<'a, G, N, NIter> BreadthFirst<'a, G, N>
     }
 }
 
-impl<'a, G, N, NIter> Iterator<N> for BreadthFirst<'a, G, N>
+impl<'a, G, N> Iterator for BreadthFirst<'a, G, N>
     where
-        G: 'a + GraphNeighbors<'a, N, NIter>,
+        G: 'a + GraphNeighbors<'a, N>,
         N: Copy + Eq + Hash,
-        NIter: Iterator<N>,
+        <G as GraphNeighbors<'a, N>>::Iter: Iterator<Item=N>,
 {
+    type Item = N;
     fn next(&mut self) -> Option<N>
     {
         while let Some(node) = self.stack.pop_front() {
@@ -238,7 +276,7 @@ impl<'a, G, N, NIter> Iterator<N> for BreadthFirst<'a, G, N>
 }
 
 /// A depth first traversal of a graph.
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct DepthFirst<'a, G, N>
     where
         G: 'a,
@@ -249,11 +287,10 @@ pub struct DepthFirst<'a, G, N>
     pub visited: HashSet<N>,
 }
 
-impl<'a, G, N, NIter> DepthFirst<'a, G, N>
+impl<'a, G, N> DepthFirst<'a, G, N>
     where
-        G: 'a + GraphNeighbors<'a, N, NIter>,
+        G: 'a + GraphNeighbors<'a, N>,
         N: Copy + Eq + Hash,
-        NIter: Iterator<N>,
 {
     pub fn new(graph: &'a G, start: N) -> DepthFirst<'a, G, N>
     {
@@ -265,12 +302,13 @@ impl<'a, G, N, NIter> DepthFirst<'a, G, N>
     }
 }
 
-impl<'a, G, N, NIter> Iterator<N> for DepthFirst<'a, G, N>
+impl<'a, G, N> Iterator for DepthFirst<'a, G, N>
     where
-        G: 'a + GraphNeighbors<'a, N, NIter>,
+        G: 'a + GraphNeighbors<'a, N>,
         N: Copy + Eq + Hash,
-        NIter: Iterator<N>,
+        <G as GraphNeighbors<'a, N>>::Iter: Iterator<Item=N>,
 {
+    type Item = N;
     fn next(&mut self) -> Option<N>
     {
         while let Some(node) = self.stack.pop() {

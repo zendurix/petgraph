@@ -6,13 +6,17 @@ extern crate petgraph;
 use arena::TypedArena;
 use std::cell::Cell;
 
-use petgraph::ograph::OGraph;
+use petgraph::ograph::{
+    OGraph,
+    toposort,
+};
 
 pub use petgraph::{
     MinScored,
     DiGraph,
     Graph,
     Ptr,
+    Incoming, Outgoing,
     Node,
     NodeCell,
     BreadthFirst,
@@ -63,7 +67,7 @@ fn make_graph() {
     // Wikipedia example
     let root = TypedArena::<NodeCell<_>>::new();
     let mut g: DiGraph<_, f32> = DiGraph::new();
-    let node = |name: &'static str| Ptr(root.alloc(NodeCell(Cell::new(name))));
+    let node = |&: name: &'static str| Ptr(root.alloc(NodeCell(Cell::new(name))));
     let a = g.add_node(node("A"));
     let b = g.add_node(node("B"));
     let c = g.add_node(node("C"));
@@ -100,7 +104,7 @@ fn make_graph() {
     }
 
     let mut g: DiGraph<_, f32> = DiGraph::new();
-    let node = |name: &'static str| name;
+    let node = |&: name: &'static str| name;
     let a = g.add_node(node("A"));
     let b = g.add_node(node("B"));
     let c = g.add_node(node("C"));
@@ -121,7 +125,7 @@ fn make_graph() {
 
     let root = TypedArena::<Node<_>>::new();
     let mut g: Graph<_, f32> = Graph::new();
-    let node = |name: &'static str| Ptr(root.alloc(Node(name.to_string())));
+    let node = |&: name: &'static str| Ptr(root.alloc(Node(name.to_string())));
     let a = g.add_node(node("A"));
     let b = g.add_node(node("B"));
     let c = g.add_node(node("C"));
@@ -176,12 +180,23 @@ fn main() {
     let a = og.add_node(0i);
     let b = og.add_node(1i);
     let c = og.add_node(2i);
-    let ed1 = og.add_edge(a, b, 0i);
-    let ed2 = og.add_edge(a, c, 1);
+    let d = og.add_node(3i);
+    let _ = og.add_edge(a, b, 0i);
+    let _ = og.add_edge(a, c, 1);
     og.add_edge(c, a, 2);
     og.add_edge(a, a, 3);
     og.add_edge(b, c, 4);
     og.add_edge(b, a, 5);
+    og.add_edge(a, d, 6);
+
+    for no in og.edges(a, Outgoing) {
+        println!("Edges {}", no);
+    }
+
+    for no in og.edges_both(a) {
+        println!("EdgesBoth {}", no);
+    }
+
     println!("{}", og);
     println!("Remove {}", a);
     for no in BreadthFirst::new(&og, a) {
@@ -216,6 +231,11 @@ fn main() {
     }
 
     println!("Scores= {}", 
-        dijkstra(&g, a, |gr, n| gr.edges(n).map(|(n, &e)| (n, e)))
+        dijkstra(&g, a, |gr, n| gr.edges(n, Outgoing).map(|(n, &e)| (n, e)))
     );
+
+    let x = g.add_node("X");
+    let y = g.add_node("Y");
+    g.add_edge(x, y, 0.);
+    println!("{}", toposort(&g));
 }

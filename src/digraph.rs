@@ -4,12 +4,14 @@ use std::collections::HashMap;
 use std::iter::Map;
 use std::collections::hash_map::{
     Keys,
+};
+use std::collections::hash_map::Entry::{
     Occupied,
     Vacant,
 };
 use std::slice::{
-    Items,
-    MutItems,
+    Iter,
+    IterMut,
 };
 use std::fmt;
 
@@ -23,7 +25,7 @@ use std::fmt;
 /// The node type must be suitable as a hash table key (implementing **Eq
 /// + Hash**) as well as being a simple type.
 ///
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct DiGraph<N: Eq + Hash, E> {
     nodes: HashMap<N, Vec<(N, E)>>,
 }
@@ -35,7 +37,7 @@ impl<N, E> fmt::Show for DiGraph<N, E> where N: Eq + Hash + fmt::Show, E: fmt::S
     }
 }
 
-impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
+impl<N, E> DiGraph<N, E> where N: Copy + Clone + Eq + Hash
 {
     /// Create a new **DiGraph**.
     pub fn new() -> DiGraph<N, E>
@@ -82,12 +84,12 @@ impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
         // add nodes if they don't already exist
         //
         // make sure the endpoint exists in the map
-        match self.nodes.entry(b) {
-            Vacant(ent) => { ent.set(Vec::new()); }
+        match self.nodes.entry(&b) {
+            Vacant(ent) => { ent.insert(Vec::new()); }
             _ => {}
         }
 
-        match self.nodes.entry(a) {
+        match self.nodes.entry(&a) {
             Occupied(ent) => {
                 // Add edge only if it isn't already there
                 let edges = ent.into_mut();
@@ -99,7 +101,7 @@ impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
                 }
             }
             Vacant(ent) => {
-                ent.set(vec![(b, edge)]);
+                ent.insert(vec![(b, edge)]);
                 true
             }
         }
@@ -110,11 +112,11 @@ impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
     /// Return **None** if the edge didn't exist.
     pub fn remove_edge(&mut self, a: N, b: N) -> Option<E>
     {
-        match self.nodes.entry(a) {
+        match self.nodes.entry(&a) {
             Occupied(mut ent) => {
                 match ent.get().iter().position(|&(elt, _)| elt == b) {
                     Some(index) => {
-                        ent.get_mut().swap_remove(index).map(|(_, edge)| edge)
+                        Some(ent.get_mut().swap_remove(index).1)
                     }
                     None => None,
                 }
@@ -147,7 +149,7 @@ impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
     /// Iterator element type is **N**.
     pub fn neighbors(&self, from: N) -> Neighbors<N, E>
     {
-        fn fst<'a, N: Copy, E>(t: &'a (N, E)) -> N
+        fn fst<N: Copy, E>(t: &(N, E)) -> N
         {
             t.0
         }
@@ -156,7 +158,7 @@ impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
             match self.nodes.get(&from) {
                 Some(edges) => edges.iter(),
                 None => [].iter(),
-            }.map(fst)
+            }.map(fst as fn(&(N, E)) -> N)
         }
     }
 
@@ -178,7 +180,7 @@ impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
             match self.nodes.get(&from) {
                 Some(edges) => edges.iter(),
                 None => [].iter(),
-            }.map(extract)
+            }.map(extract as fn(&(N, E)) -> (N, &E))
         }
     }
 
@@ -188,7 +190,7 @@ impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
     /// If the node **from** does not exist in the graph, return an empty iterator.
     ///
     /// Iterator element type is **&'a mut (N, E)**.
-    pub fn edges_mut<'a>(&'a mut self, from: N) -> MutItems<'a, (N, E)>
+    pub fn edges_mut<'a>(&'a mut self, from: N) -> IterMut<'a, (N, E)>
     {
         match self.nodes.get_mut(&from) {
             Some(edges) => edges.iter_mut(),
@@ -226,7 +228,7 @@ impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash
 
 }
 
-impl<N, E> DiGraph<N, E> where N: Copy + Eq + Hash, E: Clone
+impl<N, E> DiGraph<N, E> where N: Copy + Clone + Eq + Hash, E: Clone
 {
     /// Add a directed edges from **a** to **b** and from **b** to **a** to the
     /// graph.
@@ -271,26 +273,29 @@ pub struct Nodes<'a, N: 'a, E: 'a> {
     iter: Keys<'a, N, Vec<(N, E)>>
 }
 
-impl<'a, N: 'a, E: 'a> Iterator<&'a N> for Nodes<'a, N, E>
+impl<'a, N: 'a, E: 'a> Iterator for Nodes<'a, N, E>
 {
+    type Item = &'a N;
     iterator_methods!(&'a N);
 }
 
 pub struct Neighbors<'a, N: 'a, E: 'a> {
-    iter: Map<&'a (N, E), N, Items<'a, (N, E)>, fn(&(N, E)) -> N>,
+    iter: Map<&'a (N, E), N, Iter<'a, (N, E)>, fn(&(N, E)) -> N>,
 }
 
-impl<'a, N: 'a, E: 'a> Iterator<N> for Neighbors<'a, N, E>
+impl<'a, N: 'a, E: 'a> Iterator for Neighbors<'a, N, E>
 {
+    type Item = N;
     iterator_methods!(N);
 }
 
 pub struct Edges<'a, N: 'a, E: 'a> {
-    iter: Map<&'a (N, E), (N, &'a E), Items<'a, (N, E)>, fn(&(N, E)) -> (N, &E)>,
+    iter: Map<&'a (N, E), (N, &'a E), Iter<'a, (N, E)>, fn(&(N, E)) -> (N, &E)>,
 }
 
-impl<'a, N: 'a, E: 'a> Iterator<(N, &'a E)> for Edges<'a, N, E>
+impl<'a, N: 'a, E: 'a> Iterator for Edges<'a, N, E>
 {
+    type Item = (N, &'a E);
     iterator_methods!((N, &'a E));
 }
 
