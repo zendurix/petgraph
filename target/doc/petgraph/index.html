@@ -44,7 +44,7 @@
 <h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>petgraph</a><wbr></span><span class='out-of-band'><a href='stability.html'>[stability]</a> <span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-0' href='../src/petgraph/lib.rs.html#1-329'>[src]</a></span></h1>
+        </span><a id='src-0' href='../src/petgraph/lib.rs.html#1-497'>[src]</a></span></h1>
 <h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>pub use digraph::<a class='struct' href='../petgraph/digraph/struct.DiGraph.html' title='petgraph::digraph::DiGraph'>DiGraph</a>;</code></td></tr><tr><td><code>pub use graph::<a class='struct' href='../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>;</code></td></tr><tr><td><code>pub use ograph::<a class='struct' href='../petgraph/ograph/struct.OGraph.html' title='petgraph::ograph::OGraph'>OGraph</a>;</code></td></tr><tr><td><code>pub use self::EdgeDirection::{<a class='enum' href='../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>Outgoing</a>, <a class='enum' href='../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>Incoming</a>};</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
@@ -84,6 +84,13 @@
                     <tr>
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.DepthFirst.html'
                                title='petgraph::DepthFirst'>DepthFirst</a></td>
+                        <td class='docblock short'><p>An iterator for a depth first traversal of a graph.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.Dfs.html'
+                               title='petgraph::Dfs'>Dfs</a></td>
                         <td class='docblock short'><p>A depth first traversal of a graph.</p>
 </td>
                     </tr>
@@ -116,6 +123,13 @@ a pair for use with a <strong>BinaryHeap</strong>.</p>
                     </tr>
                 
                     <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.Reversed.html'
+                               title='petgraph::Reversed'>Reversed</a></td>
+                        <td class='docblock short'><p>Wrapper type for walking edges the other way</p>
+</td>
+                    </tr>
+                
+                    <tr>
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.Undirected.html'
                                title='petgraph::Undirected'>Undirected</a></td>
                         <td class='docblock short'><p>Wrapper type for walking the graph as if it is undirected</p>
@@ -132,17 +146,45 @@ a pair for use with a <strong>BinaryHeap</strong>.</p>
                 </table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
                     <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='trait' href='trait.GraphNeighbors.html'
-                               title='petgraph::GraphNeighbors'>GraphNeighbors</a></td>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='trait' href='trait.IntoNeighbors.html'
+                               title='petgraph::IntoNeighbors'>IntoNeighbors</a></td>
                         <td class='docblock short'><p>A graph trait for accessing the neighbors iterator <strong>I</strong>.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='trait' href='trait.VisitMap.html'
+                               title='petgraph::VisitMap'>VisitMap</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='trait' href='trait.Visitable.html'
+                               title='petgraph::Visitable'>Visitable</a></td>
+                        <td class='docblock short'><p>Trait for Graph that knows which datastructure is the best for its visitor map</p>
 </td>
                     </tr>
                 </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table>
                     <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.depth_first_search.html'
+                               title='petgraph::depth_first_search'>depth_first_search</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.depth_first_search_mut.html'
+                               title='petgraph::depth_first_search_mut'>depth_first_search_mut</a></td>
+                        <td class='docblock short'><p>Run a DFS over an <strong>OGraph</strong>, passing a mutable ref to the graph to the
+iteration function on each step.</p>
+</td>
+                    </tr>
+                
+                    <tr>
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.dijkstra.html'
                                title='petgraph::dijkstra'>dijkstra</a></td>
-                        <td class='docblock short'></td>
+                        <td class='docblock short'><p>Dijkstra&#39;s shortest path algorithm.</p>
+</td>
                     </tr>
                 </table></section>
     <section id='search' class="content hidden"></section>

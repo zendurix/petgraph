@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>ograph</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Edge.html'>Edge</a><a class='struct ' href='struct.EdgeIndex.html'>EdgeIndex</a><a class='struct ' href='struct.Edges.html'>Edges</a><a class='struct ' href='struct.EdgesBoth.html'>EdgesBoth</a><a class='struct ' href='struct.EdgesMut.html'>EdgesMut</a><a class='struct ' href='struct.Neighbors.html'>Neighbors</a><a class='struct ' href='struct.NeighborsBoth.html'>NeighborsBoth</a><a class='struct ' href='struct.Node.html'>Node</a><a class='struct ' href='struct.NodeIndex.html'>NodeIndex</a><a class='struct ' href='struct.OGraph.html'>OGraph</a><a class='struct ' href='struct.WithoutEdges.html'>WithoutEdges</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.min_spanning_tree.html'>min_spanning_tree</a><a class='fn current' href='fn.toposort.html'>toposort</a></div>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>ograph</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Directed.html'>Directed</a><a class='struct ' href='struct.Edge.html'>Edge</a><a class='struct ' href='struct.EdgeIndex.html'>EdgeIndex</a><a class='struct ' href='struct.Edges.html'>Edges</a><a class='struct ' href='struct.Neighbors.html'>Neighbors</a><a class='struct ' href='struct.Node.html'>Node</a><a class='struct ' href='struct.NodeIndex.html'>NodeIndex</a><a class='struct ' href='struct.OGraph.html'>OGraph</a><a class='struct ' href='struct.Undirected.html'>Undirected</a><a class='struct ' href='struct.WithoutEdges.html'>WithoutEdges</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='trait.EdgeType.html'>EdgeType</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.is_cyclic.html'>is_cyclic</a><a class='fn ' href='fn.min_spanning_tree.html'>min_spanning_tree</a><a class='fn current' href='fn.toposort.html'>toposort</a></div>
     </section>
 
     <nav class="sub">
@@ -44,8 +44,8 @@
 <h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>ograph</a>::<wbr><a class='fn' href=''>toposort</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-5409' href='../../src/petgraph/ograph.rs.html#523-549'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn toposort&lt;N, E&gt;(g: &amp;<a class='struct' href='../../petgraph/ograph/struct.OGraph.html' title='petgraph::ograph::OGraph'>OGraph</a>&lt;N, E&gt;) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../petgraph/ograph/struct.NodeIndex.html' title='petgraph::ograph::NodeIndex'>NodeIndex</a>&gt;</pre><div class='docblock'><p>Perform a topological sort of the graph.</p>
+        </span><a id='src-6180' href='../../src/petgraph/ograph.rs.html#707-733'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn toposort&lt;N, E&gt;(g: &amp;<a class='struct' href='../../petgraph/ograph/struct.OGraph.html' title='petgraph::ograph::OGraph'>OGraph</a>&lt;N, E, <a class='struct' href='../../petgraph/ograph/struct.Directed.html' title='petgraph::ograph::Directed'>Directed</a>&gt;) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../petgraph/ograph/struct.NodeIndex.html' title='petgraph::ograph::NodeIndex'>NodeIndex</a>&gt;</pre><div class='docblock'><p>Perform a topological sort of a directed graph.</p>
 
 <p>Return a vector of nodes in topological order: each node is ordered
 before its successors.</p>
