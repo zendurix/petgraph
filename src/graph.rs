@@ -57,6 +57,11 @@ impl<N, E> Graph<N, E> where N: Copy + Clone + PartialOrd + Eq + Hash
         }
     }
 
+    pub fn node_count(&self) -> uint
+    {
+        self.nodes.len()
+    }
+
     /// Add node **n** to the graph.
     pub fn add_node(&mut self, n: N) -> N {
         match self.nodes.entry(&n) {
@@ -184,7 +189,7 @@ impl<N, E> Graph<N, E> where N: Copy + Clone + PartialOrd + Eq + Hash
     }
 }
 
-macro_rules! iterator_methods(
+macro_rules! iterator_methods {
     ($elt_type:ty) => (
         #[inline]
         fn next(&mut self) -> Option<$elt_type>
@@ -198,7 +203,7 @@ macro_rules! iterator_methods(
             self.iter.size_hint()
         }
     )
-);
+}
 
 pub struct Nodes<'a, N: 'a> {
     iter: Keys<'a, N, Vec<N>>
