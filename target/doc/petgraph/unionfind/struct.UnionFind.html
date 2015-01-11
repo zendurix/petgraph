@@ -44,7 +44,7 @@
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>unionfind</a>::<wbr><a class='struct' href=''>UnionFind</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-6918' href='../../src/petgraph/unionfind.rs.html#15-27'>[src]</a></span></h1>
+        </span><a id='src-9085' href='../../src/petgraph/unionfind.rs.html#15-27'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct UnionFind&lt;K&gt; <span class='where'>where K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/num/trait.UnsignedInt.html' title='core::num::UnsignedInt'>UnsignedInt</a></span> {
     // some fields omitted
 }</pre><div class='docblock'><p><strong>UnionFind&lt;K&gt;</strong> is a disjoint-set data structure. It tracks set membership of <em>n</em> elements
@@ -56,7 +56,7 @@ indexed from <em>0</em> to <em>n - 1</em>. The scalar type is <strong>K</strong>
 
 <p>“The amortized time per operation is <strong>O(α(n))</strong> where <strong>α(n)</strong> is the
 inverse of <strong>f(x) = A(x, x)</strong> with <strong>A</strong> being the extremely fast-growing Ackermann function.”</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;K&gt; <a class='struct' href='../../petgraph/unionfind/struct.UnionFind.html' title='petgraph::unionfind::UnionFind'>UnionFind</a>&lt;K&gt; <span class='where'>where K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/num/trait.UnsignedInt.html' title='core::num::UnsignedInt'>UnsignedInt</a></span></code></h3><div class='impl-items'><h4 id='method.new' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.new' class='fnname'>new</a>(n: <a href='http://doc.rust-lang.org/nightly/std/primitive.uint.html'>uint</a>) -&gt; <a class='struct' href='../../petgraph/unionfind/struct.UnionFind.html' title='petgraph::unionfind::UnionFind'>UnionFind</a>&lt;K&gt;</code></h4>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;K&gt; <a class='struct' href='../../petgraph/unionfind/struct.UnionFind.html' title='petgraph::unionfind::UnionFind'>UnionFind</a>&lt;K&gt; <span class='where'>where K: <a class='trait' href='http://doc.rust-lang.org/nightly/core/num/trait.UnsignedInt.html' title='core::num::UnsignedInt'>UnsignedInt</a></span></code></h3><div class='impl-items'><h4 id='method.new' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.new' class='fnname'>new</a>(n: <a href='http://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; <a class='struct' href='../../petgraph/unionfind/struct.UnionFind.html' title='petgraph::unionfind::UnionFind'>UnionFind</a>&lt;K&gt;</code></h4>
 <div class='docblock'><p>Create a new <strong>UnionFind</strong> of <strong>n</strong> disjoint sets.</p>
 </div><h4 id='method.find' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.find' class='fnname'>find</a>(&amp;self, x: K) -&gt; K</code></h4>
 <div class='docblock'><p>Return the representative for <strong>x</strong>.</p>

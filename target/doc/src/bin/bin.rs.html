@@ -216,7 +216,9 @@
 <span id="174">174</span>
 <span id="175">175</span>
 <span id="176">176</span>
+<span id="177">177</span>
 </pre><pre class='rust '>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>allow</span>(<span class='ident'>unstable</span>)]</span>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>arena</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>petgraph</span>;
 
@@ -236,8 +238,8 @@
     <span class='ident'>Incoming</span>, <span class='ident'>Outgoing</span>,
     <span class='ident'>Node</span>,
     <span class='ident'>NodeCell</span>,
-    <span class='ident'>BreadthFirst</span>,
-    <span class='ident'>DepthFirst</span>,
+    <span class='ident'>BfsIter</span>,
+    <span class='ident'>DfsIter</span>,
     <span class='ident'>dijkstra</span>,
 };
 
@@ -300,24 +302,24 @@
     <span class='ident'>g</span>.<span class='ident'>add_diedge</span>(<span class='ident'>b</span>, <span class='ident'>f</span>, <span class='number'>15.</span>);
     <span class='ident'>g</span>.<span class='ident'>add_diedge</span>(<span class='ident'>c</span>, <span class='ident'>f</span>, <span class='number'>11.</span>);
     <span class='ident'>g</span>.<span class='ident'>add_diedge</span>(<span class='ident'>e</span>, <span class='ident'>f</span>, <span class='number'>6.</span>);
-    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>g</span>);
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>g</span>);
 
     <span class='ident'>f</span>.<span class='ident'>set</span>(<span class='string'>&quot;F&#39;&quot;</span>);
 
-    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Scores= {}&quot;</span>, 
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Scores= {:?}&quot;</span>, 
         <span class='ident'>dijkstra</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>, <span class='prelude-val'>None</span>, <span class='op'>|</span><span class='ident'>gr</span>, <span class='ident'>n</span><span class='op'>|</span> <span class='ident'>gr</span>.<span class='ident'>edges</span>(<span class='ident'>n</span>).<span class='ident'>map</span>(<span class='op'>|</span>(<span class='ident'>n</span>, <span class='kw-2'>&amp;</span><span class='ident'>e</span>)<span class='op'>|</span> (<span class='ident'>n</span>, <span class='ident'>e</span>)))
     );
 
     <span class='comment'>//let x = </span>
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>BreadthFirst</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>);
-    <span class='comment'>//let mut it = range(0i, 1);</span>
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>BfsIter</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>);
+    <span class='comment'>//let mut it = range(0, 1);</span>
     <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='ident'>it</span> {
-        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Visit {}&quot;</span>, <span class='ident'>node</span>);
+        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Visit {:?}&quot;</span>, <span class='ident'>node</span>);
     }
     <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;&quot;</span>);
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>DepthFirst</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>);
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>it</span> <span class='op'>=</span> <span class='ident'>DfsIter</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>);
     <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='ident'>it</span> {
-        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Visit {}&quot;</span>, <span class='ident'>node</span>);
+        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Visit {:?}&quot;</span>, <span class='ident'>node</span>);
     }
 
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>g</span>: <span class='ident'>DiGraph</span><span class='op'>&lt;</span>_, <span class='ident'>f32</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>DiGraph</span>::<span class='ident'>new</span>();
@@ -338,7 +340,7 @@
     <span class='ident'>g</span>.<span class='ident'>add_diedge</span>(<span class='ident'>c</span>, <span class='ident'>f</span>, <span class='number'>11.</span>);
     <span class='ident'>g</span>.<span class='ident'>add_diedge</span>(<span class='ident'>e</span>, <span class='ident'>f</span>, <span class='number'>6.</span>);
 
-    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>g</span>);
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>g</span>);
 
     <span class='kw'>let</span> <span class='ident'>root</span> <span class='op'>=</span> <span class='ident'>TypedArena</span>::<span class='op'>&lt;</span><span class='ident'>Node</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>::<span class='ident'>new</span>();
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>g</span>: <span class='ident'>Graph</span><span class='op'>&lt;</span>_, <span class='ident'>f32</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Graph</span>::<span class='ident'>new</span>();
@@ -358,35 +360,35 @@
     <span class='ident'>g</span>.<span class='ident'>add_edge</span>(<span class='ident'>b</span>, <span class='ident'>f</span>, <span class='number'>15.</span>);
     <span class='ident'>g</span>.<span class='ident'>add_edge</span>(<span class='ident'>c</span>, <span class='ident'>f</span>, <span class='number'>11.</span>);
     <span class='ident'>g</span>.<span class='ident'>add_edge</span>(<span class='ident'>e</span>, <span class='ident'>f</span>, <span class='number'>6.</span>);
-    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>g</span>);
-    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>dijkstra</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>, <span class='prelude-val'>None</span>, <span class='op'>|</span><span class='ident'>gr</span>, <span class='ident'>n</span><span class='op'>|</span> <span class='ident'>gr</span>.<span class='ident'>edges</span>(<span class='ident'>n</span>).<span class='ident'>map</span>(<span class='op'>|</span>(<span class='ident'>n</span>, <span class='kw-2'>&amp;</span><span class='ident'>e</span>)<span class='op'>|</span> (<span class='ident'>n</span>, <span class='ident'>e</span>))));
-    <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='ident'>DepthFirst</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>) {
-        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Visit {}&quot;</span>, <span class='ident'>node</span>);
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>g</span>);
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>dijkstra</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>, <span class='prelude-val'>None</span>, <span class='op'>|</span><span class='ident'>gr</span>, <span class='ident'>n</span><span class='op'>|</span> <span class='ident'>gr</span>.<span class='ident'>edges</span>(<span class='ident'>n</span>).<span class='ident'>map</span>(<span class='op'>|</span>(<span class='ident'>n</span>, <span class='kw-2'>&amp;</span><span class='ident'>e</span>)<span class='op'>|</span> (<span class='ident'>n</span>, <span class='ident'>e</span>))));
+    <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='ident'>DfsIter</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>) {
+        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Dfs Visit {:?}&quot;</span>, <span class='ident'>node</span>);
     }
     <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;&quot;</span>);
-    <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='ident'>BreadthFirst</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>) {
-        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Visit {}&quot;</span>, <span class='ident'>node</span>);
+    <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='ident'>BfsIter</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='ident'>a</span>) {
+        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Bfs Visit {:?}&quot;</span>, <span class='ident'>node</span>);
     }
 
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>g</span>: <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>int</span>, <span class='ident'>int</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Graph</span>::<span class='ident'>new</span>();
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>g</span>: <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>isize</span>, <span class='ident'>isize</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Graph</span>::<span class='ident'>new</span>();
     <span class='ident'>g</span>.<span class='ident'>add_node</span>(<span class='number'>1</span>);
     <span class='ident'>g</span>.<span class='ident'>add_node</span>(<span class='number'>2</span>);
     <span class='ident'>g</span>.<span class='ident'>add_edge</span>(<span class='number'>1</span>, <span class='number'>2</span>, <span class='op'>-</span><span class='number'>1</span>);
 
-    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>g</span>);
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>g</span>);
     <span class='op'>*</span><span class='ident'>g</span>.<span class='ident'>edge_mut</span>(<span class='number'>1</span>, <span class='number'>2</span>).<span class='ident'>unwrap</span>() <span class='op'>=</span> <span class='number'>3</span>;
     <span class='kw'>for</span> <span class='ident'>elt</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>edges</span>(<span class='number'>1</span>) {
-        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Edge {} =&gt; {}&quot;</span>, <span class='number'>1i</span>, <span class='ident'>elt</span>);
+        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Edge {:?} =&gt; {:?}&quot;</span>, <span class='number'>1</span>, <span class='ident'>elt</span>);
     }
     <span class='kw'>for</span> <span class='ident'>elt</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>edges</span>(<span class='number'>2</span>) {
-        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Edge {} =&gt; {}&quot;</span>, <span class='number'>2i</span>, <span class='ident'>elt</span>);
+        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Edge {:?} =&gt; {:?}&quot;</span>, <span class='number'>2</span>, <span class='ident'>elt</span>);
     }
-    <span class='kw'>for</span> <span class='ident'>elt</span> <span class='kw'>in</span> <span class='ident'>BreadthFirst</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='number'>2</span>) {
-        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Visit: {}&quot;</span>, <span class='ident'>elt</span>);
+    <span class='kw'>for</span> <span class='ident'>elt</span> <span class='kw'>in</span> <span class='ident'>BfsIter</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>g</span>, <span class='number'>2</span>) {
+        <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Visit: {:?}&quot;</span>, <span class='ident'>elt</span>);
     }
     <span class='comment'>//g.remove_node(2);</span>
     <span class='ident'>g</span>.<span class='ident'>remove_edge</span>(<span class='number'>2</span>, <span class='number'>1</span>);
-    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>g</span>);
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{:?}&quot;</span>, <span class='ident'>g</span>);
 }
 
 
