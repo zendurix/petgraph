@@ -1,10 +1,12 @@
+#![allow(unstable)]
 extern crate petgraph;
 
 use petgraph::{
     OGraph,
-    Undirected,
-    Reversed,
-    BreadthFirst,
+    Bfs,
+    BfsIter,
+    Dfs,
+    DfsIter,
     dijkstra,
     Incoming,
     Outgoing,
@@ -14,6 +16,11 @@ use petgraph::ograph::{
     min_spanning_tree,
     is_cyclic,
     NodeIndex,
+};
+
+use petgraph::visit::{
+    Reversed,
+    AsUndirected,
 };
 
 #[test]
@@ -70,40 +77,56 @@ fn dfs() {
     gr.add_edge(i, j, 1.);
     gr.add_edge(i, k, 2.);
 
-    let mut visited = 0u;
-    petgraph::depth_first_search(&gr, h, |_| {
-        visited += 1;
-        true
-    });
-    assert_eq!(visited, 4);
+    assert_eq!(DfsIter::new(&gr, h).count(), 4);
 
-    let mut visited = 0u;
-    petgraph::depth_first_search(&Reversed(&gr), h, |_| {
-        visited += 1;
-        true
-    });
-    assert_eq!(visited, 1);
+    assert_eq!(DfsIter::new(&Reversed(&gr), h).count(), 1);
 
-    let mut visited = 0u;
-    petgraph::depth_first_search(&Reversed(&gr), k, |_| {
-        visited += 1;
-        true
-    });
-    assert_eq!(visited, 3);
+    assert_eq!(DfsIter::new(&Reversed(&gr), k).count(), 3);
 
-    let mut visited = 0u;
-    petgraph::depth_first_search(&gr, i, |_| {
-        visited += 1;
-        true
-    });
-    assert_eq!(visited, 3);
+    assert_eq!(DfsIter::new(&gr, i).count(), 3);
 
-    let mut visited = 0u;
-    petgraph::depth_first_search(&Undirected(&gr), i, |_| {
-        visited += 1;
-        true
-    });
-    assert_eq!(visited, 4);
+    assert_eq!(DfsIter::new(&AsUndirected(&gr), i).count(), 4);
+}
+
+
+#[test]
+fn bfs() {
+    let mut gr = OGraph::new();
+    let h = gr.add_node("H");
+    let i = gr.add_node("I");
+    let j = gr.add_node("J");
+    let k = gr.add_node("K");
+    // Z is disconnected.
+    let _ = gr.add_node("Z");
+    gr.add_edge(h, i, 1.);
+    gr.add_edge(h, j, 3.);
+    gr.add_edge(i, j, 1.);
+    gr.add_edge(i, k, 2.);
+
+    assert_eq!(BfsIter::new(&gr, h).count(), 4);
+
+    assert_eq!(BfsIter::new(&Reversed(&gr), h).count(), 1);
+
+    assert_eq!(BfsIter::new(&Reversed(&gr), k).count(), 3);
+
+    assert_eq!(BfsIter::new(&gr, i).count(), 3);
+
+    assert_eq!(BfsIter::new(&AsUndirected(&gr), i).count(), 4);
+
+    let mut bfs = Bfs::new(&gr, h);
+    let nx = bfs.next(&gr);
+    assert_eq!(nx, Some(h));
+
+    let nx1 = bfs.next(&gr);
+    assert!(nx1 == Some(i) || nx1 == Some(j));
+
+    let nx2 = bfs.next(&gr);
+    assert!(nx2 == Some(i) || nx2 == Some(j));
+    assert!(nx1 != nx2);
+
+    let nx = bfs.next(&gr);
+    assert_eq!(nx, Some(k));
+    assert_eq!(bfs.next(&gr), None);
 }
 
 
@@ -139,7 +162,7 @@ fn mst() {
     gr.add_edge(i, j, 1.);
 
     let mst = min_spanning_tree(&gr);
-    println!("MST is:\n{}", mst);
+    println!("MST is:\n{:?}", mst);
     assert!(mst.node_count() == gr.node_count());
     // |E| = |N| - 2  because there are two disconnected components.
     assert!(mst.edge_count() == gr.node_count() - 2);
@@ -172,13 +195,13 @@ fn selfloop() {
 
     assert!(gr.find_edge(a, b).is_some());
     assert!(gr.find_edge(b, a).is_none());
-    assert!(gr.find_any_edge(b, a).is_some());
+    assert!(gr.find_edge_undirected(b, a).is_some());
     assert!(gr.find_edge(a, a).is_some());
-    println!("{}", gr);
+    println!("{:?}", gr);
 
     gr.remove_edge(sed);
     assert!(gr.find_edge(a, a).is_none());
-    println!("{}", gr);
+    println!("{:?}", gr);
 }
 
 #[test]
@@ -270,13 +293,13 @@ fn dijk() {
     g.add_edge(b, f, 15.);
     g.add_edge(c, f, 11.);
     g.add_edge(e, f, 6.);
-    println!("{}", g);
-    for no in BreadthFirst::new(&g, a) {
-        println!("Visit {} = {}", no, g.node_weight(no));
+    println!("{:?}", g);
+    for no in BfsIter::new(&g, a) {
+        println!("Visit {:?} = {:?}", no, g.node_weight(no));
     }
 
     let scores = dijkstra(&g, a, None, |gr, n| gr.edges(n).map(|(n, &e)| (n, e)));
-    println!("Scores= {}", scores);
+    println!("Scores= {:?}", scores);
     assert_eq!(scores[c], 9.);
     assert_eq!(scores[e], 20.);
     assert_eq!(scores[f], 20.);

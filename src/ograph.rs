@@ -2,6 +2,7 @@ use std::hash::{Hash};
 use std::fmt;
 use std::slice;
 use std::iter;
+use std::ops::{Index, IndexMut};
 
 use std::collections::BinaryHeap;
 use std::collections::BitvSet;
@@ -13,10 +14,10 @@ use super::unionfind::UnionFind;
 
 // FIXME: These aren't stable, so a public wrapper of node/edge indices
 // should be lifetimed just like pointers.
-#[derive(Copy, Clone, Show, PartialEq, PartialOrd, Eq, Hash)]
-pub struct NodeIndex(pub uint);
-#[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Hash)]
-pub struct EdgeIndex(pub uint);
+#[derive(Copy, Clone, Show, PartialEq, PartialOrd, Eq, Ord, Hash)]
+pub struct NodeIndex(pub usize);
+#[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash)]
+pub struct EdgeIndex(pub usize);
 
 impl fmt::Show for EdgeIndex
 {
@@ -54,7 +55,7 @@ impl EdgeType for Undirected {
 
 /// An invalid **EdgeIndex** used to denote absence of an edge, for example
 /// to end an adjacency list.
-pub const EDGE_END: EdgeIndex = EdgeIndex(::std::uint::MAX);
+pub const EDGE_END: EdgeIndex = EdgeIndex(::std::usize::MAX);
 
 const DIRECTIONS: [EdgeDirection; 2] = [EdgeDirection::Outgoing, EdgeDirection::Incoming];
 
@@ -72,7 +73,7 @@ impl<N> Node<N>
     /// Accessor for data structure internals: the first edge in the given direction.
     pub fn next_edge(&self, dir: EdgeDirection) -> EdgeIndex
     {
-        self.next[dir as uint]
+        self.next[dir as usize]
     }
 }
 
@@ -92,7 +93,7 @@ impl<E> Edge<E>
     /// Accessor for data structure internals: the next edge for the given direction.
     pub fn next_edge(&self, dir: EdgeDirection) -> EdgeIndex
     {
-        self.next[dir as uint]
+        self.next[dir as usize]
     }
 
     /// Return the source node index.
@@ -108,10 +109,10 @@ impl<E> Edge<E>
     }
 }
 
-/// **OGraph\<N, E, EdgeType\>** is a graph datastructure using an adjacency list representation.
+/// **OGraph\<N, E, Ty\>** is a graph datastructure using an adjacency list representation.
 ///
 /// **OGraph** is parameterized over the node weight **N**, edge weight **E** and
-/// the parameter **EdgeType** that determines whether the graph has directed edges or not.
+/// the parameter **Ty** that determines whether the graph has directed edges or not.
 ///
 /// Based on the graph implementation in rustc.
 ///
@@ -119,23 +120,24 @@ impl<E> Edge<E>
 /// weights may be accessed mutably.
 ///
 /// **NodeIndex** and **EdgeIndex** are types that act as references to nodes and edges,
-/// but these are only stable across certain operations. Adding to the graph keeps
+/// but these are only stable across certain operations. **Removing nodes or edges may shift
+/// other indices**. Adding to the graph keeps
 /// all indices stable, but removing a node will force the last node to shift its index to
 /// take its place. Similarly, removing an edge shifts the index of the last edge.
 #[derive(Clone)]
-pub struct OGraph<N, E, Edges=Directed> {
+pub struct OGraph<N, E, Ty=Directed> {
     nodes: Vec<Node<N>>,
     edges: Vec<Edge<E>>,
 }
 
-impl<N: fmt::Show, E: fmt::Show, EdgeTy: EdgeType> fmt::Show for OGraph<N, E, EdgeTy>
+impl<N: fmt::Show, E: fmt::Show, Ty: EdgeType> fmt::Show for OGraph<N, E, Ty>
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for (index, n) in self.nodes.iter().enumerate() {
-            try!(writeln!(f, "{}: {}", index, n));
+            try!(writeln!(f, "{}: {:?}", index, n));
         }
         for (index, n) in self.edges.iter().enumerate() {
-            try!(writeln!(f, "{}: {}", index, n));
+            try!(writeln!(f, "{}: {:?}", index, n));
         }
         Ok(())
     }
@@ -147,7 +149,7 @@ enum Pair<T> {
     None,
 }
 
-fn index_twice<T>(slc: &mut [T], a: uint, b: uint) -> Pair<&mut T>
+fn index_twice<T>(slc: &mut [T], a: usize, b: usize) -> Pair<&mut T>
 {
     if a == b {
         slc.get_mut(a).map_or(Pair::None, Pair::One)
@@ -183,16 +185,16 @@ impl<N, E> OGraph<N, E, Undirected>
     }
 }
 
-impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
+impl<N, E, Ty=Directed> OGraph<N, E, Ty> where Ty: EdgeType
 {
     /// Create a new **OGraph** with estimated capacity.
-    pub fn with_capacity(nodes: uint, edges: uint) -> Self
+    pub fn with_capacity(nodes: usize, edges: usize) -> Self
     {
         OGraph{nodes: Vec::with_capacity(nodes), edges: Vec::with_capacity(edges)}
     }
 
     /// Return the number of nodes (vertices) in the graph.
-    pub fn node_count(&self) -> uint
+    pub fn node_count(&self) -> usize
     {
         self.nodes.len()
     }
@@ -200,23 +202,24 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
     /// Return the number of edges in the graph.
     ///
     /// Computes in **O(1)** time.
-    pub fn edge_count(&self) -> uint
+    pub fn edge_count(&self) -> usize
     {
         self.edges.len()
     }
 
     /// Return whether the graph has directed edges or not.
+    #[inline]
     pub fn is_directed(&self) -> bool
     {
-        EdgeType::is_directed(None::<EdgeTy>)
+        EdgeType::is_directed(None::<Ty>)
     }
 
     /// Cast the graph as either undirected or directed. No edge adjustments
     /// are done.
     ///
     /// Computes in **O(1)** time.
-    pub fn into_edge_type<NewEdgeTy>(self) -> OGraph<N, E, NewEdgeTy> where
-        NewEdgeTy: EdgeType
+    pub fn into_edge_type<NewTy>(self) -> OGraph<N, E, NewTy> where
+        NewTy: EdgeType
     {
         OGraph{nodes: self.nodes, edges: self.edges}
     }
@@ -253,7 +256,7 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
     /// Iterator element type is **NodeIndex**.
     pub fn neighbors(&self, a: NodeIndex) -> Neighbors<E>
     {
-        if EdgeType::is_directed(None::<EdgeTy>) {
+        if self.is_directed() {
             self.neighbors_directed(a, Outgoing)
         } else {
             self.neighbors_undirected(a)
@@ -270,9 +273,9 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
     pub fn neighbors_directed(&self, a: NodeIndex, dir: EdgeDirection) -> Neighbors<E>
     {
         let mut iter = self.neighbors_undirected(a);
-        if EdgeType::is_directed(None::<EdgeTy>) {
+        if self.is_directed() {
             // remove the other edges not wanted.
-            let k = dir as uint;
+            let k = dir as usize;
             iter.next[1 - k] = EDGE_END;
         }
         iter
@@ -305,8 +308,8 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
     pub fn edges(&self, a: NodeIndex) -> Edges<E>
     {
         let mut iter = self.edges_both(a);
-        if EdgeType::is_directed(None::<EdgeTy>) {
-            iter.next[Incoming as uint] = EDGE_END;
+        if self.is_directed() {
+            iter.next[Incoming as usize] = EDGE_END;
         }
         iter
     }
@@ -413,7 +416,7 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
             _ => {}
         }
         for d in DIRECTIONS.iter() { 
-            let k = *d as uint;
+            let k = *d as usize;
             /*
             println!("Starting edge removal for k={}, node={}", k, a);
             for (i, n) in self.nodes.iter().enumerate() {
@@ -453,7 +456,7 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
 
         // Adjust the starts of the out edges, and ends of the in edges.
         for &d in DIRECTIONS.iter() {
-            let k = d as uint;
+            let k = d as usize;
             for (_, curedge) in EdgesMut::new(self.edges.as_mut_slice(), swap_edges[k], d) {
                 debug_assert!(curedge.node[k] == old_index);
                 curedge.node[k] = new_index;
@@ -468,12 +471,12 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
                          edge_next: [EdgeIndex; 2])
     {
         for &d in DIRECTIONS.iter() {
-            let k = d as uint;
+            let k = d as usize;
             let node = match self.nodes.get_mut(edge_node[k].0) {
                 Some(r) => r,
                 None => {
-                    debug_assert!(false, "Edge's endpoint dir={} index={} not found",
-                                  k, edge_node[k]);
+                    debug_assert!(false, "Edge's endpoint dir={:?} index={:?} not found",
+                                  d, edge_node[k]);
                     return
                 }
             };
@@ -485,6 +488,7 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
                 for (_i, curedge) in EdgesMut::new(self.edges.as_mut_slice(), fst, d) {
                     if curedge.next[k] == e {
                         curedge.next[k] = edge_next[k];
+                        break; // the edge can only be present once in the list.
                     }
                 }
             }
@@ -535,8 +539,8 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
     /// connected to the vertices **a** (and **b**).
     pub fn find_edge(&self, a: NodeIndex, b: NodeIndex) -> Option<EdgeIndex>
     {
-        if !EdgeType::is_directed(None::<EdgeTy>) {
-            self.find_any_edge(a, b).map(|(ix, _)| ix)
+        if !self.is_directed() {
+            self.find_edge_undirected(a, b).map(|(ix, _)| ix)
         } else {
             match self.nodes.get(a.0) {
                 None => None,
@@ -557,13 +561,13 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
     /// Lookup an edge between **a** and **b**, in either direction.
     ///
     /// If the graph is undirected, then this is equivalent to *.find_edge()*.
-    pub fn find_any_edge(&self, a: NodeIndex, b: NodeIndex) -> Option<(EdgeIndex, EdgeDirection)>
+    pub fn find_edge_undirected(&self, a: NodeIndex, b: NodeIndex) -> Option<(EdgeIndex, EdgeDirection)>
     {
         match self.nodes.get(a.0) {
             None => None,
             Some(node) => {
                 for &d in DIRECTIONS.iter() {
-                    let k = d as uint;
+                    let k = d as usize;
                     let mut edix = node.next[k];
                     while let Some(edge) = self.edges.get(edix.0) {
                         if edge.node[1 - k] == b {
@@ -585,6 +589,8 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
         }
     }
 
+    /* Removed: Easy to implement externally with iterate in reverse
+     *
     /// Retain only nodes that return **true** from the predicate.
     pub fn retain_nodes<F>(&mut self, mut visit: F) where
         F: FnMut(&Self, NodeIndex, &Node<N>) -> bool
@@ -612,6 +618,7 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
             }
         }
     }
+    */
 
     /// Access the internal node array
     pub fn raw_nodes(&self) -> &[Node<N>]
@@ -631,7 +638,7 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
         match self.nodes.get(a.0) {
             None => None,
             Some(node) => {
-                let edix = node.next[dir as uint];
+                let edix = node.next[dir as usize];
                 if edix == EDGE_END {
                     None
                 } else { Some(edix) }
@@ -645,7 +652,7 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
         match self.edges.get(e.0) {
             None => None,
             Some(node) => {
-                let edix = node.next[dir as uint];
+                let edix = node.next[dir as usize];
                 if edix == EDGE_END {
                     None
                 } else { Some(edix) }
@@ -661,31 +668,31 @@ impl<N, E, EdgeTy=Directed> OGraph<N, E, EdgeTy> where EdgeTy: EdgeType
     /// For an undirected graph, the initials/terminals are just the vertices without edges.
     ///
     /// The whole iteration computes in **O(|V|)** time.
-    pub fn without_edges(&self, dir: EdgeDirection) -> WithoutEdges<N, EdgeTy>
+    pub fn without_edges(&self, dir: EdgeDirection) -> WithoutEdges<N, Ty>
     {
         WithoutEdges{iter: self.nodes.iter().enumerate(), dir: dir}
     }
 }
 
 /// An iterator over either the nodes without edges to them or from them.
-pub struct WithoutEdges<'a, N: 'a, EdgeTy> {
+pub struct WithoutEdges<'a, N: 'a, Ty> {
     iter: iter::Enumerate<slice::Iter<'a, Node<N>>>,
     dir: EdgeDirection,
 }
 
-impl<'a, N: 'a, EdgeTy> Iterator for WithoutEdges<'a, N, EdgeTy> where
-    EdgeTy: EdgeType
+impl<'a, N: 'a, Ty> Iterator for WithoutEdges<'a, N, Ty> where
+    Ty: EdgeType
 {
     type Item = NodeIndex;
     fn next(&mut self) -> Option<NodeIndex>
     {
-        let k = self.dir as uint;
+        let k = self.dir as usize;
         loop {
             match self.iter.next() {
                 None => return None,
                 Some((index, node)) => {
                     if node.next[k] == EDGE_END &&
-                        (EdgeType::is_directed(None::<EdgeTy>) ||
+                        (EdgeType::is_directed(None::<Ty>) ||
                          node.next[1-k] == EDGE_END) {
                         return Some(NodeIndex(index))
                     } else {
@@ -735,7 +742,7 @@ pub fn toposort<N, E>(g: &OGraph<N, E, Directed>) -> Vec<NodeIndex>
 /// Return **true** if the input graph contains a cycle.
 ///
 /// Treat the input graph as undirected.
-pub fn is_cyclic<N, E, EdgeTy: EdgeType>(g: &OGraph<N, E, EdgeTy>) -> bool
+pub fn is_cyclic<N, E, Ty>(g: &OGraph<N, E, Ty>) -> bool where Ty: EdgeType
 {
     let mut edge_sets = UnionFind::new(g.node_count());
     for edge in g.edges.iter() {
@@ -760,10 +767,10 @@ pub fn is_cyclic<N, E, EdgeTy: EdgeType>(g: &OGraph<N, E, EdgeTy>) -> bool
 ///
 /// The resulting graph has all the vertices of the input graph (with identical node indices),
 /// and **|V| - c** edges, where **c** is the number of connected components in **g**.
-pub fn min_spanning_tree<N, E, EdgeTy>(g: &OGraph<N, E, EdgeTy>) -> OGraph<N, E, Undirected> where
+pub fn min_spanning_tree<N, E, Ty>(g: &OGraph<N, E, Ty>) -> OGraph<N, E, Undirected> where
     N: Clone,
     E: Clone + PartialOrd,
-    EdgeTy: EdgeType,
+    Ty: EdgeType,
 {
     if g.node_count() == 0 {
         return OGraph::new_undirected()
@@ -823,7 +830,7 @@ impl<'a, E> Iterator for DiNeighbors<'a, E>
     type Item = NodeIndex;
     fn next(&mut self) -> Option<NodeIndex>
     {
-        let k = self.dir as uint;
+        let k = self.dir as usize;
         match self.edges.get(self.next.0) {
             None => None,
             Some(edge) => {
@@ -889,7 +896,7 @@ impl<'a, E> Iterator for EdgesMut<'a, E>
     fn next(&mut self) -> Option<(EdgeIndex, &'a mut Edge<E>)>
     {
         let this_index = self.next;
-        let k = self.dir as uint;
+        let k = self.dir as usize;
         match self.edges.get_mut(self.next.0) {
             None => None,
             Some(edge) => {
@@ -937,5 +944,45 @@ impl<'a, E> Iterator for Edges<'a, E>
                 Some((edge.node[0], &edge.weight))
             }
         }
+    }
+}
+
+impl<N, E, Ty> Index<NodeIndex> for OGraph<N, E, Ty> where
+    Ty: EdgeType
+{
+    type Output = N;
+    /// Index the **OGraph** by **NodeIndex** to access node weights.
+    fn index(&self, index: &NodeIndex) -> &N {
+        self.node_weight(*index).unwrap()
+    }
+}
+
+impl<N, E, Ty> IndexMut<NodeIndex> for OGraph<N, E, Ty> where
+    Ty: EdgeType
+{
+    type Output = N;
+    /// Index the **OGraph** by **NodeIndex** to access node weights.
+    fn index_mut(&mut self, index: &NodeIndex) -> &mut N {
+        self.node_weight_mut(*index).unwrap()
+    }
+
+}
+impl<N, E, Ty> Index<EdgeIndex> for OGraph<N, E, Ty> where
+    Ty: EdgeType
+{
+    type Output = E;
+    /// Index the **OGraph** by **EdgeIndex** to access edge weights.
+    fn index(&self, index: &EdgeIndex) -> &E {
+        self.edge_weight(*index).unwrap()
+    }
+}
+
+impl<N, E, Ty> IndexMut<EdgeIndex> for OGraph<N, E, Ty> where
+    Ty: EdgeType
+{
+    type Output = E;
+    /// Index the **OGraph** by **EdgeIndex** to access edge weights.
+    fn index_mut(&mut self, index: &EdgeIndex) -> &mut E {
+        self.edge_weight_mut(*index).unwrap()
     }
 }

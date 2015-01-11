@@ -1,3 +1,4 @@
+#![allow(unstable)]
 extern crate arena;
 extern crate petgraph;
 
@@ -17,8 +18,8 @@ pub use petgraph::{
     Incoming, Outgoing,
     Node,
     NodeCell,
-    BreadthFirst,
-    DepthFirst,
+    BfsIter,
+    DfsIter,
     dijkstra,
 };
 
@@ -81,24 +82,24 @@ fn make_graph() {
     g.add_diedge(b, f, 15.);
     g.add_diedge(c, f, 11.);
     g.add_diedge(e, f, 6.);
-    println!("{}", g);
+    println!("{:?}", g);
 
     f.set("F'");
 
-    println!("Scores= {}", 
+    println!("Scores= {:?}", 
         dijkstra(&g, a, None, |gr, n| gr.edges(n).map(|(n, &e)| (n, e)))
     );
 
     //let x = 
-    let mut it = BreadthFirst::new(&g, a);
-    //let mut it = range(0i, 1);
+    let mut it = BfsIter::new(&g, a);
+    //let mut it = range(0, 1);
     for node in it {
-        println!("Visit {}", node);
+        println!("Visit {:?}", node);
     }
     println!("");
-    let mut it = DepthFirst::new(&g, a);
+    let mut it = DfsIter::new(&g, a);
     for node in it {
-        println!("Visit {}", node);
+        println!("Visit {:?}", node);
     }
 
     let mut g: DiGraph<_, f32> = DiGraph::new();
@@ -119,7 +120,7 @@ fn make_graph() {
     g.add_diedge(c, f, 11.);
     g.add_diedge(e, f, 6.);
 
-    println!("{}", g);
+    println!("{:?}", g);
 
     let root = TypedArena::<Node<_>>::new();
     let mut g: Graph<_, f32> = Graph::new();
@@ -139,35 +140,35 @@ fn make_graph() {
     g.add_edge(b, f, 15.);
     g.add_edge(c, f, 11.);
     g.add_edge(e, f, 6.);
-    println!("{}", g);
-    println!("{}", dijkstra(&g, a, None, |gr, n| gr.edges(n).map(|(n, &e)| (n, e))));
-    for node in DepthFirst::new(&g, a) {
-        println!("Visit {}", node);
+    println!("{:?}", g);
+    println!("{:?}", dijkstra(&g, a, None, |gr, n| gr.edges(n).map(|(n, &e)| (n, e))));
+    for node in DfsIter::new(&g, a) {
+        println!("Dfs Visit {:?}", node);
     }
     println!("");
-    for node in BreadthFirst::new(&g, a) {
-        println!("Visit {}", node);
+    for node in BfsIter::new(&g, a) {
+        println!("Bfs Visit {:?}", node);
     }
 
-    let mut g: Graph<int, int> = Graph::new();
+    let mut g: Graph<isize, isize> = Graph::new();
     g.add_node(1);
     g.add_node(2);
     g.add_edge(1, 2, -1);
 
-    println!("{}", g);
+    println!("{:?}", g);
     *g.edge_mut(1, 2).unwrap() = 3;
     for elt in g.edges(1) {
-        println!("Edge {} => {}", 1i, elt);
+        println!("Edge {:?} => {:?}", 1, elt);
     }
     for elt in g.edges(2) {
-        println!("Edge {} => {}", 2i, elt);
+        println!("Edge {:?} => {:?}", 2, elt);
     }
-    for elt in BreadthFirst::new(&g, 2) {
-        println!("Visit: {}", elt);
+    for elt in BfsIter::new(&g, 2) {
+        println!("Visit: {:?}", elt);
     }
     //g.remove_node(2);
     g.remove_edge(2, 1);
-    println!("{}", g);
+    println!("{:?}", g);
 }
 
 
