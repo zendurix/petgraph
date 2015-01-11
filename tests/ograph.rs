@@ -2,17 +2,16 @@
 extern crate petgraph;
 
 use petgraph::{
-    OGraph,
+    Graph,
     Bfs,
     BfsIter,
     Dfs,
     DfsIter,
-    dijkstra,
     Incoming,
     Outgoing,
 };
 
-use petgraph::ograph::{
+use petgraph::graph::{
     min_spanning_tree,
     is_cyclic,
     NodeIndex,
@@ -21,12 +20,13 @@ use petgraph::ograph::{
 use petgraph::visit::{
     Reversed,
     AsUndirected,
+    dijkstra,
 };
 
 #[test]
 fn undirected()
 {
-    let mut og = OGraph::new_undirected();
+    let mut og = Graph::new_undirected();
     let a = og.add_node(0);
     let b = og.add_node(1);
     let c = og.add_node(2);
@@ -65,7 +65,7 @@ fn undirected()
 
 #[test]
 fn dfs() {
-    let mut gr = OGraph::new();
+    let mut gr = Graph::new();
     let h = gr.add_node("H");
     let i = gr.add_node("I");
     let j = gr.add_node("J");
@@ -91,7 +91,7 @@ fn dfs() {
 
 #[test]
 fn bfs() {
-    let mut gr = OGraph::new();
+    let mut gr = Graph::new();
     let h = gr.add_node("H");
     let i = gr.add_node("I");
     let j = gr.add_node("J");
@@ -133,7 +133,7 @@ fn bfs() {
 
 #[test]
 fn mst() {
-    let mut gr = OGraph::<_,_>::new();
+    let mut gr = Graph::<_,_>::new();
     let a = gr.add_node("A");
     let b = gr.add_node("B");
     let c = gr.add_node("C");
@@ -185,7 +185,7 @@ fn mst() {
 
 #[test]
 fn selfloop() {
-    let mut gr = OGraph::new();
+    let mut gr = Graph::new();
     let a = gr.add_node("A");
     let b = gr.add_node("B");
     let c = gr.add_node("C");
@@ -206,7 +206,7 @@ fn selfloop() {
 
 #[test]
 fn cyclic() {
-    let mut gr = OGraph::new();
+    let mut gr = Graph::new();
     let a = gr.add_node("A");
     let b = gr.add_node("B");
     let c = gr.add_node("C");
@@ -240,7 +240,7 @@ fn cyclic() {
 
 #[test]
 fn multi() {
-    let mut gr = OGraph::new();
+    let mut gr = Graph::new();
     let a = gr.add_node("a");
     let b = gr.add_node("b");
     gr.add_edge(a, b, ());
@@ -252,7 +252,7 @@ fn multi() {
 fn update_edge()
 {
     {
-        let mut gr = OGraph::new();
+        let mut gr = Graph::new();
         let a = gr.add_node("a");
         let b = gr.add_node("b");
         let e = gr.update_edge(a, b, 1);
@@ -264,7 +264,7 @@ fn update_edge()
     }
 
     {
-        let mut gr = OGraph::new_undirected();
+        let mut gr = Graph::new_undirected();
         let a = gr.add_node("a");
         let b = gr.add_node("b");
         let e = gr.update_edge(a, b, 1);
@@ -277,7 +277,7 @@ fn update_edge()
 
 #[test]
 fn dijk() {
-    let mut g = OGraph::new_undirected();
+    let mut g = Graph::new_undirected();
     let a = g.add_node("A");
     let b = g.add_node("B");
     let c = g.add_node("C");
@@ -311,7 +311,7 @@ fn dijk() {
 #[test]
 fn without()
 {
-    let mut og = OGraph::new_undirected();
+    let mut og = Graph::new_undirected();
     let a = og.add_node(0);
     let b = og.add_node(1);
     let c = og.add_node(2);
@@ -321,7 +321,7 @@ fn without()
     let v: Vec<NodeIndex> = og.without_edges(Outgoing).collect();
     assert_eq!(v, vec![d]);
 
-    let mut og = OGraph::new();
+    let mut og = Graph::new();
     let a = og.add_node(0);
     let b = og.add_node(1);
     let c = og.add_node(2);
@@ -332,4 +332,50 @@ fn without()
     let term: Vec<NodeIndex> = og.without_edges(Outgoing).collect();
     assert_eq!(init, vec![a, d]);
     assert_eq!(term, vec![b, c, d]);
+}
+
+
+#[test]
+fn toposort() {
+    let mut gr = Graph::<_,_>::new();
+    let a = gr.add_node("A");
+    let b = gr.add_node("B");
+    let c = gr.add_node("C");
+    let d = gr.add_node("D");
+    let e = gr.add_node("E");
+    let f = gr.add_node("F");
+    let g = gr.add_node("G");
+    gr.add_edge(a, b, 7.0);
+    gr.add_edge(a, d, 5.);
+    gr.add_edge(d, b, 9.);
+    gr.add_edge(b, c, 8.);
+    gr.add_edge(b, e, 7.);
+    gr.add_edge(c, e, 5.);
+    gr.add_edge(d, e, 15.);
+    gr.add_edge(d, f, 6.);
+    gr.add_edge(f, e, 8.);
+    gr.add_edge(f, g, 11.);
+    gr.add_edge(e, g, 9.);
+
+    // add a disjoint part
+    let h = gr.add_node("H");
+    let i = gr.add_node("I");
+    let j = gr.add_node("J");
+    gr.add_edge(h, i, 1.);
+    gr.add_edge(h, j, 3.);
+    gr.add_edge(i, j, 1.);
+
+    let order = petgraph::graph::toposort(&gr);
+    println!("{:?}", order);
+    assert_eq!(order.len(), gr.node_count());
+
+    // check all the edges of the graph
+    for edge in gr.raw_edges().iter() {
+        let a = edge.source();
+        let b = edge.target();
+        let ai = order.iter().position(|x| *x == a);
+        let bi = order.iter().position(|x| *x == b);
+        println!("Check that {:?} is before {:?}", a, b);
+        assert!(ai < bi);
+    }
 }
