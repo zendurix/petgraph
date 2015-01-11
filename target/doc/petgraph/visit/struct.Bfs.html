@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>visit</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.AsUndirected.html'>AsUndirected</a><a class='struct current' href='struct.Bfs.html'>Bfs</a><a class='struct ' href='struct.BfsIter.html'>BfsIter</a><a class='struct ' href='struct.Dfs.html'>Dfs</a><a class='struct ' href='struct.DfsIter.html'>DfsIter</a><a class='struct ' href='struct.Reversed.html'>Reversed</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='enum.Color.html'>Color</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='trait.ColorMap.html'>ColorMap</a><a class='trait ' href='trait.ColorVisitable.html'>ColorVisitable</a><a class='trait ' href='trait.Graphlike.html'>Graphlike</a><a class='trait ' href='trait.IntoNeighbors.html'>IntoNeighbors</a><a class='trait ' href='trait.VisitMap.html'>VisitMap</a><a class='trait ' href='trait.Visitable.html'>Visitable</a></div>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>visit</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.AsUndirected.html'>AsUndirected</a><a class='struct current' href='struct.Bfs.html'>Bfs</a><a class='struct ' href='struct.BfsIter.html'>BfsIter</a><a class='struct ' href='struct.Dfs.html'>Dfs</a><a class='struct ' href='struct.DfsIter.html'>DfsIter</a><a class='struct ' href='struct.Reversed.html'>Reversed</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='enum.Color.html'>Color</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='trait.ColorMap.html'>ColorMap</a><a class='trait ' href='trait.ColorVisitable.html'>ColorVisitable</a><a class='trait ' href='trait.Graphlike.html'>Graphlike</a><a class='trait ' href='trait.IntoNeighbors.html'>IntoNeighbors</a><a class='trait ' href='trait.VisitMap.html'>VisitMap</a><a class='trait ' href='trait.Visitable.html'>Visitable</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.dijkstra.html'>dijkstra</a></div>
     </section>
 
     <nav class="sub">
@@ -44,7 +44,7 @@
 <h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>visit</a>::<wbr><a class='struct' href=''>Bfs</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-8658' href='../../src/petgraph/visit.rs.html#404-407'>[src]</a></span></h1>
+        </span><a id='src-7451' href='../../src/petgraph/visit.rs.html#392-395'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Bfs&lt;N, VM&gt; {
     pub stack: <a class='struct' href='http://doc.rust-lang.org/nightly/collections/ring_buf/struct.RingBuf.html' title='collections::ring_buf::RingBuf'>RingBuf</a>&lt;N&gt;,
     pub discovered: VM,
@@ -53,9 +53,9 @@
 <p>Using a <strong>Bfs</strong> you can run a traversal over a graph while still retaining
 mutable access to it, if you use it like the following example:</p>
 <pre class='rust '>
-<span class='kw'>use</span> <span class='ident'>petgraph</span>::{<span class='ident'>OGraph</span>, <span class='ident'>Bfs</span>};
+<span class='kw'>use</span> <span class='ident'>petgraph</span>::{<span class='ident'>Graph</span>, <span class='ident'>Bfs</span>};
 
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>graph</span> <span class='op'>=</span> <span class='ident'>OGraph</span>::<span class='op'>&lt;</span>_,()<span class='op'>&gt;</span>::<span class='ident'>new</span>();
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>graph</span> <span class='op'>=</span> <span class='ident'>Graph</span>::<span class='op'>&lt;</span>_,()<span class='op'>&gt;</span>::<span class='ident'>new</span>();
 <span class='kw'>let</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>graph</span>.<span class='ident'>add_node</span>(<span class='number'>0</span>);
 
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>bfs</span> <span class='op'>=</span> <span class='ident'>Bfs</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>graph</span>, <span class='ident'>a</span>);
