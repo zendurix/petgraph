@@ -3,6 +3,9 @@ extern crate petgraph;
 use petgraph::{
     GraphMap,
 };
+use petgraph::visit::{
+    DfsIter,
+};
 
 #[test]
 fn simple() {
@@ -15,30 +18,32 @@ fn simple() {
     let d = gr.add_node(("D"));
     let e = gr.add_node(("E"));
     let f = gr.add_node(("F"));
-    gr.add_edge(a, b, 7.);
-    gr.add_edge(a, c, 9.);
-    gr.add_edge(a, d, 14.);
-    gr.add_edge(b, c, 10.);
-    gr.add_edge(c, d, 2.);
-    gr.add_edge(d, e, 9.);
-    gr.add_edge(b, f, 15.);
-    gr.add_edge(c, f, 11.);
+    gr.add_edge(a, b, 7);
+    gr.add_edge(a, c, 9);
+    gr.add_edge(a, d, 14);
+    gr.add_edge(b, c, 10);
+    gr.add_edge(c, d, 2);
+    gr.add_edge(d, e, 9);
+    gr.add_edge(b, f, 15);
+    gr.add_edge(c, f, 11);
 
-    assert!(gr.add_edge(e, f, 5.));
+    assert!(gr.add_edge(e, f, 5));
 
     // duplicate edges
-    assert!(!gr.add_edge(f, b, 15.));
-    assert!(!gr.add_edge(f, e, 6.));
+    assert!(!gr.add_edge(f, b, 15));
+    assert!(!gr.add_edge(f, e, 6));
     println!("{:?}", gr);
 
     assert_eq!(gr.node_count(), 6);
     assert_eq!(gr.edge_count(), 9);
 
     // check updated edge weight
-    assert_eq!(gr.edge_weight(e, f), Some(&6.));
+    assert_eq!(gr.edge_weight(e, f), Some(&6));
     let scores = petgraph::visit::dijkstra(&gr, a, None, |gr, n| gr.edges(n).map(|(n, &e)| (n, e)));
-    assert_eq!(scores.values().map(|f| *f as i32).min(), Some(0));
-    assert_eq!(scores.values().map(|f| *f as i32).max(), Some(20));
+    let mut scores: Vec<_> = scores.into_iter().collect();
+    scores.sort();
+    assert_eq!(scores,
+       vec![("A", 0), ("B", 7), ("C", 9), ("D", 11), ("E", 20), ("F", 20)]);
 }
 
 #[test]
@@ -63,3 +68,23 @@ fn remov()
     assert_eq!(g.edge_weight(2, 1), None);
     assert_eq!(g.neighbors(1).count(), 0);
 }
+
+#[test]
+fn dfs() {
+    let mut gr = GraphMap::new();
+    let h = gr.add_node("H");
+    let i = gr.add_node("I");
+    let j = gr.add_node("J");
+    let k = gr.add_node("K");
+    // Z is disconnected.
+    let z = gr.add_node("Z");
+    gr.add_edge(h, i, 1.);
+    gr.add_edge(h, j, 3.);
+    gr.add_edge(i, j, 1.);
+    gr.add_edge(i, k, 2.);
+
+    assert_eq!(DfsIter::new(&gr, h).count(), 4);
+    assert_eq!(DfsIter::new(&gr, i).count(), 4);
+    assert_eq!(DfsIter::new(&gr, z).count(), 1);
+}
+

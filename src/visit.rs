@@ -7,7 +7,6 @@ use std::collections::{
     BinaryHeap,
     HashSet,
     HashMap,
-    Bitv,
     BitvSet,
     RingBuf,
 };
@@ -32,28 +31,28 @@ pub trait Graphlike {
     type NodeId: Clone;
 }
 
-/// A graph trait for accessing the neighbors iterator **I**.
-pub trait IntoNeighbors<N> : Copy {
+/// A graph trait for accessing the neighbors iterator
+pub trait NeighborIter<'a, N> {
     type Iter: Iterator<Item=N>;
-    fn neighbors(self, n: N) -> Self::Iter;
+    fn neighbors(&'a self, n: N) -> Self::Iter;
 }
 
-impl<'a, N: 'a, E> IntoNeighbors<N> for &'a GraphMap<N, E>
-where N: Copy + Clone + PartialOrd + Hash<Hasher> + Eq
+impl<'a, N, E, Ty: EdgeType> NeighborIter<'a, graph::NodeIndex> for Graph<N, E, Ty>
 {
-    type Iter = graphmap::Neighbors<'a, N>;
-    fn neighbors(self, n: N) -> graphmap::Neighbors<'a, N>
+    type Iter = graph::Neighbors<'a, E>;
+    fn neighbors(&'a self, n: graph::NodeIndex) -> graph::Neighbors<'a, E>
     {
-        GraphMap::neighbors(self, n)
+        Graph::neighbors(self, n)
     }
 }
 
-impl<'a, N, E, Ty: EdgeType> IntoNeighbors< graph::NodeIndex> for &'a Graph<N, E, Ty>
+impl<'a, N, E> NeighborIter<'a, N> for GraphMap<N, E>
+where N: Copy + Clone + PartialOrd + Hash<Hasher> + Eq
 {
-    type Iter = graph::Neighbors<'a, E>;
-    fn neighbors(self, n: graph::NodeIndex) -> graph::Neighbors<'a, E>
+    type Iter = graphmap::Neighbors<'a, N>;
+    fn neighbors(&'a self, n: N) -> graphmap::Neighbors<'a, N>
     {
-        Graph::neighbors(self, n)
+        GraphMap::neighbors(self, n)
     }
 }
 
@@ -62,19 +61,19 @@ pub struct AsUndirected<G>(pub G);
 /// Wrapper type for walking edges the other way
 pub struct Reversed<G>(pub G);
 
-impl<'a, 'b, N, E> IntoNeighbors< graph::NodeIndex> for &'a AsUndirected<&'b Graph<N, E>>
+impl<'a, 'b, N, E, Ty: EdgeType> NeighborIter<'a, graph::NodeIndex> for AsUndirected<&'b Graph<N, E, Ty>>
 {
     type Iter = graph::Neighbors<'a, E>;
-    fn neighbors(self, n: graph::NodeIndex) -> graph::Neighbors<'a, E>
+    fn neighbors(&'a self, n: graph::NodeIndex) -> graph::Neighbors<'a, E>
     {
         Graph::neighbors_undirected(self.0, n)
     }
 }
 
-impl<'a, 'b, N, E, Ty: EdgeType> IntoNeighbors< graph::NodeIndex> for &'a Reversed<&'b Graph<N, E, Ty>>
+impl<'a, 'b, N, E, Ty: EdgeType> NeighborIter<'a, graph::NodeIndex> for Reversed<&'b Graph<N, E, Ty>>
 {
     type Iter = graph::Neighbors<'a, E>;
-    fn neighbors(self, n: graph::NodeIndex) -> graph::Neighbors<'a, E>
+    fn neighbors(&'a self, n: graph::NodeIndex) -> graph::Neighbors<'a, E>
     {
         Graph::neighbors_directed(self.0, n, EdgeDirection::Incoming)
     }
@@ -106,7 +105,7 @@ impl<N: Eq + Hash<Hasher>> VisitMap<N> for HashSet<N> {
 
 /// Trait for GraphMap that knows which datastructure is the best for its visitor map
 pub trait Visitable : Graphlike {
-    type Map: VisitMap<<Self as Graphlike>::Item>;
+    type Map: VisitMap<<Self as Graphlike>::NodeId>;
     fn visit_map(&self) -> Self::Map;
 }
 
@@ -159,106 +158,6 @@ impl<'a, V: Visitable> Visitable for Reversed<&'a V>
     }
 }
 
-
-/// “Color” of nodes used in a regular depth-first search
-#[derive(Copy, Clone, PartialEq, Eq)]
-pub enum Color {
-    /// Unvisited
-    White = 0,
-    /// Discovered
-    Gray = 1,
-    /// Visited
-    Black = 2,
-}
-
-/// Trait for GraphMap that knows which datastructure is the best for its visitor map
-pub trait ColorVisitable : Graphlike {
-    type Map;
-    fn color_visit_map(&self) -> Self::Map;
-}
-
-impl<N, E> ColorVisitable for GraphMap<N, E> where
-    N: Clone + Eq + Hash<Hasher>,
-{
-    type Map = HashMap<N, Color>;
-    fn color_visit_map(&self) -> HashMap<N, Color>
-    {
-        HashMap::new()
-    }
-}
-
-impl<N, E, Ty> ColorVisitable for Graph<N, E, Ty> where
-    Ty: EdgeType,
-{
-    type Map = Bitv;
-    fn color_visit_map(&self) -> Bitv
-    {
-        Bitv::from_elem(self.node_count() * 2, false)
-    }
-}
-
-pub trait ColorMap<K> {
-    fn color(&self, &K) -> Color;
-    fn visit(&mut self, K, Color);
-    fn is_white(&self, k: &K) -> bool {
-        self.color(k) == Color::White
-    }
-}
-
-// Use two bits per node.
-// 00 => White
-// 10 => Gray
-// 11 => Black
-impl ColorMap<graph::NodeIndex> for Bitv
-{
-    fn is_white(&self, k: &graph::NodeIndex) -> bool {
-        let ix = k.0;
-        self[2*ix]
-    }
-
-    fn color(&self, k: &graph::NodeIndex) -> Color {
-        let ix = k.0;
-        let white_bit = self[2*ix];
-        let gray_bit = self[2*ix+1];
-        if white_bit {
-            Color::White
-        } else if gray_bit {
-            Color::Gray
-        } else {
-            Color::Black
-        }
-    }
-
-    fn visit(&mut self, k: graph::NodeIndex, c: Color) {
-        let ix = k.0;
-        match c {
-            Color::White => {
-                self.set(2*ix, false);
-                self.set(2*ix + 1, false);
-            }
-            Color::Gray => {
-                self.set(2*ix, true);
-                self.set(2*ix + 1, false);
-            }
-            Color::Black => {
-                self.set(2*ix, true);
-                self.set(2*ix + 1, true);
-            }
-        }
-    }
-}
-
-impl<K: Eq + Hash<Hasher>> ColorMap<K> for HashMap<K, Color>
-{
-    fn color(&self, k: &K) -> Color {
-        *self.get(k).unwrap_or(&Color::White)
-    }
-
-    fn visit(&mut self, k: K, c: Color) {
-        self.insert(k, c);
-    }
-}
-
 /// A depth first search (DFS) of a graph.
 ///
 /// Using a **Dfs** you can run a traversal over a graph while still retaining
@@ -287,22 +186,38 @@ pub struct Dfs<N, VM> {
     pub discovered: VM,
 }
 
-impl<N, G> Dfs<N, <G as Visitable>::Map> where
-    N: Clone,
-    G: Visitable<NodeId=N>,
-    <G as Visitable>::Map: VisitMap<N>,
+impl<G: Visitable> Dfs<G::NodeId, <G as Visitable>::Map>
 {
-    /// Create a new **Dfs**, using the graph's visitor map.
-    ///
-    /// **Note:** Does not borrow the graph.
-    pub fn new(graph: &G, start: N) -> Self
+    /// Create a new **Dfs**, using the graph's visitor map, and put **start**
+    /// in the stack of nodes to visit.
+    pub fn new(graph: &G, start: G::NodeId) -> Self
     {
-        let mut discovered = graph.visit_map();
-        discovered.visit(start.clone());
+        let mut dfs = Dfs::empty(graph);
+        dfs.move_to(start);
+        dfs
+    }
+
+    /// Create a new **Dfs** using the graph's visitor map, and no stack.
+    pub fn empty(graph: &G) -> Self
+    {
         Dfs {
-            stack: vec![start],
-            discovered: discovered,
+            stack: Vec::new(),
+            discovered: graph.visit_map(),
         }
+    }
+}
+
+impl<N, VM> Dfs<N, VM> where
+    N: Clone,
+    VM: VisitMap<N>
+{
+    /// Keep the discovered map, but clear the visit stack and restart
+    /// the dfs from a particular node.
+    pub fn move_to(&mut self, start: N)
+    {
+        self.discovered.visit(start.clone());
+        self.stack.clear();
+        self.stack.push(start);
     }
 }
 
@@ -312,8 +227,8 @@ impl<N, VM> Dfs<N, VM> where
 {
     /// Return the next node in the dfs, or **None** if the traversal is done.
     pub fn next<'a, G>(&mut self, graph: &'a G) -> Option<N> where
-        &'a G: IntoNeighbors< N>,
-        <&'a G as IntoNeighbors< N>>::Iter: Iterator<Item=N>,
+        G: for<'b> NeighborIter<'b, N>,
+        <G as NeighborIter<'a, N>>::Iter: Iterator<Item=N>,
     {
         while let Some(node) = self.stack.pop() {
             for succ in graph.neighbors(node.clone()) {
@@ -326,7 +241,6 @@ impl<N, VM> Dfs<N, VM> where
         }
         None
     }
-
 }
 
 /// An iterator for a depth first traversal of a graph.
@@ -338,12 +252,9 @@ pub struct DfsIter<'a, G, N, VM> where
     dfs: Dfs<N, VM>,
 }
 
-impl<'a, G, N> DfsIter<'a, G, N, <G as Visitable>::Map> where
-    N: Clone,
-    G: Visitable<NodeId=N>,
-    <G as Visitable>::Map: VisitMap<N>,
+impl<'a, G: Visitable> DfsIter<'a, G, G::NodeId, <G as Visitable>::Map>
 {
-    pub fn new(graph: &'a G, start: N) -> DfsIter<'a, G, N, <G as Visitable>::Map>
+    pub fn new(graph: &'a G, start: G::NodeId) -> DfsIter<'a, G, G::NodeId, <G as Visitable>::Map>
     {
         DfsIter {
             graph: graph,
@@ -352,15 +263,14 @@ impl<'a, G, N> DfsIter<'a, G, N, <G as Visitable>::Map> where
     }
 }
 
-impl<'a, G, N, VM> Iterator for DfsIter<'a, G, N, VM> where
+impl<'a, G: Visitable, VM> Iterator for DfsIter<'a, G, G::NodeId, VM> where
     G: 'a,
-    N: Clone,
-    VM: VisitMap<N>,
-    &'a G: IntoNeighbors< N>,
-    <&'a G as IntoNeighbors<N>>::Iter: Iterator<Item=N>,
+    VM: VisitMap<G::NodeId>,
+    G: for<'b> NeighborIter<'b, G::NodeId>,
+    <G as NeighborIter<'a, G::NodeId>>::Iter: Iterator<Item=G::NodeId>,
 {
-    type Item = N;
-    fn next(&mut self) -> Option<N>
+    type Item = G::NodeId;
+    fn next(&mut self) -> Option<G::NodeId>
     {
         self.dfs.next(self.graph)
     }
@@ -399,9 +309,8 @@ impl<N, G> Bfs<N, <G as Visitable>::Map> where
     G: Visitable<NodeId=N>,
     <G as Visitable>::Map: VisitMap<N>,
 {
-    /// Create a new **Bfs**, using the graph's visitor map.
-    ///
-    /// **Note:** Does not borrow the graph.
+    /// Create a new **Bfs**, using the graph's visitor map, and put **start**
+    /// in the stack of nodes to visit.
     pub fn new(graph: &G, start: N) -> Self
     {
         let mut discovered = graph.visit_map();
@@ -422,8 +331,8 @@ impl<N, VM> Bfs<N, VM> where
 {
     /// Return the next node in the dfs, or **None** if the traversal is done.
     pub fn next<'a, G>(&mut self, graph: &'a G) -> Option<N> where
-        &'a G: IntoNeighbors< N>,
-        <&'a G as IntoNeighbors< N>>::Iter: Iterator<Item=N>,
+        G: for<'b> NeighborIter<'b, N>,
+        <G as NeighborIter<'a, N>>::Iter: Iterator<Item=N>,
     {
         while let Some(node) = self.stack.pop_front() {
             for succ in graph.neighbors(node.clone()) {
@@ -438,6 +347,24 @@ impl<N, VM> Bfs<N, VM> where
     }
 
 }
+
+/*
+pub struct Visitor<G> where
+    G: Visitable,
+{
+    stack: Vec<<G as Graphlike>::NodeId>,
+    discovered: <G as Visitable>::Map,
+}
+
+pub fn visitor<G>(graph: &G, start: <G as Graphlike>::NodeId) -> Visitor<G> where
+    G: Visitable
+{
+    Visitor{
+        stack: vec![start],
+        discovered: graph.visit_map(),
+    }
+}
+*/
 
 /// An iterator for a breadth first traversal of a graph.
 #[derive(Clone)]
@@ -466,8 +393,8 @@ impl<'a, G, N, VM> Iterator for BfsIter<'a, G, N, VM> where
     G: 'a,
     N: Clone,
     VM: VisitMap<N>,
-    &'a G: IntoNeighbors< N>,
-    <&'a G as IntoNeighbors< N>>::Iter: Iterator<Item=N>,
+    G: for<'b> NeighborIter<'b, N>,
+    <G as NeighborIter<'a, N>>::Iter: Iterator<Item=N>,
 {
     type Item = N;
     fn next(&mut self) -> Option<N>

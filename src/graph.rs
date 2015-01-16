@@ -1,6 +1,5 @@
 //! **Graph\<N, E, Ty\>** is a graph datastructure using an adjacency list representation.
 
-use std::hash::{Hash};
 use std::fmt;
 use std::slice;
 use std::iter;
@@ -18,6 +17,11 @@ use super::{
 use super::MinScored;
 
 use super::unionfind::UnionFind;
+use super::visit::{
+    Reversed,
+    Dfs,
+    VisitMap,
+};
 
 // FIXME: These aren't stable, so a public wrapper of node/edge indices
 // should be lifetimed just like pointers.
@@ -727,6 +731,53 @@ pub fn toposort<N, E>(g: &Graph<N, E, Directed>) -> Vec<NodeIndex>
     order
 }
 
+/// Compute *Strongly connected components* using Kosaraju's algorithm.
+///
+/// Return a vector where each element is an scc.
+///
+/// For an undirected graph, the sccs are simply the connected components.
+pub fn scc<N, E, Ty>(g: &Graph<N, E, Ty>) -> Vec<Vec<NodeIndex>> where
+    Ty: EdgeType
+{
+    let mut dfs = Dfs::empty(g);
+
+    // First phase, reverse dfs pass, compute finishing times.
+    let mut finish_order = Vec::new();
+    for index in (0..g.node_count()) {
+        if dfs.discovered.contains(&index) {
+            continue
+        }
+        // We want to order the vertices by finishing time --
+        // so record when we see them, then reverse all we have seen in this DFS pass.
+        let pass_start = finish_order.len();
+        dfs.move_to(NodeIndex(index));
+        while let Some(nx) = dfs.next(&Reversed(g)) {
+            finish_order.push(nx);
+        }
+        finish_order[pass_start..].reverse();
+    }
+
+    dfs.discovered.clear();
+    let mut sccs = Vec::new();
+
+    // Second phase
+    // Process in decreasing finishing time order
+    for &nindex in finish_order.iter().rev() {
+        if dfs.discovered.contains(&nindex.0) {
+            continue;
+        }
+        // Move to the leader node.
+        dfs.move_to(nindex);
+        //let leader = nindex;
+        let mut scc = Vec::new();
+        while let Some(nx) = dfs.next(g) {
+            scc.push(nx);
+        }
+        sccs.push(scc);
+    }
+    sccs
+}
+
 /// Return **true** if the input graph contains a cycle.
 ///
 /// Treat the input graph as undirected.
@@ -744,6 +795,25 @@ pub fn is_cyclic<N, E, Ty>(g: &Graph<N, E, Ty>) -> bool where Ty: EdgeType
     }
     false
 }
+
+/// Return the number of connected components of the graph.
+///
+/// For a directed graph, this is the *weakly* connected components.
+pub fn connected_components<N, E, Ty>(g: &Graph<N, E, Ty>) -> usize where Ty: EdgeType
+{
+    let mut vertex_sets = UnionFind::new(g.node_count());
+    for edge in g.edges.iter() {
+        let (a, b) = (edge.source(), edge.target());
+
+        // union the two vertices of the edge
+        vertex_sets.union(a.0, b.0);
+    }
+    let mut labels = vertex_sets.into_labeling();
+    labels.sort();
+    labels.dedup();
+    labels.len()
+}
+
 
 /// Return a *Minimum Spanning Tree* of a graph.
 ///

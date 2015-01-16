@@ -1,6 +1,8 @@
 #![allow(unstable)]
 extern crate petgraph;
 
+use std::iter::AdditiveIterator;
+
 use petgraph::{
     Graph,
     Bfs,
@@ -9,6 +11,7 @@ use petgraph::{
     DfsIter,
     Incoming,
     Outgoing,
+    Undirected,
 };
 
 use petgraph::graph::{
@@ -86,6 +89,7 @@ fn dfs() {
     assert_eq!(DfsIter::new(&gr, i).count(), 3);
 
     assert_eq!(DfsIter::new(&AsUndirected(&gr), i).count(), 4);
+
 }
 
 
@@ -284,28 +288,28 @@ fn dijk() {
     let d = g.add_node("D");
     let e = g.add_node("E");
     let f = g.add_node("F");
-    g.add_edge(a, b, 7.0_f32);
-    g.add_edge(c, a, 9.);
-    g.add_edge(a, d, 14.);
-    g.add_edge(b, c, 10.);
-    g.add_edge(d, c, 2.);
-    g.add_edge(d, e, 9.);
-    g.add_edge(b, f, 15.);
-    g.add_edge(c, f, 11.);
-    g.add_edge(e, f, 6.);
+    g.add_edge(a, b, 7i32);
+    g.add_edge(c, a, 9);
+    g.add_edge(a, d, 14);
+    g.add_edge(b, c, 10);
+    g.add_edge(d, c, 2);
+    g.add_edge(d, e, 9);
+    g.add_edge(b, f, 15);
+    g.add_edge(c, f, 11);
+    g.add_edge(e, f, 6);
     println!("{:?}", g);
     for no in BfsIter::new(&g, a) {
         println!("Visit {:?} = {:?}", no, g.node_weight(no));
     }
 
     let scores = dijkstra(&g, a, None, |gr, n| gr.edges(n).map(|(n, &e)| (n, e)));
-    println!("Scores= {:?}", scores);
-    assert_eq!(scores[c], 9.);
-    assert_eq!(scores[e], 20.);
-    assert_eq!(scores[f], 20.);
+    let mut scores: Vec<_> = scores.into_iter().map(|(n, s)| (g[n], s)).collect();
+    scores.sort();
+    assert_eq!(scores,
+       vec![("A", 0), ("B", 7), ("C", 9), ("D", 11), ("E", 20), ("F", 20)]);
 
     let scores = dijkstra(&g, a, Some(c), |gr, n| gr.edges(n).map(|(n, &e)| (n, e)));
-    assert_eq!(scores[c], 9.);
+    assert_eq!(scores[c], 9);
 }
 
 #[test]
@@ -378,4 +382,104 @@ fn toposort() {
         println!("Check that {:?} is before {:?}", a, b);
         assert!(ai < bi);
     }
+}
+
+#[test]
+fn scc() {
+    let n = NodeIndex;
+    let mut gr = Graph::new();
+    gr.add_node(0);
+    gr.add_node(1);
+    gr.add_node(2);
+    gr.add_node(3);
+    gr.add_node(4);
+    gr.add_node(5);
+    gr.add_node(6);
+    gr.add_node(7);
+    gr.add_node(8);
+    gr.add_edge(n(6), n(0), ());
+    gr.add_edge(n(0), n(3), ());
+    gr.add_edge(n(3), n(6), ());
+    gr.add_edge(n(8), n(6), ());
+    gr.add_edge(n(8), n(2), ());
+    gr.add_edge(n(2), n(5), ());
+    gr.add_edge(n(5), n(8), ());
+    gr.add_edge(n(7), n(5), ());
+    gr.add_edge(n(1), n(7), ());
+    gr.add_edge(n(7), n(4), ());
+    gr.add_edge(n(4), n(1), ());
+
+    let mut sccs = petgraph::graph::scc(&gr);
+    assert_eq!(sccs.iter().map(|v| v.len()).sum(), gr.node_count());
+
+    let scc_answer = vec![
+        vec![n(0), n(3), n(6)],
+        vec![n(1), n(4), n(7)],
+        vec![n(2), n(5), n(8)]];
+
+    // normalize the result and compare with the answer.
+    for sc in sccs.iter_mut() {
+        sc.sort();
+    }
+    // sort by minimum element
+    sccs.sort_by(|v, w| v[0].cmp(&w[0]));
+    assert_eq!(sccs, scc_answer);
+
+    // Test an undirected graph just for fun.
+    // Sccs are just connected components.
+    let mut hr = gr.into_edge_type::<Undirected>();
+    // Delete an edge to disconnect it
+    let ed = hr.find_edge(n(6), n(8)).unwrap();
+    assert!(hr.remove_edge(ed).is_some());
+
+    let mut sccs = petgraph::graph::scc(&hr);
+
+    let scc_undir_answer = vec![
+        vec![n(0), n(3), n(6)],
+        vec![n(1), n(2), n(4), n(5), n(7), n(8)]];
+
+    for sc in sccs.iter_mut() {
+        sc.sort();
+        sc.dedup();
+    }
+    sccs.sort_by(|v, w| v[0].cmp(&w[0]));
+    assert_eq!(sccs, scc_undir_answer);
+}
+
+#[test]
+fn connected_comp()
+{
+    let n = NodeIndex;
+    let mut gr = Graph::new();
+    gr.add_node(0);
+    gr.add_node(1);
+    gr.add_node(2);
+    gr.add_node(3);
+    gr.add_node(4);
+    gr.add_node(5);
+    gr.add_node(6);
+    gr.add_node(7);
+    gr.add_node(8);
+    gr.add_edge(n(6), n(0), ());
+    gr.add_edge(n(0), n(3), ());
+    gr.add_edge(n(3), n(6), ());
+    gr.add_edge(n(8), n(6), ());
+    gr.add_edge(n(8), n(2), ());
+    gr.add_edge(n(2), n(5), ());
+    gr.add_edge(n(5), n(8), ());
+    gr.add_edge(n(7), n(5), ());
+    gr.add_edge(n(1), n(7), ());
+    gr.add_edge(n(7), n(4), ());
+    gr.add_edge(n(4), n(1), ());
+    assert_eq!(petgraph::graph::connected_components(&gr), 1);
+
+    gr.add_node(9);
+    gr.add_node(10);
+    assert_eq!(petgraph::graph::connected_components(&gr), 3);
+
+    gr.add_edge(n(9), n(10), ());
+    assert_eq!(petgraph::graph::connected_components(&gr), 2);
+
+    let gr = gr.into_edge_type::<Undirected>();
+    assert_eq!(petgraph::graph::connected_components(&gr), 2);
 }

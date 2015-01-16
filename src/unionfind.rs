@@ -143,4 +143,17 @@ impl<K> UnionFind<K> where K: num::UnsignedInt
         }
         true
     }
+
+    /// Return a vector mapping each element to its representative.
+    pub fn into_labeling(mut self) -> Vec<K> where
+        K: num::NumCast,
+    {
+        // write in the labeling of each element
+        unsafe {
+            for ix in (0..self.parent.len()) {
+                self.find_mut_recursive(num::cast(ix).unwrap());
+            }
+        }
+        self.parent
+    }
 }
