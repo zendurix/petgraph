@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/ulrik/pt/13/rustexperiments/zillabyte-graph/src/visit.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/ulrik/pt/13/rustexperiments/petgraph/src/visit.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>visit.rs.html -- source</title>
@@ -494,79 +494,6 @@
 <span id="452">452</span>
 <span id="453">453</span>
 <span id="454">454</span>
-<span id="455">455</span>
-<span id="456">456</span>
-<span id="457">457</span>
-<span id="458">458</span>
-<span id="459">459</span>
-<span id="460">460</span>
-<span id="461">461</span>
-<span id="462">462</span>
-<span id="463">463</span>
-<span id="464">464</span>
-<span id="465">465</span>
-<span id="466">466</span>
-<span id="467">467</span>
-<span id="468">468</span>
-<span id="469">469</span>
-<span id="470">470</span>
-<span id="471">471</span>
-<span id="472">472</span>
-<span id="473">473</span>
-<span id="474">474</span>
-<span id="475">475</span>
-<span id="476">476</span>
-<span id="477">477</span>
-<span id="478">478</span>
-<span id="479">479</span>
-<span id="480">480</span>
-<span id="481">481</span>
-<span id="482">482</span>
-<span id="483">483</span>
-<span id="484">484</span>
-<span id="485">485</span>
-<span id="486">486</span>
-<span id="487">487</span>
-<span id="488">488</span>
-<span id="489">489</span>
-<span id="490">490</span>
-<span id="491">491</span>
-<span id="492">492</span>
-<span id="493">493</span>
-<span id="494">494</span>
-<span id="495">495</span>
-<span id="496">496</span>
-<span id="497">497</span>
-<span id="498">498</span>
-<span id="499">499</span>
-<span id="500">500</span>
-<span id="501">501</span>
-<span id="502">502</span>
-<span id="503">503</span>
-<span id="504">504</span>
-<span id="505">505</span>
-<span id="506">506</span>
-<span id="507">507</span>
-<span id="508">508</span>
-<span id="509">509</span>
-<span id="510">510</span>
-<span id="511">511</span>
-<span id="512">512</span>
-<span id="513">513</span>
-<span id="514">514</span>
-<span id="515">515</span>
-<span id="516">516</span>
-<span id="517">517</span>
-<span id="518">518</span>
-<span id="519">519</span>
-<span id="520">520</span>
-<span id="521">521</span>
-<span id="522">522</span>
-<span id="523">523</span>
-<span id="524">524</span>
-<span id="525">525</span>
-<span id="526">526</span>
-<span id="527">527</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Graph visitor algorithms.</span>
 <span class='doccomment'>//!</span>
@@ -577,7 +504,6 @@
     <span class='ident'>BinaryHeap</span>,
     <span class='ident'>HashSet</span>,
     <span class='ident'>HashMap</span>,
-    <span class='ident'>Bitv</span>,
     <span class='ident'>BitvSet</span>,
     <span class='ident'>RingBuf</span>,
 };
@@ -602,28 +528,28 @@
     <span class='kw'>type</span> <span class='ident'>NodeId</span>: <span class='ident'>Clone</span>;
 }
 
-<span class='doccomment'>/// A graph trait for accessing the neighbors iterator **I**.</span>
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span> : <span class='ident'>Copy</span> {
+<span class='doccomment'>/// A graph trait for accessing the neighbors iterator</span>
+<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;</span> {
     <span class='kw'>type</span> <span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>;
-    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>::<span class='ident'>Iter</span>;
+    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>::<span class='ident'>Iter</span>;
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>GraphMap</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
-<span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Clone</span> <span class='op'>+</span> <span class='ident'>PartialOrd</span> <span class='op'>+</span> <span class='ident'>Hash</span><span class='op'>&lt;</span><span class='ident'>Hasher</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>Eq</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>
 {
-    <span class='kw'>type</span> <span class='ident'>Iter</span> <span class='op'>=</span> <span class='ident'>graphmap</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;</span>;
-    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>graphmap</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;</span>
+    <span class='kw'>type</span> <span class='ident'>Iter</span> <span class='op'>=</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>;
+    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
     {
-        <span class='ident'>GraphMap</span>::<span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>)
+        <span class='ident'>Graph</span>::<span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>)
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span><span class='op'>&gt;</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>GraphMap</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
+<span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Clone</span> <span class='op'>+</span> <span class='ident'>PartialOrd</span> <span class='op'>+</span> <span class='ident'>Hash</span><span class='op'>&lt;</span><span class='ident'>Hasher</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>Eq</span>
 {
-    <span class='kw'>type</span> <span class='ident'>Iter</span> <span class='op'>=</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>;
-    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='kw'>type</span> <span class='ident'>Iter</span> <span class='op'>=</span> <span class='ident'>graphmap</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;</span>;
+    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>graphmap</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;</span>
     {
-        <span class='ident'>Graph</span>::<span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>)
+        <span class='ident'>GraphMap</span>::<span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>)
     }
 }
 
@@ -632,19 +558,19 @@
 <span class='doccomment'>/// Wrapper type for walking edges the other way</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Reversed</span><span class='op'>&lt;</span><span class='ident'>G</span><span class='op'>&gt;</span>(<span class='kw'>pub</span> <span class='ident'>G</span>);
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>AsUndirected</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>AsUndirected</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;&gt;</span>
 {
     <span class='kw'>type</span> <span class='ident'>Iter</span> <span class='op'>=</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>;
-    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
     {
         <span class='ident'>Graph</span>::<span class='ident'>neighbors_undirected</span>(<span class='self'>self</span>.<span class='number'>0</span>, <span class='ident'>n</span>)
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span><span class='op'>&gt;</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>Reversed</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='lifetime'>&#39;b</span>, <span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Reversed</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;&gt;</span>
 {
     <span class='kw'>type</span> <span class='ident'>Iter</span> <span class='op'>=</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>;
-    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>graph</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
     {
         <span class='ident'>Graph</span>::<span class='ident'>neighbors_directed</span>(<span class='self'>self</span>.<span class='number'>0</span>, <span class='ident'>n</span>, <span class='ident'>EdgeDirection</span>::<span class='ident'>Incoming</span>)
     }
@@ -676,7 +602,7 @@
 
 <span class='doccomment'>/// Trait for GraphMap that knows which datastructure is the best for its visitor map</span>
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>Visitable</span> : <span class='ident'>Graphlike</span> {
-    <span class='kw'>type</span> <span class='ident'>Map</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;&lt;</span><span class='ident'>Self</span> <span class='kw'>as</span> <span class='ident'>Graphlike</span><span class='op'>&gt;</span>::<span class='ident'>Item</span><span class='op'>&gt;</span>;
+    <span class='kw'>type</span> <span class='ident'>Map</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;&lt;</span><span class='ident'>Self</span> <span class='kw'>as</span> <span class='ident'>Graphlike</span><span class='op'>&gt;</span>::<span class='ident'>NodeId</span><span class='op'>&gt;</span>;
     <span class='kw'>fn</span> <span class='ident'>visit_map</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>::<span class='ident'>Map</span>;
 }
 
@@ -729,106 +655,6 @@
     }
 }
 
-
-<span class='doccomment'>/// “Color” of nodes used in a regular depth-first search</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Color</span> {
-    <span class='doccomment'>/// Unvisited</span>
-    <span class='ident'>White</span> <span class='op'>=</span> <span class='number'>0</span>,
-    <span class='doccomment'>/// Discovered</span>
-    <span class='ident'>Gray</span> <span class='op'>=</span> <span class='number'>1</span>,
-    <span class='doccomment'>/// Visited</span>
-    <span class='ident'>Black</span> <span class='op'>=</span> <span class='number'>2</span>,
-}
-
-<span class='doccomment'>/// Trait for GraphMap that knows which datastructure is the best for its visitor map</span>
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>ColorVisitable</span> : <span class='ident'>Graphlike</span> {
-    <span class='kw'>type</span> <span class='ident'>Map</span>;
-    <span class='kw'>fn</span> <span class='ident'>color_visit_map</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>::<span class='ident'>Map</span>;
-}
-
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>ColorVisitable</span> <span class='kw'>for</span> <span class='ident'>GraphMap</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>N</span>: <span class='ident'>Clone</span> <span class='op'>+</span> <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span><span class='op'>&lt;</span><span class='ident'>Hasher</span><span class='op'>&gt;</span>,
-{
-    <span class='kw'>type</span> <span class='ident'>Map</span> <span class='op'>=</span> <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Color</span><span class='op'>&gt;</span>;
-    <span class='kw'>fn</span> <span class='ident'>color_visit_map</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Color</span><span class='op'>&gt;</span>
-    {
-        <span class='ident'>HashMap</span>::<span class='ident'>new</span>()
-    }
-}
-
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='ident'>ColorVisitable</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
-{
-    <span class='kw'>type</span> <span class='ident'>Map</span> <span class='op'>=</span> <span class='ident'>Bitv</span>;
-    <span class='kw'>fn</span> <span class='ident'>color_visit_map</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Bitv</span>
-    {
-        <span class='ident'>Bitv</span>::<span class='ident'>from_elem</span>(<span class='self'>self</span>.<span class='ident'>node_count</span>() <span class='op'>*</span> <span class='number'>2</span>, <span class='boolval'>false</span>)
-    }
-}
-
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>ColorMap</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>color</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='kw-2'>&amp;</span><span class='ident'>K</span>) <span class='op'>-&gt;</span> <span class='ident'>Color</span>;
-    <span class='kw'>fn</span> <span class='ident'>visit</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>K</span>, <span class='ident'>Color</span>);
-    <span class='kw'>fn</span> <span class='ident'>is_white</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>k</span>: <span class='kw-2'>&amp;</span><span class='ident'>K</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='self'>self</span>.<span class='ident'>color</span>(<span class='ident'>k</span>) <span class='op'>==</span> <span class='ident'>Color</span>::<span class='ident'>White</span>
-    }
-}
-
-<span class='comment'>// Use two bits per node.</span>
-<span class='comment'>// 00 =&gt; White</span>
-<span class='comment'>// 10 =&gt; Gray</span>
-<span class='comment'>// 11 =&gt; Black</span>
-<span class='kw'>impl</span> <span class='ident'>ColorMap</span><span class='op'>&lt;</span><span class='ident'>graph</span>::<span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Bitv</span>
-{
-    <span class='kw'>fn</span> <span class='ident'>is_white</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>k</span>: <span class='kw-2'>&amp;</span><span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='kw'>let</span> <span class='ident'>ix</span> <span class='op'>=</span> <span class='ident'>k</span>.<span class='number'>0</span>;
-        <span class='self'>self</span>[<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span>]
-    }
-
-    <span class='kw'>fn</span> <span class='ident'>color</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>k</span>: <span class='kw-2'>&amp;</span><span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>Color</span> {
-        <span class='kw'>let</span> <span class='ident'>ix</span> <span class='op'>=</span> <span class='ident'>k</span>.<span class='number'>0</span>;
-        <span class='kw'>let</span> <span class='ident'>white_bit</span> <span class='op'>=</span> <span class='self'>self</span>[<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span>];
-        <span class='kw'>let</span> <span class='ident'>gray_bit</span> <span class='op'>=</span> <span class='self'>self</span>[<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span><span class='op'>+</span><span class='number'>1</span>];
-        <span class='kw'>if</span> <span class='ident'>white_bit</span> {
-            <span class='ident'>Color</span>::<span class='ident'>White</span>
-        } <span class='kw'>else</span> <span class='kw'>if</span> <span class='ident'>gray_bit</span> {
-            <span class='ident'>Color</span>::<span class='ident'>Gray</span>
-        } <span class='kw'>else</span> {
-            <span class='ident'>Color</span>::<span class='ident'>Black</span>
-        }
-    }
-
-    <span class='kw'>fn</span> <span class='ident'>visit</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>k</span>: <span class='ident'>graph</span>::<span class='ident'>NodeIndex</span>, <span class='ident'>c</span>: <span class='ident'>Color</span>) {
-        <span class='kw'>let</span> <span class='ident'>ix</span> <span class='op'>=</span> <span class='ident'>k</span>.<span class='number'>0</span>;
-        <span class='kw'>match</span> <span class='ident'>c</span> {
-            <span class='ident'>Color</span>::<span class='ident'>White</span> <span class='op'>=&gt;</span> {
-                <span class='self'>self</span>.<span class='ident'>set</span>(<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span>, <span class='boolval'>false</span>);
-                <span class='self'>self</span>.<span class='ident'>set</span>(<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span> <span class='op'>+</span> <span class='number'>1</span>, <span class='boolval'>false</span>);
-            }
-            <span class='ident'>Color</span>::<span class='ident'>Gray</span> <span class='op'>=&gt;</span> {
-                <span class='self'>self</span>.<span class='ident'>set</span>(<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span>, <span class='boolval'>true</span>);
-                <span class='self'>self</span>.<span class='ident'>set</span>(<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span> <span class='op'>+</span> <span class='number'>1</span>, <span class='boolval'>false</span>);
-            }
-            <span class='ident'>Color</span>::<span class='ident'>Black</span> <span class='op'>=&gt;</span> {
-                <span class='self'>self</span>.<span class='ident'>set</span>(<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span>, <span class='boolval'>true</span>);
-                <span class='self'>self</span>.<span class='ident'>set</span>(<span class='number'>2</span><span class='op'>*</span><span class='ident'>ix</span> <span class='op'>+</span> <span class='number'>1</span>, <span class='boolval'>true</span>);
-            }
-        }
-    }
-}
-
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>K</span>: <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span><span class='op'>&lt;</span><span class='ident'>Hasher</span><span class='op'>&gt;&gt;</span> <span class='ident'>ColorMap</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>K</span>, <span class='ident'>Color</span><span class='op'>&gt;</span>
-{
-    <span class='kw'>fn</span> <span class='ident'>color</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>k</span>: <span class='kw-2'>&amp;</span><span class='ident'>K</span>) <span class='op'>-&gt;</span> <span class='ident'>Color</span> {
-        <span class='op'>*</span><span class='self'>self</span>.<span class='ident'>get</span>(<span class='ident'>k</span>).<span class='ident'>unwrap_or</span>(<span class='kw-2'>&amp;</span><span class='ident'>Color</span>::<span class='ident'>White</span>)
-    }
-
-    <span class='kw'>fn</span> <span class='ident'>visit</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>k</span>: <span class='ident'>K</span>, <span class='ident'>c</span>: <span class='ident'>Color</span>) {
-        <span class='self'>self</span>.<span class='ident'>insert</span>(<span class='ident'>k</span>, <span class='ident'>c</span>);
-    }
-}
-
 <span class='doccomment'>/// A depth first search (DFS) of a graph.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// Using a **Dfs** you can run a traversal over a graph while still retaining</span>
@@ -857,22 +683,38 @@
     <span class='kw'>pub</span> <span class='ident'>discovered</span>: <span class='ident'>VM</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>G</span><span class='op'>&gt;</span> <span class='ident'>Dfs</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>N</span>: <span class='ident'>Clone</span>,
-    <span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
-    <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>,
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&gt;</span> <span class='ident'>Dfs</span><span class='op'>&lt;</span><span class='ident'>G</span>::<span class='ident'>NodeId</span>, <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span><span class='op'>&gt;</span>
 {
-    <span class='doccomment'>/// Create a new **Dfs**, using the graph&#39;s visitor map.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// **Note:** Does not borrow the graph.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='doccomment'>/// Create a new **Dfs**, using the graph&#39;s visitor map, and put **start**</span>
+    <span class='doccomment'>/// in the stack of nodes to visit.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>G</span>::<span class='ident'>NodeId</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
     {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>discovered</span> <span class='op'>=</span> <span class='ident'>graph</span>.<span class='ident'>visit_map</span>();
-        <span class='ident'>discovered</span>.<span class='ident'>visit</span>(<span class='ident'>start</span>.<span class='ident'>clone</span>());
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>dfs</span> <span class='op'>=</span> <span class='ident'>Dfs</span>::<span class='ident'>empty</span>(<span class='ident'>graph</span>);
+        <span class='ident'>dfs</span>.<span class='ident'>move_to</span>(<span class='ident'>start</span>);
+        <span class='ident'>dfs</span>
+    }
+
+    <span class='doccomment'>/// Create a new **Dfs** using the graph&#39;s visitor map, and no stack.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>empty</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    {
         <span class='ident'>Dfs</span> {
-            <span class='ident'>stack</span>: <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>start</span>],
-            <span class='ident'>discovered</span>: <span class='ident'>discovered</span>,
+            <span class='ident'>stack</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+            <span class='ident'>discovered</span>: <span class='ident'>graph</span>.<span class='ident'>visit_map</span>(),
         }
+    }
+}
+
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='ident'>Dfs</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>N</span>: <span class='ident'>Clone</span>,
+    <span class='ident'>VM</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>
+{
+    <span class='doccomment'>/// Keep the discovered map, but clear the visit stack and restart</span>
+    <span class='doccomment'>/// the dfs from a particular node.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>move_to</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>start</span>: <span class='ident'>N</span>)
+    {
+        <span class='self'>self</span>.<span class='ident'>discovered</span>.<span class='ident'>visit</span>(<span class='ident'>start</span>.<span class='ident'>clone</span>());
+        <span class='self'>self</span>.<span class='ident'>stack</span>.<span class='ident'>clear</span>();
+        <span class='self'>self</span>.<span class='ident'>stack</span>.<span class='ident'>push</span>(<span class='ident'>start</span>);
     }
 }
 
@@ -882,8 +724,8 @@
 {
     <span class='doccomment'>/// Return the next node in the dfs, or **None** if the traversal is done.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-        <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>: <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>N</span><span class='op'>&gt;</span>,
-        <span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>N</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
+        <span class='ident'>G</span>: <span class='kw'>for</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>N</span><span class='op'>&gt;</span>,
+        <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
     {
         <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>stack</span>.<span class='ident'>pop</span>() {
             <span class='kw'>for</span> <span class='ident'>succ</span> <span class='kw'>in</span> <span class='ident'>graph</span>.<span class='ident'>neighbors</span>(<span class='ident'>node</span>.<span class='ident'>clone</span>()) {
@@ -896,7 +738,6 @@
         }
         <span class='prelude-val'>None</span>
     }
-
 }
 
 <span class='doccomment'>/// An iterator for a depth first traversal of a graph.</span>
@@ -908,12 +749,9 @@
     <span class='ident'>dfs</span>: <span class='ident'>Dfs</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>, <span class='ident'>N</span><span class='op'>&gt;</span> <span class='ident'>DfsIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>, <span class='ident'>N</span>, <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>N</span>: <span class='ident'>Clone</span>,
-    <span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
-    <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>,
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&gt;</span> <span class='ident'>DfsIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>, <span class='ident'>G</span>::<span class='ident'>NodeId</span>, <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span><span class='op'>&gt;</span>
 {
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>DfsIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>, <span class='ident'>N</span>, <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>G</span>::<span class='ident'>NodeId</span>) <span class='op'>-&gt;</span> <span class='ident'>DfsIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>, <span class='ident'>G</span>::<span class='ident'>NodeId</span>, <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span><span class='op'>&gt;</span>
     {
         <span class='ident'>DfsIter</span> {
             <span class='ident'>graph</span>: <span class='ident'>graph</span>,
@@ -922,15 +760,14 @@
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>, <span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>DfsIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>, <span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>: <span class='ident'>Visitable</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>DfsIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>, <span class='ident'>G</span>::<span class='ident'>NodeId</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='kw'>where</span>
     <span class='ident'>G</span>: <span class='lifetime'>&#39;a</span>,
-    <span class='ident'>N</span>: <span class='ident'>Clone</span>,
-    <span class='ident'>VM</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>,
-    <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>: <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>N</span><span class='op'>&gt;</span>,
-    <span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
+    <span class='ident'>VM</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>G</span>::<span class='ident'>NodeId</span><span class='op'>&gt;</span>,
+    <span class='ident'>G</span>: <span class='kw'>for</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>G</span>::<span class='ident'>NodeId</span><span class='op'>&gt;</span>,
+    <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>::<span class='ident'>NodeId</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>G</span>::<span class='ident'>NodeId</span><span class='op'>&gt;</span>,
 {
-    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>N</span>;
-    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>
+    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>G</span>::<span class='ident'>NodeId</span>;
+    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>G</span>::<span class='ident'>NodeId</span><span class='op'>&gt;</span>
     {
         <span class='self'>self</span>.<span class='ident'>dfs</span>.<span class='ident'>next</span>(<span class='self'>self</span>.<span class='ident'>graph</span>)
     }
@@ -969,9 +806,8 @@
     <span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
     <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>::<span class='ident'>Map</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>,
 {
-    <span class='doccomment'>/// Create a new **Bfs**, using the graph&#39;s visitor map.</span>
-    <span class='doccomment'>///</span>
-    <span class='doccomment'>/// **Note:** Does not borrow the graph.</span>
+    <span class='doccomment'>/// Create a new **Bfs**, using the graph&#39;s visitor map, and put **start**</span>
+    <span class='doccomment'>/// in the stack of nodes to visit.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
     {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>discovered</span> <span class='op'>=</span> <span class='ident'>graph</span>.<span class='ident'>visit_map</span>();
@@ -992,8 +828,8 @@
 {
     <span class='doccomment'>/// Return the next node in the dfs, or **None** if the traversal is done.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-        <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>: <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>N</span><span class='op'>&gt;</span>,
-        <span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>N</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
+        <span class='ident'>G</span>: <span class='kw'>for</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>N</span><span class='op'>&gt;</span>,
+        <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
     {
         <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>stack</span>.<span class='ident'>pop_front</span>() {
             <span class='kw'>for</span> <span class='ident'>succ</span> <span class='kw'>in</span> <span class='ident'>graph</span>.<span class='ident'>neighbors</span>(<span class='ident'>node</span>.<span class='ident'>clone</span>()) {
@@ -1008,6 +844,24 @@
     }
 
 }
+
+<span class='comment'>/*
+pub struct Visitor&lt;G&gt; where
+    G: Visitable,
+{
+    stack: Vec&lt;&lt;G as Graphlike&gt;::NodeId&gt;,
+    discovered: &lt;G as Visitable&gt;::Map,
+}
+
+pub fn visitor&lt;G&gt;(graph: &amp;G, start: &lt;G as Graphlike&gt;::NodeId) -&gt; Visitor&lt;G&gt; where
+    G: Visitable
+{
+    Visitor{
+        stack: vec![start],
+        discovered: graph.visit_map(),
+    }
+}
+*/</span>
 
 <span class='doccomment'>/// An iterator for a breadth first traversal of a graph.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>)]</span>
@@ -1036,8 +890,8 @@
     <span class='ident'>G</span>: <span class='lifetime'>&#39;a</span>,
     <span class='ident'>N</span>: <span class='ident'>Clone</span>,
     <span class='ident'>VM</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>,
-    <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>: <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>N</span><span class='op'>&gt;</span>,
-    <span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>IntoNeighbors</span><span class='op'>&lt;</span> <span class='ident'>N</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
+    <span class='ident'>G</span>: <span class='kw'>for</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>N</span><span class='op'>&gt;</span>,
+    <span class='op'>&lt;</span><span class='ident'>G</span> <span class='kw'>as</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Iter</span>: <span class='ident'>Iterator</span><span class='op'>&lt;</span><span class='ident'>Item</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
 {
     <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>N</span>;
     <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>

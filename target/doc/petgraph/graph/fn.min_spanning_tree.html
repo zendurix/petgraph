@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>graph</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Edge.html'>Edge</a><a class='struct ' href='struct.EdgeIndex.html'>EdgeIndex</a><a class='struct ' href='struct.Edges.html'>Edges</a><a class='struct ' href='struct.Graph.html'>Graph</a><a class='struct ' href='struct.Neighbors.html'>Neighbors</a><a class='struct ' href='struct.Node.html'>Node</a><a class='struct ' href='struct.NodeIndex.html'>NodeIndex</a><a class='struct ' href='struct.WithoutEdges.html'>WithoutEdges</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.is_cyclic.html'>is_cyclic</a><a class='fn current' href='fn.min_spanning_tree.html'>min_spanning_tree</a><a class='fn ' href='fn.toposort.html'>toposort</a></div>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>graph</a></p><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.Edge.html'>Edge</a><a class='struct ' href='struct.EdgeIndex.html'>EdgeIndex</a><a class='struct ' href='struct.Edges.html'>Edges</a><a class='struct ' href='struct.Graph.html'>Graph</a><a class='struct ' href='struct.Neighbors.html'>Neighbors</a><a class='struct ' href='struct.Node.html'>Node</a><a class='struct ' href='struct.NodeIndex.html'>NodeIndex</a><a class='struct ' href='struct.WithoutEdges.html'>WithoutEdges</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.connected_components.html'>connected_components</a><a class='fn ' href='fn.is_cyclic.html'>is_cyclic</a><a class='fn current' href='fn.min_spanning_tree.html'>min_spanning_tree</a><a class='fn ' href='fn.scc.html'>scc</a><a class='fn ' href='fn.toposort.html'>toposort</a></div>
     </section>
 
     <nav class="sub">
@@ -44,7 +44,7 @@
 <h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>graph</a>::<wbr><a class='fn' href=''>min_spanning_tree</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-5140' href='../../src/petgraph/graph.rs.html#758-801'>[src]</a></span></h1>
+        </span><a id='src-5362' href='../../src/petgraph/graph.rs.html#828-871'>[src]</a></span></h1>
 <pre class='rust fn'>pub fn min_spanning_tree&lt;N, E, Ty&gt;(g: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty&gt;) -&gt; <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, <a class='struct' href='../../petgraph/struct.Undirected.html' title='petgraph::Undirected'>Undirected</a>&gt; <span class='where'>where N: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, E: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> + <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html' title='core::cmp::PartialOrd'>PartialOrd</a>, Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a></span></pre><div class='docblock'><p>Return a <em>Minimum Spanning Tree</em> of a graph.</p>
 
 <p>Treat the input graph as undirected.</p>

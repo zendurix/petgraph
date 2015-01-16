@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/ulrik/pt/13/rustexperiments/zillabyte-graph/src/unionfind.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/ulrik/pt/13/rustexperiments/petgraph/src/unionfind.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>unionfind.rs.html -- source</title>
@@ -186,6 +186,19 @@
 <span id="144">144</span>
 <span id="145">145</span>
 <span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! **UnionFind\&lt;K\&gt;** is a disjoint-set data structure.</span>
 
@@ -331,6 +344,19 @@
             <span class='self'>self</span>.<span class='ident'>rank</span>[<span class='ident'>xrepu</span>] <span class='op'>+=</span> <span class='number'>1</span>;
         }
         <span class='boolval'>true</span>
+    }
+
+    <span class='doccomment'>/// Return a vector mapping each element to its representative.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>into_labeling</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+        <span class='ident'>K</span>: <span class='ident'>num</span>::<span class='ident'>NumCast</span>,
+    {
+        <span class='comment'>// write in the labeling of each element</span>
+        <span class='kw'>unsafe</span> {
+            <span class='kw'>for</span> <span class='ident'>ix</span> <span class='kw'>in</span> (<span class='number'>0</span>..<span class='self'>self</span>.<span class='ident'>parent</span>.<span class='ident'>len</span>()) {
+                <span class='self'>self</span>.<span class='ident'>find_mut_recursive</span>(<span class='ident'>num</span>::<span class='ident'>cast</span>(<span class='ident'>ix</span>).<span class='ident'>unwrap</span>());
+            }
+        }
+        <span class='self'>self</span>.<span class='ident'>parent</span>
     }
 }
 </pre>
