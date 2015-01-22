@@ -220,15 +220,15 @@
 
 <span class='doccomment'>/// A graph&#39;s edge type determines whether is has directed edges or not.</span>
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>EdgeType</span> {
-    <span class='kw'>fn</span> <span class='ident'>is_directed</span>(<span class='ident'>_ig</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Self</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>;
+    <span class='kw'>fn</span> <span class='ident'>is_directed</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span>;
 }
 
 <span class='kw'>impl</span> <span class='ident'>EdgeType</span> <span class='kw'>for</span> <span class='ident'>Directed</span> {
-    <span class='kw'>fn</span> <span class='ident'>is_directed</span>(<span class='ident'>_ig</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Self</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>true</span> }
+    <span class='kw'>fn</span> <span class='ident'>is_directed</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>true</span> }
 }
 
 <span class='kw'>impl</span> <span class='ident'>EdgeType</span> <span class='kw'>for</span> <span class='ident'>Undirected</span> {
-    <span class='kw'>fn</span> <span class='ident'>is_directed</span>(<span class='ident'>_ig</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Self</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>false</span> }
+    <span class='kw'>fn</span> <span class='ident'>is_directed</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>false</span> }
 }
 
 

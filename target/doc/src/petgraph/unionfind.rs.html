@@ -199,6 +199,7 @@
 <span id="157">157</span>
 <span id="158">158</span>
 <span id="159">159</span>
+<span id="160">160</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! **UnionFind\&lt;K\&gt;** is a disjoint-set data structure.</span>
 
@@ -347,13 +348,14 @@
     }
 
     <span class='doccomment'>/// Return a vector mapping each element to its representative.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>into_labeling</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-        <span class='ident'>K</span>: <span class='ident'>num</span>::<span class='ident'>NumCast</span>,
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>into_labeling</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;</span>
     {
         <span class='comment'>// write in the labeling of each element</span>
         <span class='kw'>unsafe</span> {
             <span class='kw'>for</span> <span class='ident'>ix</span> <span class='kw'>in</span> (<span class='number'>0</span>..<span class='self'>self</span>.<span class='ident'>parent</span>.<span class='ident'>len</span>()) {
-                <span class='self'>self</span>.<span class='ident'>find_mut_recursive</span>(<span class='ident'>num</span>::<span class='ident'>cast</span>(<span class='ident'>ix</span>).<span class='ident'>unwrap</span>());
+                <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='op'>*</span><span class='ident'>get_unchecked</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>parent</span>[], <span class='ident'>ix</span>);
+                <span class='kw'>let</span> <span class='ident'>xrep</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>find_mut_recursive</span>(<span class='ident'>k</span>);
+                <span class='op'>*</span><span class='self'>self</span>.<span class='ident'>parent</span>.<span class='ident'>get_unchecked_mut</span>(<span class='ident'>ix</span>) <span class='op'>=</span> <span class='ident'>xrep</span>;
             }
         }
         <span class='self'>self</span>.<span class='ident'>parent</span>
