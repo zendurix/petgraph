@@ -203,7 +203,7 @@ impl<N, E, Ty=Directed> Graph<N, E, Ty> where Ty: EdgeType
     #[inline]
     pub fn is_directed(&self) -> bool
     {
-        EdgeType::is_directed(None::<Ty>)
+        <Ty as EdgeType>::is_directed()
     }
 
     /// Cast the graph as either undirected or directed. No edge adjustments
@@ -684,7 +684,7 @@ impl<'a, N: 'a, Ty> Iterator for WithoutEdges<'a, N, Ty> where
                 None => return None,
                 Some((index, node)) => {
                     if node.next[k] == EDGE_END &&
-                        (EdgeType::is_directed(None::<Ty>) ||
+                        (<Ty as EdgeType>::is_directed() ||
                          node.next[1-k] == EDGE_END) {
                         return Some(NodeIndex(index))
                     } else {
@@ -1007,8 +1007,10 @@ impl<N, E, Ty> Index<NodeIndex> for Graph<N, E, Ty> where
 {
     type Output = N;
     /// Index the **Graph** by **NodeIndex** to access node weights.
+    ///
+    /// **Panics** if the node doesn't exist.
     fn index(&self, index: &NodeIndex) -> &N {
-        self.node_weight(*index).unwrap()
+        &self.nodes[index.0].weight
     }
 }
 
@@ -1017,8 +1019,10 @@ impl<N, E, Ty> IndexMut<NodeIndex> for Graph<N, E, Ty> where
 {
     type Output = N;
     /// Index the **Graph** by **NodeIndex** to access node weights.
+    ///
+    /// **Panics** if the node doesn't exist.
     fn index_mut(&mut self, index: &NodeIndex) -> &mut N {
-        self.node_weight_mut(*index).unwrap()
+        &mut self.nodes[index.0].weight
     }
 
 }
@@ -1027,8 +1031,10 @@ impl<N, E, Ty> Index<EdgeIndex> for Graph<N, E, Ty> where
 {
     type Output = E;
     /// Index the **Graph** by **EdgeIndex** to access edge weights.
+    ///
+    /// **Panics** if the edge doesn't exist.
     fn index(&self, index: &EdgeIndex) -> &E {
-        self.edge_weight(*index).unwrap()
+        &self.edges[index.0].weight
     }
 }
 
@@ -1037,7 +1043,9 @@ impl<N, E, Ty> IndexMut<EdgeIndex> for Graph<N, E, Ty> where
 {
     type Output = E;
     /// Index the **Graph** by **EdgeIndex** to access edge weights.
+    ///
+    /// **Panics** if the edge doesn't exist.
     fn index_mut(&mut self, index: &EdgeIndex) -> &mut E {
-        self.edge_weight_mut(*index).unwrap()
+        &mut self.edges[index.0].weight
     }
 }
