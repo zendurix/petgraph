@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/ulrik/pt/13/rustexperiments/petgraph/src/unionfind.rs`.">
+    <meta name="description" content="Source to the Rust file `src/unionfind.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>unionfind.rs.html -- source</title>
@@ -214,7 +214,7 @@
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// “The amortized time per operation is **O(α(n))** where **α(n)** is the</span>
 <span class='doccomment'>/// inverse of **f(x) = A(x, x)** with **A** being the extremely fast-growing Ackermann function.”</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Show</span>, <span class='ident'>Clone</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>UnionFind</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>K</span>: <span class='ident'>num</span>::<span class='ident'>UnsignedInt</span>
 {
     <span class='comment'>// For element at index *i*, store the index of its parent; the representative itself</span>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/ulrik/pt/13/rustexperiments/petgraph/src/graph.rs`.">
+    <meta name="description" content="Source to the Rust file `src/graph.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>graph.rs.html -- source</title>
@@ -1091,8 +1091,107 @@
 <span id="1049">1049</span>
 <span id="1050">1050</span>
 <span id="1051">1051</span>
+<span id="1052">1052</span>
+<span id="1053">1053</span>
+<span id="1054">1054</span>
+<span id="1055">1055</span>
+<span id="1056">1056</span>
+<span id="1057">1057</span>
+<span id="1058">1058</span>
+<span id="1059">1059</span>
+<span id="1060">1060</span>
+<span id="1061">1061</span>
+<span id="1062">1062</span>
+<span id="1063">1063</span>
+<span id="1064">1064</span>
+<span id="1065">1065</span>
+<span id="1066">1066</span>
+<span id="1067">1067</span>
+<span id="1068">1068</span>
+<span id="1069">1069</span>
+<span id="1070">1070</span>
+<span id="1071">1071</span>
+<span id="1072">1072</span>
+<span id="1073">1073</span>
+<span id="1074">1074</span>
+<span id="1075">1075</span>
+<span id="1076">1076</span>
+<span id="1077">1077</span>
+<span id="1078">1078</span>
+<span id="1079">1079</span>
+<span id="1080">1080</span>
+<span id="1081">1081</span>
+<span id="1082">1082</span>
+<span id="1083">1083</span>
+<span id="1084">1084</span>
+<span id="1085">1085</span>
+<span id="1086">1086</span>
+<span id="1087">1087</span>
+<span id="1088">1088</span>
+<span id="1089">1089</span>
+<span id="1090">1090</span>
+<span id="1091">1091</span>
+<span id="1092">1092</span>
+<span id="1093">1093</span>
+<span id="1094">1094</span>
+<span id="1095">1095</span>
+<span id="1096">1096</span>
+<span id="1097">1097</span>
+<span id="1098">1098</span>
+<span id="1099">1099</span>
+<span id="1100">1100</span>
+<span id="1101">1101</span>
+<span id="1102">1102</span>
+<span id="1103">1103</span>
+<span id="1104">1104</span>
+<span id="1105">1105</span>
+<span id="1106">1106</span>
+<span id="1107">1107</span>
+<span id="1108">1108</span>
+<span id="1109">1109</span>
+<span id="1110">1110</span>
+<span id="1111">1111</span>
+<span id="1112">1112</span>
+<span id="1113">1113</span>
+<span id="1114">1114</span>
+<span id="1115">1115</span>
+<span id="1116">1116</span>
+<span id="1117">1117</span>
+<span id="1118">1118</span>
+<span id="1119">1119</span>
+<span id="1120">1120</span>
+<span id="1121">1121</span>
+<span id="1122">1122</span>
+<span id="1123">1123</span>
+<span id="1124">1124</span>
+<span id="1125">1125</span>
+<span id="1126">1126</span>
+<span id="1127">1127</span>
+<span id="1128">1128</span>
+<span id="1129">1129</span>
+<span id="1130">1130</span>
+<span id="1131">1131</span>
+<span id="1132">1132</span>
+<span id="1133">1133</span>
+<span id="1134">1134</span>
+<span id="1135">1135</span>
+<span id="1136">1136</span>
+<span id="1137">1137</span>
+<span id="1138">1138</span>
+<span id="1139">1139</span>
+<span id="1140">1140</span>
+<span id="1141">1141</span>
+<span id="1142">1142</span>
+<span id="1143">1143</span>
+<span id="1144">1144</span>
+<span id="1145">1145</span>
+<span id="1146">1146</span>
+<span id="1147">1147</span>
+<span id="1148">1148</span>
+<span id="1149">1149</span>
+<span id="1150">1150</span>
 </pre><pre class='rust '>
-<span class='doccomment'>//! **Graph\&lt;N, E, Ty\&gt;** is a graph datastructure using an adjacency list representation.</span>
+<span class='doccomment'>//! **Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.</span>
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>slice</span>;
@@ -1117,88 +1216,158 @@
     <span class='ident'>VisitMap</span>,
 };
 
+<span class='doccomment'>/// The default integer type for node and edge indices in **Graph**.</span>
+<span class='doccomment'>/// **u32** is the default to reduce the size of the graph&#39;s data and improve</span>
+<span class='doccomment'>/// performance in the common case.</span>
+<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>DefIndex</span> <span class='op'>=</span> <span class='ident'>u32</span>;
+
+<span class='doccomment'>/// Trait for the unsigned integer type used for node and edge indices.</span>
+<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>IndexType</span> : <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Clone</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='op'>+</span> <span class='lifetime'>&#39;static</span>
+{
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>;
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span>;
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span>;
+}
+
+<span class='kw'>impl</span> <span class='ident'>IndexType</span> <span class='kw'>for</span> <span class='ident'>usize</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> { <span class='ident'>x</span> }
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> { <span class='op'>*</span><span class='self'>self</span> }
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>usize</span>::<span class='ident'>MAX</span> }
+}
+
+<span class='kw'>impl</span> <span class='ident'>IndexType</span> <span class='kw'>for</span> <span class='ident'>u32</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u32</span> }
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='op'>*</span><span class='self'>self</span> <span class='kw'>as</span> <span class='ident'>usize</span> }
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u32</span>::<span class='ident'>MAX</span> }
+}
+
 <span class='comment'>// FIXME: These aren&#39;t stable, so a public wrapper of node/edge indices</span>
 <span class='comment'>// should be lifetimed just like pointers.</span>
 <span class='doccomment'>/// Node identifier.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>Show</span>, <span class='ident'>PartialEq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>Ord</span>, <span class='ident'>Hash</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>NodeIndex</span>(<span class='kw'>pub</span> <span class='ident'>usize</span>);
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>Ord</span>, <span class='ident'>Hash</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>=</span><span class='ident'>DefIndex</span><span class='op'>&gt;</span>(<span class='ident'>Ix</span>);
+
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
+{
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> {
+        <span class='ident'>NodeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>new</span>(<span class='ident'>x</span>))
+    }
+
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span>
+    {
+        <span class='self'>self</span>.<span class='number'>0</span>.<span class='ident'>index</span>()
+    }
+
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    {
+        <span class='ident'>NodeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>max</span>())
+    }
+}
+
 <span class='doccomment'>/// Edge identifier.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>PartialEq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>Ord</span>, <span class='ident'>Hash</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>EdgeIndex</span>(<span class='kw'>pub</span> <span class='ident'>usize</span>);
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>=</span><span class='ident'>DefIndex</span><span class='op'>&gt;</span>(<span class='ident'>Ix</span>);
 
-<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Show</span> <span class='kw'>for</span> <span class='ident'>EdgeIndex</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
+{
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> {
+        <span class='ident'>EdgeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>new</span>(<span class='ident'>x</span>))
+    }
+
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span>
+    {
+        <span class='self'>self</span>.<span class='number'>0</span>.<span class='ident'>index</span>()
+    }
+
+    <span class='doccomment'>/// An invalid **EdgeIndex** used to denote absence of an edge, for example</span>
+    <span class='doccomment'>/// to end an adjacency list.</span>
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span> {
+        <span class='ident'>EdgeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>max</span>())
+    }
+}
+
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;EdgeIndex(&quot;</span>));
-        <span class='kw'>if</span> <span class='op'>*</span><span class='self'>self</span> <span class='op'>==</span> <span class='ident'>EDGE_END</span> {
+        <span class='kw'>if</span> <span class='op'>*</span><span class='self'>self</span> <span class='op'>==</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>() {
             <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;End&quot;</span>));
         } <span class='kw'>else</span> {
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;{}&quot;</span>, <span class='self'>self</span>.<span class='number'>0</span>));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;{}&quot;</span>, <span class='self'>self</span>.<span class='ident'>index</span>()));
         }
         <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;)&quot;</span>)
     }
 }
 
-<span class='doccomment'>/// An invalid **EdgeIndex** used to denote absence of an edge, for example</span>
-<span class='doccomment'>/// to end an adjacency list.</span>
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>EDGE_END</span>: <span class='ident'>EdgeIndex</span> <span class='op'>=</span> <span class='ident'>EdgeIndex</span>(::<span class='ident'>std</span>::<span class='ident'>usize</span>::<span class='ident'>MAX</span>);
-
 <span class='kw'>const</span> <span class='ident'>DIRECTIONS</span>: [<span class='ident'>EdgeDirection</span>; <span class='number'>2</span>] <span class='op'>=</span> [<span class='ident'>EdgeDirection</span>::<span class='ident'>Outgoing</span>, <span class='ident'>EdgeDirection</span>::<span class='ident'>Incoming</span>];
 
 <span class='doccomment'>/// The graph&#39;s node type.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Show</span>, <span class='ident'>Clone</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span> {
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Associated node data.</span>
     <span class='kw'>pub</span> <span class='ident'>weight</span>: <span class='ident'>N</span>,
     <span class='doccomment'>/// Next edge in outgoing and incoming edge lists.</span>
-    <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span>; <span class='number'>2</span>],
+    <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span> <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='doccomment'>/// Accessor for data structure internals: the first edge in the given direction.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='self'>self</span>.<span class='ident'>next</span>[<span class='ident'>dir</span> <span class='kw'>as</span> <span class='ident'>usize</span>]
     }
 }
 
 <span class='doccomment'>/// The graph&#39;s edge type.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Show</span>, <span class='ident'>Clone</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span> {
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Associated edge data.</span>
     <span class='kw'>pub</span> <span class='ident'>weight</span>: <span class='ident'>E</span>,
     <span class='doccomment'>/// Next edge in outgoing and incoming edge lists.</span>
-    <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span>; <span class='number'>2</span>],
+    <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
     <span class='doccomment'>/// Start and End node index</span>
-    <span class='ident'>node</span>: [<span class='ident'>NodeIndex</span>; <span class='number'>2</span>],
+    <span class='ident'>node</span>: [<span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='doccomment'>/// Accessor for data structure internals: the next edge for the given direction.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='self'>self</span>.<span class='ident'>next</span>[<span class='ident'>dir</span> <span class='kw'>as</span> <span class='ident'>usize</span>]
     }
 
     <span class='doccomment'>/// Return the source node index.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>source</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>NodeIndex</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>source</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='self'>self</span>.<span class='ident'>node</span>[<span class='number'>0</span>]
     }
 
     <span class='doccomment'>/// Return the target node index.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>target</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>NodeIndex</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>target</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='self'>self</span>.<span class='ident'>node</span>[<span class='number'>1</span>]
     }
 }
 
-<span class='doccomment'>/// **Graph\&lt;N, E, Ty\&gt;** is a graph datastructure using an adjacency list representation.</span>
+<span class='doccomment'>/// **Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// **Graph** is parameterized over the node weight **N**, edge weight **E** and</span>
-<span class='doccomment'>/// the parameter **Ty** that determines whether the graph has directed edges or not.</span>
+<span class='doccomment'>/// **Graph** is parameterized over the node weight **N**, edge weight **E**, </span>
+<span class='doccomment'>/// edge type **Ty** that determines whether the graph has directed edges or not,</span>
+<span class='doccomment'>/// and **Ix** which is the index type used.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// Based on the graph implementation in rustc.</span>
 <span class='doccomment'>///</span>
@@ -1210,13 +1379,20 @@
 <span class='doccomment'>/// other indices**. Adding to the graph keeps</span>
 <span class='doccomment'>/// all indices stable, but removing a node will force the last node to shift its index to</span>
 <span class='doccomment'>/// take its place. Similarly, removing an edge shifts the index of the last edge.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// The fact that the node and edge indices in the graph are numbered in a compact interval from</span>
+<span class='doccomment'>/// 0 to *n* - 1 simplifies some graph algorithms.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// The **Ix** parameter is **u32** by default. The goal is that you can ignore this parameter</span>
+<span class='doccomment'>/// completely unless you need a very big graph -- then you can use **usize**.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>=</span><span class='ident'>Directed</span><span class='op'>&gt;</span> {
-    <span class='ident'>nodes</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;&gt;</span>,
-    <span class='ident'>edges</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;&gt;</span>,
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span> <span class='op'>=</span> <span class='ident'>Directed</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
+    <span class='ident'>nodes</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>,
+    <span class='ident'>edges</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>: <span class='ident'>fmt</span>::<span class='ident'>Show</span>, <span class='ident'>E</span>: <span class='ident'>fmt</span>::<span class='ident'>Show</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span><span class='op'>&gt;</span> <span class='ident'>fmt</span>::<span class='ident'>Show</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>N</span>: <span class='ident'>fmt</span>::<span class='ident'>Debug</span>, <span class='ident'>E</span>: <span class='ident'>fmt</span>::<span class='ident'>Debug</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>
 {
     <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>for</span> (<span class='ident'>index</span>, <span class='ident'>n</span>) <span class='kw'>in</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>().<span class='ident'>enumerate</span>() {
@@ -1271,7 +1447,9 @@
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>=</span><span class='ident'>Directed</span><span class='op'>&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>=</span><span class='ident'>Directed</span>, <span class='ident'>Ix</span><span class='op'>=</span><span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='doccomment'>/// Create a new **Graph** with estimated capacity.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>: <span class='ident'>usize</span>, <span class='ident'>edges</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
@@ -1304,7 +1482,7 @@
     <span class='doccomment'>/// are done.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Computes in **O(1)** time.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>into_edge_type</span><span class='op'>&lt;</span><span class='ident'>NewTy</span><span class='op'>&gt;</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>NewTy</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>into_edge_type</span><span class='op'>&lt;</span><span class='ident'>NewTy</span><span class='op'>&gt;</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>NewTy</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
         <span class='ident'>NewTy</span>: <span class='ident'>EdgeType</span>
     {
         <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='self'>self</span>.<span class='ident'>nodes</span>, <span class='ident'>edges</span>: <span class='self'>self</span>.<span class='ident'>edges</span>}
@@ -1315,32 +1493,33 @@
     <span class='doccomment'>/// Computes in **O(1)** time.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Return the index of the new node.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>add_node</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>w</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>NodeIndex</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>add_node</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>w</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
-        <span class='kw'>let</span> <span class='ident'>node</span> <span class='op'>=</span> <span class='ident'>Node</span>{<span class='ident'>weight</span>: <span class='ident'>w</span>, <span class='ident'>next</span>: [<span class='ident'>EDGE_END</span>, <span class='ident'>EDGE_END</span>]};
-        <span class='kw'>let</span> <span class='ident'>node_idx</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span>(<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>len</span>());
+        <span class='kw'>let</span> <span class='ident'>node</span> <span class='op'>=</span> <span class='ident'>Node</span>{<span class='ident'>weight</span>: <span class='ident'>w</span>, <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>(), <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>()]};
+        <span class='kw'>let</span> <span class='ident'>node_idx</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>len</span>());
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>NodeIndex</span>::<span class='ident'>end</span>() <span class='op'>!=</span> <span class='ident'>node_idx</span>);
         <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>push</span>(<span class='ident'>node</span>);
         <span class='ident'>node_idx</span>
     }
 
     <span class='doccomment'>/// Access node weight for node **a**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>node_weight</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>N</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>node_weight</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>N</span><span class='op'>&gt;</span>
     {
-        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='number'>0</span>).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>n</span><span class='op'>|</span> <span class='kw-2'>&amp;</span><span class='ident'>n</span>.<span class='ident'>weight</span>)
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>n</span><span class='op'>|</span> <span class='kw-2'>&amp;</span><span class='ident'>n</span>.<span class='ident'>weight</span>)
     }
 
     <span class='doccomment'>/// Access node weight for node **a**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>node_weight_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>N</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>node_weight_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>N</span><span class='op'>&gt;</span>
     {
-        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get_mut</span>(<span class='ident'>a</span>.<span class='number'>0</span>).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>n</span><span class='op'>|</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>n</span>.<span class='ident'>weight</span>)
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get_mut</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>n</span><span class='op'>|</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>n</span>.<span class='ident'>weight</span>)
     }
 
     <span class='doccomment'>/// Return an iterator of all nodes with an edge starting from **a**.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Produces an empty iterator if the node doesn&#39;t exist.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Iterator element type is **NodeIndex**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='doccomment'>/// Iterator element type is **NodeIndex&lt;Ix&gt;**.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>is_directed</span>() {
             <span class='self'>self</span>.<span class='ident'>neighbors_directed</span>(<span class='ident'>a</span>, <span class='ident'>Outgoing</span>)
@@ -1355,14 +1534,14 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Produces an empty iterator if the node doesn&#39;t exist.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Iterator element type is **NodeIndex**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>neighbors_directed</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='doccomment'>/// Iterator element type is **NodeIndex&lt;Ix&gt;**.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>neighbors_directed</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>iter</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>neighbors_undirected</span>(<span class='ident'>a</span>);
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>is_directed</span>() {
             <span class='comment'>// remove the other edges not wanted.</span>
             <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>dir</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
-            <span class='ident'>iter</span>.<span class='ident'>next</span>[<span class='number'>1</span> <span class='op'>-</span> <span class='ident'>k</span>] <span class='op'>=</span> <span class='ident'>EDGE_END</span>;
+            <span class='ident'>iter</span>.<span class='ident'>next</span>[<span class='number'>1</span> <span class='op'>-</span> <span class='ident'>k</span>] <span class='op'>=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>();
         }
         <span class='ident'>iter</span>
     }
@@ -1373,13 +1552,13 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Produces an empty iterator if the node doesn&#39;t exist.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Iterator element type is **NodeIndex**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>neighbors_undirected</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='doccomment'>/// Iterator element type is **NodeIndex&lt;Ix&gt;**.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>neighbors_undirected</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
-        <span class='ident'>Neighbors</span>{
+        <span class='ident'>Neighbors</span> {
             <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='op'>*</span><span class='self'>self</span>.<span class='ident'>edges</span>,
-            <span class='ident'>next</span>: <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='number'>0</span>) {
-                <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> [<span class='ident'>EDGE_END</span>, <span class='ident'>EDGE_END</span>],
+            <span class='ident'>next</span>: <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
+                <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> [<span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>(), <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>()],
                 <span class='prelude-val'>Some</span>(<span class='ident'>n</span>) <span class='op'>=&gt;</span> <span class='ident'>n</span>.<span class='ident'>next</span>,
             }
         }
@@ -1390,12 +1569,12 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Produces an empty iterator if the node doesn&#39;t exist.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Iterator element type is **(NodeIndex, &amp;&#39;a E)**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='doccomment'>/// Iterator element type is **(NodeIndex&lt;Ix&gt;, &amp;&#39;a E)**.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>iter</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges_both</span>(<span class='ident'>a</span>);
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>is_directed</span>() {
-            <span class='ident'>iter</span>.<span class='ident'>next</span>[<span class='ident'>Incoming</span> <span class='kw'>as</span> <span class='ident'>usize</span>] <span class='op'>=</span> <span class='ident'>EDGE_END</span>;
+            <span class='ident'>iter</span>.<span class='ident'>next</span>[<span class='ident'>Incoming</span> <span class='kw'>as</span> <span class='ident'>usize</span>] <span class='op'>=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>();
         }
         <span class='ident'>iter</span>
     }
@@ -1405,13 +1584,13 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Produces an empty iterator if the node doesn&#39;t exist.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Iterator element type is **(NodeIndex, &amp;&#39;a E)**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edges_both</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='doccomment'>/// Iterator element type is **(NodeIndex&lt;Ix&gt;, &amp;&#39;a E)**.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edges_both</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='ident'>Edges</span>{
             <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='op'>*</span><span class='self'>self</span>.<span class='ident'>edges</span>,
-            <span class='ident'>next</span>: <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='number'>0</span>) {
-                <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> [<span class='ident'>EDGE_END</span>, <span class='ident'>EDGE_END</span>],
+            <span class='ident'>next</span>: <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
+                <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> [<span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>(), <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>()],
                 <span class='prelude-val'>Some</span>(<span class='ident'>n</span>) <span class='op'>=&gt;</span> <span class='ident'>n</span>.<span class='ident'>next</span>,
             }
         }
@@ -1427,10 +1606,11 @@
     <span class='doccomment'>/// Return the index of the new edge.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if any of the nodes don&#39;t exist.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>add_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span>, <span class='ident'>weight</span>: <span class='ident'>E</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>add_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>weight</span>: <span class='ident'>E</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
-        <span class='kw'>let</span> <span class='ident'>edge_idx</span> <span class='op'>=</span> <span class='ident'>EdgeIndex</span>(<span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>len</span>());
-        <span class='kw'>match</span> <span class='ident'>index_twice</span>(<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>as_mut_slice</span>(), <span class='ident'>a</span>.<span class='number'>0</span>, <span class='ident'>b</span>.<span class='number'>0</span>) {
+        <span class='kw'>let</span> <span class='ident'>edge_idx</span> <span class='op'>=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>len</span>());
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>edge_idx</span> <span class='op'>!=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>());
+        <span class='kw'>match</span> <span class='ident'>index_twice</span>(<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>as_mut_slice</span>(), <span class='ident'>a</span>.<span class='ident'>index</span>(), <span class='ident'>b</span>.<span class='ident'>index</span>()) {
             <span class='ident'>Pair</span>::<span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;NodeIndices out of bounds&quot;</span>),
             <span class='ident'>Pair</span>::<span class='ident'>One</span>(<span class='ident'>an</span>) <span class='op'>=&gt;</span> {
                 <span class='kw'>let</span> <span class='ident'>edge</span> <span class='op'>=</span> <span class='ident'>Edge</span> {
@@ -1467,7 +1647,7 @@
     <span class='doccomment'>/// Return the index of the affected edge.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if any of the nodes don&#39;t exist.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span>, <span class='ident'>weight</span>: <span class='ident'>E</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>weight</span>: <span class='ident'>E</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>ix</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>find_edge</span>(<span class='ident'>a</span>, <span class='ident'>b</span>) {
             <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edge_weight_mut</span>(<span class='ident'>ix</span>) {
@@ -1482,22 +1662,22 @@
     }
 
     <span class='doccomment'>/// Access the edge weight for **e**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edge_weight</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edge_weight</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>E</span><span class='op'>&gt;</span>
     {
-        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>e</span>.<span class='number'>0</span>).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>ed</span><span class='op'>|</span> <span class='kw-2'>&amp;</span><span class='ident'>ed</span>.<span class='ident'>weight</span>)
+        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>e</span>.<span class='ident'>index</span>()).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>ed</span><span class='op'>|</span> <span class='kw-2'>&amp;</span><span class='ident'>ed</span>.<span class='ident'>weight</span>)
     }
 
     <span class='doccomment'>/// Access the edge weight for **e** mutably.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edge_weight_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edge_weight_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>E</span><span class='op'>&gt;</span>
     {
-        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get_mut</span>(<span class='ident'>e</span>.<span class='number'>0</span>).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>ed</span><span class='op'>|</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>ed</span>.<span class='ident'>weight</span>)
+        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get_mut</span>(<span class='ident'>e</span>.<span class='ident'>index</span>()).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>ed</span><span class='op'>|</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>ed</span>.<span class='ident'>weight</span>)
     }
 
     <span class='doccomment'>/// Remove **a** from the graph if it exists, and return its weight.</span>
     <span class='doccomment'>/// If it doesn&#39;t exist in the graph, return **None**.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove_node</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove_node</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>
     {
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>None</span>,
             _ <span class='op'>=&gt;</span> {}
         }
@@ -1514,8 +1694,8 @@
             */</span>
             <span class='comment'>// Remove all edges from and to this node.</span>
             <span class='kw'>loop</span> {
-                <span class='kw'>let</span> <span class='ident'>next</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='ident'>a</span>.<span class='number'>0</span>].<span class='ident'>next</span>[<span class='ident'>k</span>];
-                <span class='kw'>if</span> <span class='ident'>next</span> <span class='op'>==</span> <span class='ident'>EDGE_END</span> {
+                <span class='kw'>let</span> <span class='ident'>next</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='ident'>a</span>.<span class='ident'>index</span>()].<span class='ident'>next</span>[<span class='ident'>k</span>];
+                <span class='kw'>if</span> <span class='ident'>next</span> <span class='op'>==</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>() {
                     <span class='kw'>break</span>
                 }
                 <span class='kw'>let</span> <span class='ident'>ret</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>remove_edge</span>(<span class='ident'>next</span>);
@@ -1525,19 +1705,19 @@
         }
 
         <span class='comment'>// Use swap_remove -- only the swapped-in node is going to change</span>
-        <span class='comment'>// NodeIndex, so we only have to walk its edges and update them.</span>
+        <span class='comment'>// NodeIndex&lt;Ix&gt;, so we only have to walk its edges and update them.</span>
 
-        <span class='kw'>let</span> <span class='ident'>node</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>swap_remove</span>(<span class='ident'>a</span>.<span class='number'>0</span>);
+        <span class='kw'>let</span> <span class='ident'>node</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>swap_remove</span>(<span class='ident'>a</span>.<span class='ident'>index</span>());
 
         <span class='comment'>// Find the edge lists of the node that had to relocate.</span>
         <span class='comment'>// It may be that no node had to relocate, then we are done already.</span>
-        <span class='kw'>let</span> <span class='ident'>swap_edges</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='number'>0</span>) {
+        <span class='kw'>let</span> <span class='ident'>swap_edges</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>Some</span>(<span class='ident'>node</span>.<span class='ident'>weight</span>),
             <span class='prelude-val'>Some</span>(<span class='ident'>ed</span>) <span class='op'>=&gt;</span> <span class='ident'>ed</span>.<span class='ident'>next</span>,
         };
 
         <span class='comment'>// The swapped element&#39;s old index</span>
-        <span class='kw'>let</span> <span class='ident'>old_index</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span>(<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>len</span>());
+        <span class='kw'>let</span> <span class='ident'>old_index</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>len</span>());
         <span class='kw'>let</span> <span class='ident'>new_index</span> <span class='op'>=</span> <span class='ident'>a</span>;
 
         <span class='comment'>// Adjust the starts of the out edges, and ends of the in edges.</span>
@@ -1553,12 +1733,12 @@
 
     <span class='doccomment'>/// For edge **e** with endpoints **edge_node**, replace links to it,</span>
     <span class='doccomment'>/// with links to **edge_next**.</span>
-    <span class='kw'>fn</span> <span class='ident'>change_edge_links</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>edge_node</span>: [<span class='ident'>NodeIndex</span>; <span class='number'>2</span>], <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span>,
-                         <span class='ident'>edge_next</span>: [<span class='ident'>EdgeIndex</span>; <span class='number'>2</span>])
+    <span class='kw'>fn</span> <span class='ident'>change_edge_links</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>edge_node</span>: [<span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>], <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>,
+                         <span class='ident'>edge_next</span>: [<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>])
     {
         <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>d</span> <span class='kw'>in</span> <span class='ident'>DIRECTIONS</span>.<span class='ident'>iter</span>() {
             <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>d</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
-            <span class='kw'>let</span> <span class='ident'>node</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get_mut</span>(<span class='ident'>edge_node</span>[<span class='ident'>k</span>].<span class='number'>0</span>) {
+            <span class='kw'>let</span> <span class='ident'>node</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get_mut</span>(<span class='ident'>edge_node</span>[<span class='ident'>k</span>].<span class='ident'>index</span>()) {
                 <span class='prelude-val'>Some</span>(<span class='ident'>r</span>) <span class='op'>=&gt;</span> <span class='ident'>r</span>,
                 <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
                     <span class='macro'>debug_assert</span><span class='macro'>!</span>(<span class='boolval'>false</span>, <span class='string'>&quot;Edge&#39;s endpoint dir={:?} index={:?} not found&quot;</span>,
@@ -1585,12 +1765,12 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Computes in **O(e&#39;)** time, where **e&#39;** is the size of four particular edge lists, for</span>
     <span class='doccomment'>/// the vertices of **e** and the vertices of another affected edge.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
     {
         <span class='comment'>// every edge is part of two lists,</span>
         <span class='comment'>// outgoing and incoming edges.</span>
         <span class='comment'>// Remove it from both</span>
-        <span class='kw'>let</span> (<span class='ident'>edge_node</span>, <span class='ident'>edge_next</span>) <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>e</span>.<span class='number'>0</span>) {
+        <span class='kw'>let</span> (<span class='ident'>edge_node</span>, <span class='ident'>edge_next</span>) <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>e</span>.<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>None</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>x</span>) <span class='op'>=&gt;</span> (<span class='ident'>x</span>.<span class='ident'>node</span>, <span class='ident'>x</span>.<span class='ident'>next</span>),
         };
@@ -1600,18 +1780,18 @@
         <span class='self'>self</span>.<span class='ident'>remove_edge_adjust_indices</span>(<span class='ident'>e</span>)
     }
 
-    <span class='kw'>fn</span> <span class='ident'>remove_edge_adjust_indices</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
+    <span class='kw'>fn</span> <span class='ident'>remove_edge_adjust_indices</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>
     {
         <span class='comment'>// swap_remove the edge -- only the removed edge</span>
         <span class='comment'>// and the edge swapped into place are affected and need updating</span>
         <span class='comment'>// indices.</span>
-        <span class='kw'>let</span> <span class='ident'>edge</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>swap_remove</span>(<span class='ident'>e</span>.<span class='number'>0</span>);
-        <span class='kw'>let</span> <span class='ident'>swap</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>e</span>.<span class='number'>0</span>) {
+        <span class='kw'>let</span> <span class='ident'>edge</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>swap_remove</span>(<span class='ident'>e</span>.<span class='ident'>index</span>());
+        <span class='kw'>let</span> <span class='ident'>swap</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>e</span>.<span class='ident'>index</span>()) {
             <span class='comment'>// no elment needed to be swapped.</span>
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>.<span class='ident'>weight</span>),
             <span class='prelude-val'>Some</span>(<span class='ident'>ed</span>) <span class='op'>=&gt;</span> <span class='ident'>ed</span>.<span class='ident'>node</span>,
         };
-        <span class='kw'>let</span> <span class='ident'>swapped_e</span> <span class='op'>=</span> <span class='ident'>EdgeIndex</span>(<span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>len</span>());
+        <span class='kw'>let</span> <span class='ident'>swapped_e</span> <span class='op'>=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>len</span>());
 
         <span class='comment'>// Update the edge lists by replacing links to the old index by references to the new</span>
         <span class='comment'>// edge index.</span>
@@ -1623,16 +1803,16 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Computes in **O(e&#39;)** time, where **e&#39;** is the number of edges</span>
     <span class='doccomment'>/// connected to the vertices **a** (and **b**).</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>find_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>find_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>
     {
         <span class='kw'>if</span> <span class='op'>!</span><span class='self'>self</span>.<span class='ident'>is_directed</span>() {
             <span class='self'>self</span>.<span class='ident'>find_edge_undirected</span>(<span class='ident'>a</span>, <span class='ident'>b</span>).<span class='ident'>map</span>(<span class='op'>|</span>(<span class='ident'>ix</span>, _)<span class='op'>|</span> <span class='ident'>ix</span>)
         } <span class='kw'>else</span> {
-            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='number'>0</span>) {
+            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
                 <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
                 <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=&gt;</span> {
                     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>edix</span> <span class='op'>=</span> <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='number'>0</span>];
-                    <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>edix</span>.<span class='number'>0</span>) {
+                    <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>edix</span>.<span class='ident'>index</span>()) {
                         <span class='kw'>if</span> <span class='ident'>edge</span>.<span class='ident'>node</span>[<span class='number'>1</span>] <span class='op'>==</span> <span class='ident'>b</span> {
                             <span class='kw'>return</span> <span class='prelude-val'>Some</span>(<span class='ident'>edix</span>)
                         }
@@ -1647,15 +1827,15 @@
     <span class='doccomment'>/// Lookup an edge between **a** and **b**, in either direction.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// If the graph is undirected, then this is equivalent to *.find_edge()*.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>find_edge_undirected</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>EdgeIndex</span>, <span class='ident'>EdgeDirection</span>)<span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>find_edge_undirected</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>EdgeDirection</span>)<span class='op'>&gt;</span>
     {
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=&gt;</span> {
                 <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>d</span> <span class='kw'>in</span> <span class='ident'>DIRECTIONS</span>.<span class='ident'>iter</span>() {
                     <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>d</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
                     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>edix</span> <span class='op'>=</span> <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='ident'>k</span>];
-                    <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>edix</span>.<span class='number'>0</span>) {
+                    <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>edix</span>.<span class='ident'>index</span>()) {
                         <span class='kw'>if</span> <span class='ident'>edge</span>.<span class='ident'>node</span>[<span class='number'>1</span> <span class='op'>-</span> <span class='ident'>k</span>] <span class='op'>==</span> <span class='ident'>b</span> {
                             <span class='kw'>return</span> <span class='prelude-val'>Some</span>((<span class='ident'>edix</span>, <span class='ident'>d</span>))
                         }
@@ -1679,11 +1859,11 @@
      *
     /// Retain only nodes that return **true** from the predicate.
     pub fn retain_nodes&lt;F&gt;(&amp;mut self, mut visit: F) where
-        F: FnMut(&amp;Self, NodeIndex, &amp;Node&lt;N&gt;) -&gt; bool
+        F: FnMut(&amp;Self, NodeIndex&lt;Ix&gt;, &amp;Node&lt;N&gt;) -&gt; bool
     {
         for index in (0..self.node_count()).rev() {
-            let nix = NodeIndex(index);
-            if !visit(&amp;*self, nix, &amp;self.nodes[nix.0]) {
+            let nix = NodeIndex&lt;Ix&gt;(index);
+            if !visit(&amp;*self, nix, &amp;self.nodes[nix.index()]) {
                 let ret = self.remove_node(nix);
                 debug_assert!(ret.is_some());
                 let _ = ret;
@@ -1696,9 +1876,9 @@
         F: FnMut(&amp;Self, EdgeIndex, &amp;Edge&lt;E&gt;) -&gt; bool
     {
         for index in (0..self.edge_count()).rev() {
-            let eix = EdgeIndex(index);
-            if !visit(&amp;*self, eix, &amp;self.edges[eix.0]) {
-                let ret = self.remove_edge(EdgeIndex(index));
+            let eix = EdgeIndex::new(index);
+            if !visit(&amp;*self, eix, &amp;self.edges[eix.index()]) {
+                let ret = self.remove_edge(EdgeIndex::new(index));
                 debug_assert!(ret.is_some());
                 let _ = ret;
             }
@@ -1707,25 +1887,25 @@
     */</span>
 
     <span class='doccomment'>/// Access the internal node array</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>raw_nodes</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span>[<span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>]
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>raw_nodes</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span>[<span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>]
     {
         <span class='kw-2'>&amp;</span><span class='op'>*</span><span class='self'>self</span>.<span class='ident'>nodes</span>
     }
 
     <span class='doccomment'>/// Access the internal edge array</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>raw_edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span>[<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>]
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>raw_edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span>[<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>]
     {
         <span class='kw-2'>&amp;</span><span class='op'>*</span><span class='self'>self</span>.<span class='ident'>edges</span>
     }
 
     <span class='doccomment'>/// Accessor for data structure internals: the first edge in the given direction.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>first_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>first_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>
     {
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=&gt;</span> {
                 <span class='kw'>let</span> <span class='ident'>edix</span> <span class='op'>=</span> <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='ident'>dir</span> <span class='kw'>as</span> <span class='ident'>usize</span>];
-                <span class='kw'>if</span> <span class='ident'>edix</span> <span class='op'>==</span> <span class='ident'>EDGE_END</span> {
+                <span class='kw'>if</span> <span class='ident'>edix</span> <span class='op'>==</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>() {
                     <span class='prelude-val'>None</span>
                 } <span class='kw'>else</span> { <span class='prelude-val'>Some</span>(<span class='ident'>edix</span>) }
             }
@@ -1733,13 +1913,13 @@
     }
 
     <span class='doccomment'>/// Accessor for data structure internals: the next edge for the given direction.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>
     {
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>e</span>.<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>e</span>.<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=&gt;</span> {
                 <span class='kw'>let</span> <span class='ident'>edix</span> <span class='op'>=</span> <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='ident'>dir</span> <span class='kw'>as</span> <span class='ident'>usize</span>];
-                <span class='kw'>if</span> <span class='ident'>edix</span> <span class='op'>==</span> <span class='ident'>EDGE_END</span> {
+                <span class='kw'>if</span> <span class='ident'>edix</span> <span class='op'>==</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>() {
                     <span class='prelude-val'>None</span>
                 } <span class='kw'>else</span> { <span class='prelude-val'>Some</span>(<span class='ident'>edix</span>) }
             }
@@ -1754,33 +1934,34 @@
     <span class='doccomment'>/// For an undirected graph, the initials/terminals are just the vertices without edges.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// The whole iteration computes in **O(|V|)** time.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>without_edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>without_edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='ident'>WithoutEdges</span>{<span class='ident'>iter</span>: <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>().<span class='ident'>enumerate</span>(), <span class='ident'>dir</span>: <span class='ident'>dir</span>}
     }
 }
 
 <span class='doccomment'>/// An iterator over either the nodes without edges to them or from them.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> {
-    <span class='ident'>iter</span>: <span class='ident'>iter</span>::<span class='ident'>Enumerate</span><span class='op'>&lt;</span><span class='ident'>slice</span>::<span class='ident'>Iter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span>,
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
+    <span class='ident'>iter</span>: <span class='ident'>iter</span>::<span class='ident'>Enumerate</span><span class='op'>&lt;</span><span class='ident'>slice</span>::<span class='ident'>Iter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span>,
     <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span>;
-    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&gt;</span>
+    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>;
+    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>
     {
         <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>dir</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
         <span class='kw'>loop</span> {
             <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>iter</span>.<span class='ident'>next</span>() {
                 <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>None</span>,
                 <span class='prelude-val'>Some</span>((<span class='ident'>index</span>, <span class='ident'>node</span>)) <span class='op'>=&gt;</span> {
-                    <span class='kw'>if</span> <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='ident'>k</span>] <span class='op'>==</span> <span class='ident'>EDGE_END</span> <span class='op'>&amp;&amp;</span>
+                    <span class='kw'>if</span> <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='ident'>k</span>] <span class='op'>==</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>() <span class='op'>&amp;&amp;</span>
                         (<span class='op'>&lt;</span><span class='ident'>Ty</span> <span class='kw'>as</span> <span class='ident'>EdgeType</span><span class='op'>&gt;</span>::<span class='ident'>is_directed</span>() <span class='op'>||</span>
-                         <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>k</span>] <span class='op'>==</span> <span class='ident'>EDGE_END</span>) {
-                        <span class='kw'>return</span> <span class='prelude-val'>Some</span>(<span class='ident'>NodeIndex</span>(<span class='ident'>index</span>))
+                         <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>k</span>] <span class='op'>==</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>()) {
+                        <span class='kw'>return</span> <span class='prelude-val'>Some</span>(<span class='ident'>NodeIndex</span>::<span class='ident'>new</span>(<span class='ident'>index</span>))
                     } <span class='kw'>else</span> {
                         <span class='kw'>continue</span>
                     }
@@ -1797,7 +1978,8 @@
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// If the returned vec contains less than all the nodes of the graph, then</span>
 <span class='doccomment'>/// the graph was cyclic.</span>
-<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>toposort</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Directed</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&gt;</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>toposort</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Directed</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>order</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>g</span>.<span class='ident'>node_count</span>());
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>ordered</span> <span class='op'>=</span> <span class='ident'>BitvSet</span>::<span class='ident'>with_capacity</span>(<span class='ident'>g</span>.<span class='ident'>node_count</span>());
@@ -1808,15 +1990,15 @@
 
     <span class='comment'>// Take an unvisited element and </span>
     <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>nix</span>) <span class='op'>=</span> <span class='ident'>tovisit</span>.<span class='ident'>pop</span>() {
-        <span class='kw'>if</span> <span class='ident'>ordered</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='ident'>nix</span>.<span class='number'>0</span>) {
+        <span class='kw'>if</span> <span class='ident'>ordered</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='ident'>nix</span>.<span class='ident'>index</span>()) {
             <span class='kw'>continue</span>;
         }
         <span class='ident'>order</span>.<span class='ident'>push</span>(<span class='ident'>nix</span>);
-        <span class='ident'>ordered</span>.<span class='ident'>insert</span>(<span class='ident'>nix</span>.<span class='number'>0</span>);
+        <span class='ident'>ordered</span>.<span class='ident'>insert</span>(<span class='ident'>nix</span>.<span class='ident'>index</span>());
         <span class='kw'>for</span> <span class='ident'>neigh</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>neighbors_directed</span>(<span class='ident'>nix</span>, <span class='ident'>Outgoing</span>) {
             <span class='comment'>// Look at each neighbor, and those that only have incoming edges</span>
             <span class='comment'>// from the already ordered list, they are the next to visit.</span>
-            <span class='kw'>if</span> <span class='ident'>g</span>.<span class='ident'>neighbors_directed</span>(<span class='ident'>neigh</span>, <span class='ident'>Incoming</span>).<span class='ident'>all</span>(<span class='op'>|</span><span class='ident'>b</span><span class='op'>|</span> <span class='ident'>ordered</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='ident'>b</span>.<span class='number'>0</span>)) {
+            <span class='kw'>if</span> <span class='ident'>g</span>.<span class='ident'>neighbors_directed</span>(<span class='ident'>neigh</span>, <span class='ident'>Incoming</span>).<span class='ident'>all</span>(<span class='op'>|</span><span class='ident'>b</span><span class='op'>|</span> <span class='ident'>ordered</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='ident'>b</span>.<span class='ident'>index</span>())) {
                 <span class='ident'>tovisit</span>.<span class='ident'>push</span>(<span class='ident'>neigh</span>);
             }
         }
@@ -1830,8 +2012,9 @@
 <span class='doccomment'>/// Return a vector where each element is an scc.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// For an undirected graph, the sccs are simply the connected components.</span>
-<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>scc</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&gt;&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>scc</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>dfs</span> <span class='op'>=</span> <span class='ident'>Dfs</span>::<span class='ident'>empty</span>(<span class='ident'>g</span>);
 
@@ -1844,7 +2027,7 @@
         <span class='comment'>// We want to order the vertices by finishing time --</span>
         <span class='comment'>// so record when we see them, then reverse all we have seen in this DFS pass.</span>
         <span class='kw'>let</span> <span class='ident'>pass_start</span> <span class='op'>=</span> <span class='ident'>finish_order</span>.<span class='ident'>len</span>();
-        <span class='ident'>dfs</span>.<span class='ident'>move_to</span>(<span class='ident'>NodeIndex</span>(<span class='ident'>index</span>));
+        <span class='ident'>dfs</span>.<span class='ident'>move_to</span>(<span class='ident'>NodeIndex</span>::<span class='ident'>new</span>(<span class='ident'>index</span>));
         <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>nx</span>) <span class='op'>=</span> <span class='ident'>dfs</span>.<span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='ident'>Reversed</span>(<span class='ident'>g</span>)) {
             <span class='ident'>finish_order</span>.<span class='ident'>push</span>(<span class='ident'>nx</span>);
         }
@@ -1857,7 +2040,7 @@
     <span class='comment'>// Second phase</span>
     <span class='comment'>// Process in decreasing finishing time order</span>
     <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>nindex</span> <span class='kw'>in</span> <span class='ident'>finish_order</span>.<span class='ident'>iter</span>().<span class='ident'>rev</span>() {
-        <span class='kw'>if</span> <span class='ident'>dfs</span>.<span class='ident'>discovered</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='ident'>nindex</span>.<span class='number'>0</span>) {
+        <span class='kw'>if</span> <span class='ident'>dfs</span>.<span class='ident'>discovered</span>.<span class='ident'>contains</span>(<span class='kw-2'>&amp;</span><span class='ident'>nindex</span>.<span class='ident'>index</span>()) {
             <span class='kw'>continue</span>;
         }
         <span class='comment'>// Move to the leader node.</span>
@@ -1875,7 +2058,9 @@
 <span class='doccomment'>/// Return **true** if the input graph contains a cycle.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// Treat the input graph as undirected.</span>
-<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>is_cyclic</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> <span class='kw'>where</span> <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>is_cyclic</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>edge_sets</span> <span class='op'>=</span> <span class='ident'>UnionFind</span>::<span class='ident'>new</span>(<span class='ident'>g</span>.<span class='ident'>node_count</span>());
     <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>edges</span>.<span class='ident'>iter</span>() {
@@ -1883,7 +2068,7 @@
 
         <span class='comment'>// union the two vertices of the edge</span>
         <span class='comment'>//  -- if they were already the same, then we have a cycle</span>
-        <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>edge_sets</span>.<span class='ident'>union</span>(<span class='ident'>a</span>.<span class='number'>0</span>, <span class='ident'>b</span>.<span class='number'>0</span>) {
+        <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>edge_sets</span>.<span class='ident'>union</span>(<span class='ident'>a</span>.<span class='ident'>index</span>(), <span class='ident'>b</span>.<span class='ident'>index</span>()) {
             <span class='kw'>return</span> <span class='boolval'>true</span>
         }
     }
@@ -1893,14 +2078,16 @@
 <span class='doccomment'>/// Return the number of connected components of the graph.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// For a directed graph, this is the *weakly* connected components.</span>
-<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>connected_components</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> <span class='kw'>where</span> <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>connected_components</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>vertex_sets</span> <span class='op'>=</span> <span class='ident'>UnionFind</span>::<span class='ident'>new</span>(<span class='ident'>g</span>.<span class='ident'>node_count</span>());
     <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>edges</span>.<span class='ident'>iter</span>() {
         <span class='kw'>let</span> (<span class='ident'>a</span>, <span class='ident'>b</span>) <span class='op'>=</span> (<span class='ident'>edge</span>.<span class='ident'>source</span>(), <span class='ident'>edge</span>.<span class='ident'>target</span>());
 
         <span class='comment'>// union the two vertices of the edge</span>
-        <span class='ident'>vertex_sets</span>.<span class='ident'>union</span>(<span class='ident'>a</span>.<span class='number'>0</span>, <span class='ident'>b</span>.<span class='number'>0</span>);
+        <span class='ident'>vertex_sets</span>.<span class='ident'>union</span>(<span class='ident'>a</span>.<span class='ident'>index</span>(), <span class='ident'>b</span>.<span class='ident'>index</span>());
     }
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>labels</span> <span class='op'>=</span> <span class='ident'>vertex_sets</span>.<span class='ident'>into_labeling</span>();
     <span class='ident'>labels</span>.<span class='ident'>sort</span>();
@@ -1919,13 +2106,14 @@
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// The resulting graph has all the vertices of the input graph (with identical node indices),</span>
 <span class='doccomment'>/// and **|V| - c** edges, where **c** is the number of connected components in **g**.</span>
-<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>min_spanning_tree</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Undirected</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>min_spanning_tree</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Undirected</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
     <span class='ident'>N</span>: <span class='ident'>Clone</span>,
     <span class='ident'>E</span>: <span class='ident'>Clone</span> <span class='op'>+</span> <span class='ident'>PartialOrd</span>,
     <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>if</span> <span class='ident'>g</span>.<span class='ident'>node_count</span>() <span class='op'>==</span> <span class='number'>0</span> {
-        <span class='kw'>return</span> <span class='ident'>Graph</span>::<span class='ident'>new_undirected</span>()
+        <span class='kw'>return</span> <span class='ident'>Graph</span>::<span class='ident'>with_capacity</span>(<span class='number'>0</span>, <span class='number'>0</span>)
     }
 
     <span class='comment'>// Create a mst skeleton by copying all nodes</span>
@@ -1954,7 +2142,7 @@
     <span class='comment'>//     add the edge.</span>
     <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>MinScored</span>(<span class='ident'>score</span>, (<span class='ident'>a</span>, <span class='ident'>b</span>))) <span class='op'>=</span> <span class='ident'>sort_edges</span>.<span class='ident'>pop</span>() {
         <span class='comment'>// check if the edge would connect two disjoint parts</span>
-        <span class='kw'>if</span> <span class='ident'>subgraphs</span>.<span class='ident'>union</span>(<span class='ident'>a</span>.<span class='number'>0</span>, <span class='ident'>b</span>.<span class='number'>0</span>) {
+        <span class='kw'>if</span> <span class='ident'>subgraphs</span>.<span class='ident'>union</span>(<span class='ident'>a</span>.<span class='ident'>index</span>(), <span class='ident'>b</span>.<span class='ident'>index</span>()) {
             <span class='ident'>mst</span>.<span class='ident'>add_edge</span>(<span class='ident'>a</span>, <span class='ident'>b</span>, <span class='ident'>score</span>);
         }
     }
@@ -1980,7 +2168,7 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     fn next(&amp;mut self) -&gt; Option&lt;NodeIndex&gt;
     {
         let k = self.dir as usize;
-        match self.edges.get(self.next.0) {
+        match self.edges.get(self.next.index()) {
             None =&gt; None,
             Some(edge) =&gt; {
                 self.next = edge.next[k];
@@ -1994,24 +2182,27 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
 <span class='doccomment'>/// Iterator over the neighbors of a node.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// Iterator element type is **NodeIndex**.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>],
-    <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span>; <span class='number'>2</span>],
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ix</span>: <span class='lifetime'>&#39;a</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
+{
+    <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>],
+    <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span>;
-    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&gt;</span>
+    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>;
+    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>
     {
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>0</span>].<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>0</span>].<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {}
             <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=&gt;</span> {
                 <span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>0</span>] <span class='op'>=</span> <span class='ident'>edge</span>.<span class='ident'>next</span>[<span class='number'>0</span>];
                 <span class='kw'>return</span> <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>.<span class='ident'>node</span>[<span class='number'>1</span>])
             }
         }
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>1</span>].<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>1</span>].<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=&gt;</span> {
                 <span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>1</span>] <span class='op'>=</span> <span class='ident'>edge</span>.<span class='ident'>next</span>[<span class='number'>1</span>];
@@ -2021,15 +2212,16 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     }
 }
 
-<span class='kw'>struct</span> <span class='ident'>EdgesMut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>],
-    <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span>,
+<span class='kw'>struct</span> <span class='ident'>EdgesMut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
+    <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>],
+    <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>,
     <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>EdgesMut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>EdgesMut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>], <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>], <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
     {
         <span class='ident'>EdgesMut</span>{
             <span class='ident'>edges</span>: <span class='ident'>edges</span>,
@@ -2039,14 +2231,15 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>EdgesMut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>EdgesMut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> (<span class='ident'>EdgeIndex</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>);
-    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>EdgeIndex</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>)<span class='op'>&gt;</span>
+    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> (<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>);
+    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>)<span class='op'>&gt;</span>
     {
         <span class='kw'>let</span> <span class='ident'>this_index</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>next</span>;
         <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>dir</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get_mut</span>(<span class='self'>self</span>.<span class='ident'>next</span>.<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get_mut</span>(<span class='self'>self</span>.<span class='ident'>next</span>.<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=&gt;</span> {
                 <span class='self'>self</span>.<span class='ident'>next</span> <span class='op'>=</span> <span class='ident'>edge</span>.<span class='ident'>next</span>[<span class='ident'>k</span>];
@@ -2067,18 +2260,19 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
 }
 
 <span class='doccomment'>/// Iterator over the edges of a node.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>: <span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
-    <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>],
-    <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span>; <span class='number'>2</span>],
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
+    <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>],
+    <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> (<span class='ident'>NodeIndex</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>E</span>);
-    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>NodeIndex</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>E</span>)<span class='op'>&gt;</span>
+    <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> (<span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>E</span>);
+    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>E</span>)<span class='op'>&gt;</span>
     {
         <span class='comment'>// First any outgoing edges</span>
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>0</span>].<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>0</span>].<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {}
             <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=&gt;</span> {
                 <span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>0</span>] <span class='op'>=</span> <span class='ident'>edge</span>.<span class='ident'>next</span>[<span class='number'>0</span>];
@@ -2086,7 +2280,7 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
             }
         }
         <span class='comment'>// Then incoming edges</span>
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>1</span>].<span class='number'>0</span>) {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>1</span>].<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=&gt;</span> {
                 <span class='self'>self</span>.<span class='ident'>next</span>[<span class='number'>1</span>] <span class='op'>=</span> <span class='ident'>edge</span>.<span class='ident'>next</span>[<span class='number'>1</span>];
@@ -2096,51 +2290,55 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>N</span>;
     <span class='doccomment'>/// Index the **Graph** by **NodeIndex** to access node weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the node doesn&#39;t exist.</span>
-    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>N</span> {
-        <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='ident'>index</span>.<span class='number'>0</span>].<span class='ident'>weight</span>
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>N</span> {
+        <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='ident'>index</span>.<span class='ident'>index</span>()].<span class='ident'>weight</span>
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>N</span>;
     <span class='doccomment'>/// Index the **Graph** by **NodeIndex** to access node weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the node doesn&#39;t exist.</span>
-    <span class='kw'>fn</span> <span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>NodeIndex</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>N</span> {
-        <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='ident'>index</span>.<span class='number'>0</span>].<span class='ident'>weight</span>
+    <span class='kw'>fn</span> <span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>N</span> {
+        <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='ident'>index</span>.<span class='ident'>index</span>()].<span class='ident'>weight</span>
     }
 
 }
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>E</span>;
     <span class='doccomment'>/// Index the **Graph** by **EdgeIndex** to access edge weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the edge doesn&#39;t exist.</span>
-    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>EdgeIndex</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>E</span> {
-        <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>edges</span>[<span class='ident'>index</span>.<span class='number'>0</span>].<span class='ident'>weight</span>
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>E</span> {
+        <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>edges</span>[<span class='ident'>index</span>.<span class='ident'>index</span>()].<span class='ident'>weight</span>
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>E</span>;
     <span class='doccomment'>/// Index the **Graph** by **EdgeIndex** to access edge weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the edge doesn&#39;t exist.</span>
-    <span class='kw'>fn</span> <span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>EdgeIndex</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>E</span> {
-        <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>edges</span>[<span class='ident'>index</span>.<span class='number'>0</span>].<span class='ident'>weight</span>
+    <span class='kw'>fn</span> <span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>E</span> {
+        <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>edges</span>[<span class='ident'>index</span>.<span class='ident'>index</span>()].<span class='ident'>weight</span>
     }
 }
 </pre>

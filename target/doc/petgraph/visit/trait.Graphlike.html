@@ -44,7 +44,7 @@
 <h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>visit</a>::<wbr><a class='trait' href=''>Graphlike</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-6126' href='../../src/petgraph/visit.rs.html#30-32'>[src]</a></span></h1>
+        </span><a id='src-6812' href='../../src/petgraph/visit.rs.html#34-36'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Graphlike {
     type NodeId: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>;
 }</pre>
@@ -53,7 +53,7 @@
         <h3 id='associatedtype.NodeId' class='method'><a class='stability Unmarked' title='No stability level'></a><code>type NodeId: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a></code></h3></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
-    <li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;N, E, Ty&gt; <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a> for <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty&gt;</code></li>
+    <li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;N, E, Ty, Ix&gt; <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a> for <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></li>
 <li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;N: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, E&gt; <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a> for <a class='struct' href='../../petgraph/graphmap/struct.GraphMap.html' title='petgraph::graphmap::GraphMap'>GraphMap</a>&lt;N, E&gt;</code></li>
 <li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'a, V: <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a>&gt; <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a> for <a class='struct' href='../../petgraph/visit/struct.AsUndirected.html' title='petgraph::visit::AsUndirected'>AsUndirected</a>&lt;&amp;'a V&gt;</code></li>
 <li><a class='stability Unmarked' title='No stability level'></a><code>impl&lt;'a, V: <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a>&gt; <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a> for <a class='struct' href='../../petgraph/visit/struct.Reversed.html' title='petgraph::visit::Reversed'>Reversed</a>&lt;&amp;'a V&gt;</code></li>
