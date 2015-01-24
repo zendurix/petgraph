@@ -35,7 +35,7 @@ pub struct GraphMap<N: Eq + Hash<Hasher>, E> {
     edges: HashMap<(N, N), E>,
 }
 
-impl<N: Eq + Hash<Hasher> + fmt::Show, E: fmt::Show> fmt::Show for GraphMap<N, E>
+impl<N: Eq + Hash<Hasher> + fmt::Debug, E: fmt::Debug> fmt::Debug for GraphMap<N, E>
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.nodes.fmt(f)
@@ -198,7 +198,7 @@ impl<N, E> GraphMap<N, E> where N: NodeTrait
     /// Iterator element type is **N**.
     pub fn nodes<'a>(&'a self) -> Nodes<'a, N>
     {
-        Nodes{iter: self.nodes.keys().map(copy as fn(&N) -> N)}
+        Nodes{iter: self.nodes.keys().map(copy)}
     }
 
     /// Return an iterator over the nodes that are connected with **from** by edges.
@@ -212,7 +212,7 @@ impl<N, E> GraphMap<N, E> where N: NodeTrait
             match self.nodes.get(&from) {
                 Some(neigh) => neigh.iter(),
                 None => [].iter(),
-            }.map(copy as fn(&N) -> N)
+            }.map(copy)
         }
     }
 
@@ -316,7 +316,7 @@ impl<N, E> Index<(N, N)> for GraphMap<N, E> where N: NodeTrait
     /// Index **GraphMap** by node pairs to access edge weights.
     fn index(&self, index: &(N, N)) -> &E
     {
-        self.edge_weight(index.0, index.1).unwrap()
+        self.edge_weight(index.0, index.1).expect("GraphMap::index: no such edge")
     }
 }
 
@@ -326,6 +326,6 @@ impl<N, E> IndexMut<(N, N)> for GraphMap<N, E> where N: NodeTrait
     /// Index **GraphMap** by node pairs to access edge weights.
     fn index_mut(&mut self, index: &(N, N)) -> &mut E
     {
-        self.edge_weight_mut(index.0, index.1).unwrap()
+        self.edge_weight_mut(index.0, index.1).expect("GraphMap::index: no such edge")
     }
 }

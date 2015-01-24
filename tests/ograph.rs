@@ -11,6 +11,7 @@ use petgraph::{
     DfsIter,
     Incoming,
     Outgoing,
+    Directed,
     Undirected,
 };
 
@@ -386,7 +387,7 @@ fn toposort() {
 
 #[test]
 fn scc() {
-    let n = NodeIndex;
+    let n = NodeIndex::new;
     let mut gr = Graph::new();
     gr.add_node(0);
     gr.add_node(1);
@@ -449,7 +450,7 @@ fn scc() {
 #[test]
 fn connected_comp()
 {
-    let n = NodeIndex;
+    let n = NodeIndex::new;
     let mut gr = Graph::new();
     gr.add_node(0);
     gr.add_node(1);
@@ -493,4 +494,20 @@ fn oob_index()
     let b = gr.add_node(1);
     gr.remove_node(a);
     gr[b];
+}
+
+#[test]
+fn usize_index()
+{
+    let mut gr = Graph::<_, _, Directed, usize>::with_capacity(0, 0);
+    let a = gr.add_node(0);
+    let b = gr.add_node(1);
+    let e = gr.add_edge(a, b, 1.2);
+    let mut dfs = Dfs::new(&gr, a);
+    while let Some(nx) = dfs.next(&gr) {
+        gr[nx] += 1;
+    }
+    assert_eq!(gr[a], 1);
+    assert_eq!(gr[b], 2);
+    assert_eq!(gr[e], 1.2);
 }
