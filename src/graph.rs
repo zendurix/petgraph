@@ -23,6 +23,9 @@ use super::visit::{
     VisitMap,
 };
 
+pub use super::isomorphism::is_isomorphic;
+
+
 /// The default integer type for node and edge indices in **Graph**.
 /// **u32** is the default to reduce the size of the graph's data and improve
 /// performance in the common case.
@@ -74,7 +77,7 @@ impl<Ix: IndexType = DefIndex> NodeIndex<Ix>
     }
 
     #[inline]
-    fn end() -> Self
+    pub fn end() -> Self
     {
         NodeIndex(IndexType::max())
     }
@@ -276,6 +279,13 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     pub fn edge_count(&self) -> usize
     {
         self.edges.len()
+    }
+
+    /// Remove all nodes and edges
+    pub fn clear(&mut self)
+    {
+        self.nodes.clear();
+        self.edges.clear();
     }
 
     /// Return whether the graph has directed edges or not.
@@ -958,7 +968,6 @@ pub fn min_spanning_tree<N, E, Ty, Ix>(g: &Graph<N, E, Ty, Ix>) -> Graph<N, E, U
     debug_assert!(mst.edge_count() < g.node_count());
     mst
 }
-
 /*
 /// Iterator over the neighbors of a node.
 ///
