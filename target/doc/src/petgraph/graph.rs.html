@@ -1190,6 +1190,15 @@
 <span id="1148">1148</span>
 <span id="1149">1149</span>
 <span id="1150">1150</span>
+<span id="1151">1151</span>
+<span id="1152">1152</span>
+<span id="1153">1153</span>
+<span id="1154">1154</span>
+<span id="1155">1155</span>
+<span id="1156">1156</span>
+<span id="1157">1157</span>
+<span id="1158">1158</span>
+<span id="1159">1159</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! **Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.</span>
 
@@ -1215,6 +1224,9 @@
     <span class='ident'>Dfs</span>,
     <span class='ident'>VisitMap</span>,
 };
+
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>isomorphism</span>::<span class='ident'>is_isomorphic</span>;
+
 
 <span class='doccomment'>/// The default integer type for node and edge indices in **Graph**.</span>
 <span class='doccomment'>/// **u32** is the default to reduce the size of the graph&#39;s data and improve</span>
@@ -1267,7 +1279,7 @@
     }
 
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span>
     {
         <span class='ident'>NodeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>max</span>())
     }
@@ -1469,6 +1481,13 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edge_count</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span>
     {
         <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>len</span>()
+    }
+
+    <span class='doccomment'>/// Remove all nodes and edges</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>clear</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>)
+    {
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>clear</span>();
+        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>clear</span>();
     }
 
     <span class='doccomment'>/// Return whether the graph has directed edges or not.</span>
@@ -2151,7 +2170,6 @@
     <span class='macro'>debug_assert</span><span class='macro'>!</span>(<span class='ident'>mst</span>.<span class='ident'>edge_count</span>() <span class='op'>&lt;</span> <span class='ident'>g</span>.<span class='ident'>node_count</span>());
     <span class='ident'>mst</span>
 }
-
 <span class='comment'>/*
 /// Iterator over the neighbors of a node.
 ///

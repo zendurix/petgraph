@@ -709,7 +709,7 @@
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// **Note:** The algorithm may not behave correctly if nodes are removed</span>
 <span class='doccomment'>/// during iteration. It may not necessarily visit added nodes or edges.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Dfs</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> {
     <span class='kw'>pub</span> <span class='ident'>stack</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>,
     <span class='kw'>pub</span> <span class='ident'>discovered</span>: <span class='ident'>VM</span>,
