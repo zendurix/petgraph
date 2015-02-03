@@ -15,15 +15,18 @@ use petgraph::{
     Undirected,
 };
 
-use petgraph::graph::{
+use petgraph::algo::{
     min_spanning_tree,
     is_cyclic,
-    NodeIndex,
 };
+
+use petgraph::graph::NodeIndex;
 
 use petgraph::visit::{
     Reversed,
     AsUndirected,
+};
+use petgraph::algo::{
     dijkstra,
 };
 
@@ -370,7 +373,7 @@ fn toposort() {
     gr.add_edge(h, j, 3.);
     gr.add_edge(i, j, 1.);
 
-    let order = petgraph::graph::toposort(&gr);
+    let order = petgraph::algo::toposort(&gr);
     println!("{:?}", order);
     assert_eq!(order.len(), gr.node_count());
 
@@ -410,7 +413,7 @@ fn scc() {
     gr.add_edge(n(7), n(4), ());
     gr.add_edge(n(4), n(1), ());
 
-    let mut sccs = petgraph::graph::scc(&gr);
+    let mut sccs = petgraph::algo::scc(&gr);
     assert_eq!(sccs.iter().map(|v| v.len()).sum(), gr.node_count());
 
     let scc_answer = vec![
@@ -433,7 +436,7 @@ fn scc() {
     let ed = hr.find_edge(n(6), n(8)).unwrap();
     assert!(hr.remove_edge(ed).is_some());
 
-    let mut sccs = petgraph::graph::scc(&hr);
+    let mut sccs = petgraph::algo::scc(&hr);
 
     let scc_undir_answer = vec![
         vec![n(0), n(3), n(6)],
@@ -472,17 +475,17 @@ fn connected_comp()
     gr.add_edge(n(1), n(7), ());
     gr.add_edge(n(7), n(4), ());
     gr.add_edge(n(4), n(1), ());
-    assert_eq!(petgraph::graph::connected_components(&gr), 1);
+    assert_eq!(petgraph::algo::connected_components(&gr), 1);
 
     gr.add_node(9);
     gr.add_node(10);
-    assert_eq!(petgraph::graph::connected_components(&gr), 3);
+    assert_eq!(petgraph::algo::connected_components(&gr), 3);
 
     gr.add_edge(n(9), n(10), ());
-    assert_eq!(petgraph::graph::connected_components(&gr), 2);
+    assert_eq!(petgraph::algo::connected_components(&gr), 2);
 
     let gr = gr.into_edge_type::<Undirected>();
-    assert_eq!(petgraph::graph::connected_components(&gr), 2);
+    assert_eq!(petgraph::algo::connected_components(&gr), 2);
 }
 
 #[should_fail]

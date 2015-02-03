@@ -1,3 +1,5 @@
+use std::collections::Bitv;
+
 use super::{
     EdgeType,
     Incoming,
@@ -8,8 +10,10 @@ use super::graph::{
     NodeIndex,
 };
 
+use super::visit::HasAdjacencyMatrix;
+
 #[derive(Debug)]
-struct Vf2State<Ix, Ty> {
+struct Vf2State<Ty, Ix> {
     /// The current mapping M(s) of nodes from G0 → G1 and G1 → G0,
     /// NodeIndex::end() for no mapping.
     mapping: Vec<NodeIndex<Ix>>,
@@ -22,17 +26,26 @@ struct Vf2State<Ix, Ty> {
     /// have an edge from them into the mapping.
     /// Unused if graph is undirected -- it's identical with out in that case.
     ins: Vec<usize>,
+    out_size: usize,
+    ins_size: usize,
+    adjacency_matrix: Bitv,
     generation: usize,
 }
 
-impl<Ix, Ty> Vf2State<Ix, Ty> where Ix: IndexType, Ty: EdgeType,
+impl<Ty, Ix> Vf2State<Ty, Ix> where
+    Ty: EdgeType,
+    Ix: IndexType,
 {
-    pub fn new(c0: usize) -> Self
+    pub fn new<N, E>(g: &Graph<N, E, Ty, Ix>) -> Self
     {
+        let c0 = g.node_count();
         let mut state = Vf2State {
             mapping: Vec::with_capacity(c0),
             out: Vec::with_capacity(c0),
-            ins: Vec::with_capacity(c0 * <Ty as EdgeType>::is_directed() as usize),
+            ins: Vec::with_capacity(c0 * (g.is_directed() as usize)),
+            out_size: 0,
+            ins_size: 0,
+            adjacency_matrix: g.adjacency_matrix(),
             generation: 0,
         };
         for _ in (0..c0) {
@@ -65,6 +78,7 @@ impl<Ix, Ty> Vf2State<Ix, Ty> where Ix: IndexType, Ty: EdgeType,
             if self.out[ix.index()] == 0 {
                 self.out[ix.index()] = s;
             }
+            self.out_size += 1;
         }
         if g.is_directed() {
             for ix in g.neighbors_directed(from, Incoming) {
@@ -72,6 +86,7 @@ impl<Ix, Ty> Vf2State<Ix, Ty> where Ix: IndexType, Ty: EdgeType,
                     self.ins[ix.index()] = s;
                 }
             }
+            self.ins_size += 1;
         }
     }
 
@@ -90,6 +105,7 @@ impl<Ix, Ty> Vf2State<Ix, Ty> where Ix: IndexType, Ty: EdgeType,
             if self.out[ix.index()] == s {
                 self.out[ix.index()] = 0;
             }
+            self.out_size -= 1;
         }
         if g.is_directed() {
             for ix in g.neighbors_directed(from, Incoming) {
@@ -97,6 +113,7 @@ impl<Ix, Ty> Vf2State<Ix, Ty> where Ix: IndexType, Ty: EdgeType,
                     self.ins[ix.index()] = 0;
                 }
             }
+            self.ins_size -= 1;
         }
     }
 
@@ -156,7 +173,7 @@ pub fn is_isomorphic<N, E, Ix, Ty>(g0: &Graph<N, E, Ty, Ix>,
     }
 
     /// Return Some(bool) if isomorphism is decided, else None.
-    fn try_match<N, E, Ix, Ty>(st: &mut [Vf2State<Ix, Ty>; 2],
+    fn try_match<N, E, Ix, Ty>(st: &mut [Vf2State<Ty, Ix>; 2],
                                g0: &Graph<N, E, Ty, Ix>,
                                g1: &Graph<N, E, Ty, Ix>) -> Option<bool> where
         Ix: IndexType,
@@ -264,6 +281,13 @@ pub fn is_isomorphic<N, E, Ix, Ty>(g0: &Graph<N, E, Ty, Ix>,
             // Check that every neighbor of nx is mapped to a neighbor of mx,
             // then check the reverse, from mx to nx. Check that they have the same
             // count of edges.
+            //
+            // Note: We want to check the lookahead measures here if we can,
+            // R_out: Equal for G0, G1: Card(Succ(G, n) ^ Tout); for both Succ and Pred
+            // R_in: Same with Tin
+            // R_new: Equal for G0, G1: Ñ n Pred(G, n); both Succ and Pred,
+            //      Ñ is G0 - M - Tin - Tout
+            // last attempt to add these did not speed up any of the testcases
             let mut succ_count = [0, 0];
             for j in graph_indices.clone() {
                 for n_neigh in g[j].neighbors(nodes[j]) {
@@ -272,7 +296,7 @@ pub fn is_isomorphic<N, E, Ix, Ty>(g0: &Graph<N, E, Ty, Ix>,
                     if m_neigh == end {
                         continue;
                     }
-                    let has_edge = g[1-j].find_edge(nodes[1-j], m_neigh).is_some();
+                    let has_edge = g[1-j].is_adjacent(&st[1-j].adjacency_matrix, nodes[1-j], m_neigh);
                     if !has_edge {
                         continue 'candidates;
                     }
@@ -292,7 +316,7 @@ pub fn is_isomorphic<N, E, Ix, Ty>(g0: &Graph<N, E, Ty, Ix>,
                         if m_neigh == end {
                             continue;
                         }
-                        let has_edge = g[1-j].find_edge(m_neigh, nodes[1-j]).is_some();
+                        let has_edge = g[1-j].is_adjacent(&st[1-j].adjacency_matrix, m_neigh, nodes[1-j]);
                         if !has_edge {
                             continue 'candidates;
                         }
@@ -303,40 +327,21 @@ pub fn is_isomorphic<N, E, Ix, Ty>(g0: &Graph<N, E, Ty, Ix>,
                 }
             }
 
-            // Check cardinalities of open sets, important to prune
-            // the search tree.
-            //
-            // counts in Tin/Tout
-            let t0in = st[0].ins.iter().filter(|&&x| x > 0).count();
-            let t1in = st[1].ins.iter().filter(|&&x| x > 0).count();
-            let t0out = st[0].out.iter().filter(|&&x| x > 0).count();
-            let t1out = st[1].out.iter().filter(|&&x| x > 0).count();
-            if t0in != t1in || t0out != t1out {
-                continue 'candidates;
-            }
-
-            // counts in N0 - M0 - Tin - Tout
-            // equal to count in N - ins - outs
-            let n0 = st[0].ins.iter().zip(st[0].out.iter())
-                        .filter(|&(&a, &b)| a == 0 && b == 0)
-                        .count();
-            let n1 = st[1].ins.iter().zip(st[1].out.iter())
-                        .filter(|&(&a, &b)| a == 0 && b == 0)
-                        .count();
-                        
-            if n0 != n1 {
-                continue 'candidates;
-            }
-
             // Add mapping nx <-> mx to the state
             for j in graph_indices.clone() {
                 st[j].push_mapping(nodes[j], nodes[1-j], g[j]);
             }
 
-            // Recurse
-            match try_match(st, g0, g1) {
-                None => {}
-                result => return result,
+            // Check counts in Tin/Tout
+            if st[0].out_size == st[0].out_size ||
+               st[1].ins_size == st[1].ins_size
+            {
+
+                // Recurse
+                match try_match(st, g0, g1) {
+                    None => {}
+                    result => return result,
+                }
             }
 
             // Restore state.
@@ -346,8 +351,7 @@ pub fn is_isomorphic<N, E, Ix, Ty>(g0: &Graph<N, E, Ty, Ix>,
         }
         None
     }
-    let mut st = [Vf2State::new(g0.node_count()),
-                  Vf2State::new(g1.node_count())];
+    let mut st = [Vf2State::new(g0), Vf2State::new(g1)];
     try_match(&mut st, g0, g1).unwrap_or(false)
 }
 

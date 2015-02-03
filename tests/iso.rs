@@ -1,3 +1,4 @@
+extern crate test;
 extern crate petgraph;
 
 use std::time::Duration;
@@ -38,6 +39,33 @@ const PETERSEN_B: &'static str = "
  0 0 1 1 0 0 0 0 1 0 
  0 0 0 0 1 1 0 1 0 0 
  1 0 1 0 1 0 0 0 0 0
+";
+
+/// An almost full set, isomorphic
+const FULL_A: &'static str = "
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 0 1 1 1 0 1 
+ 1 1 1 1 1 1 1 1 1 1
+";
+
+const FULL_B: &'static str = "
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 0 1 1 1 0 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1 
+ 1 1 1 1 1 1 1 1 1 1
 ";
 
 /// Praust A and B are not isomorphic
@@ -162,6 +190,18 @@ const G3_2: &'static str = "
 1 1 0
 ";
 
+// Non-isomorphic due to selfloop difference
+const S1: &'static str = "
+1 1 1
+1 0 1
+1 0 0
+";
+const S2: &'static str = "
+1 1 1
+0 1 1
+1 0 0
+";
+
 /// Parse a text adjacency matrix format into a directed graph
 fn parse_graph<Ty: EdgeType = Directed>(s: &str) -> Graph<(), (), Ty>
 {
@@ -170,7 +210,7 @@ fn parse_graph<Ty: EdgeType = Directed>(s: &str) -> Graph<(), (), Ty>
     let mut lines = s.lines().filter(|l| !l.is_empty());
     for (row, line) in lines.enumerate() {
         for (col, word) in line.words().enumerate() {
-            let has_edge = word.parse::<i32>().expect("Failed to parse matrix cell");
+            let has_edge = word.parse::<i32>().unwrap();
             assert!(has_edge == 0 || has_edge == 1);
             if has_edge == 0 {
                 continue;
@@ -216,12 +256,14 @@ fn petersen_iso()
     // 0 => 0, 1 => 3, 2 => 1, 3 => 4, 5 => 2, 6 => 5, 7 => 7, 8 => 6, 9 => 8, 4 => 9
     let peta = str_to_digraph(PETERSEN_A);
     let petb = str_to_digraph(PETERSEN_B);
+    /*
     println!("{:?}", peta);
     graph_to_ad_matrix(&peta);
     println!("");
     graph_to_ad_matrix(&petb);
+    */
 
-    assert!(petgraph::graph::is_isomorphic(&peta, &petb));
+    assert!(petgraph::algo::is_isomorphic(&peta, &petb));
 }
 
 #[test]
@@ -231,12 +273,17 @@ fn petersen_undir_iso()
     // 0 => 0, 1 => 3, 2 => 1, 3 => 4, 5 => 2, 6 => 5, 7 => 7, 8 => 6, 9 => 8, 4 => 9
     let peta = str_to_digraph(PETERSEN_A);
     let petb = str_to_digraph(PETERSEN_B);
-    println!("{:?}", peta);
-    graph_to_ad_matrix(&peta);
-    println!("");
-    graph_to_ad_matrix(&petb);
 
-    assert!(petgraph::graph::is_isomorphic(&peta, &petb));
+    assert!(petgraph::algo::is_isomorphic(&peta, &petb));
+}
+
+#[test]
+fn full_iso()
+{
+    let a = str_to_graph(FULL_A);
+    let b = str_to_graph(FULL_B);
+
+    assert!(petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -244,15 +291,8 @@ fn praust_dir_no_iso()
 {
     let a = str_to_digraph(PRAUST_A);
     let b = str_to_digraph(PRAUST_B);
-    println!("{:?}", a);
-    graph_to_ad_matrix(&a);
-    println!("");
-    graph_to_ad_matrix(&b);
 
-    let t = Duration::span(|| {
-        assert!(!petgraph::graph::is_isomorphic(&a, &b));
-    });
-    println!("{:?}", t);
+    assert!(!petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -260,15 +300,53 @@ fn praust_undir_no_iso()
 {
     let a = str_to_graph(PRAUST_A);
     let b = str_to_graph(PRAUST_B);
-    println!("{:?}", a);
-    graph_to_ad_matrix(&a);
-    println!("");
-    graph_to_ad_matrix(&b);
 
-    let t = Duration::span(|| {
-        assert!(!petgraph::graph::is_isomorphic(&a, &b));
-    });
-    println!("{:?}", t);
+    assert!(!petgraph::algo::is_isomorphic(&a, &b));
+}
+
+#[bench]
+fn petersen_iso_bench(bench: &mut test::Bencher)
+{
+    let a = str_to_digraph(PETERSEN_A);
+    let b = str_to_digraph(PETERSEN_B);
+
+    bench.iter(|| petgraph::algo::is_isomorphic(&a, &b));
+}
+
+#[bench]
+fn petersen_undir_iso_bench(bench: &mut test::Bencher)
+{
+    let a = str_to_graph(PETERSEN_A);
+    let b = str_to_graph(PETERSEN_B);
+
+    bench.iter(|| petgraph::algo::is_isomorphic(&a, &b));
+}
+
+#[bench]
+fn full_iso_bench(bench: &mut test::Bencher)
+{
+    let a = str_to_graph(FULL_A);
+    let b = str_to_graph(FULL_B);
+
+    bench.iter(|| petgraph::algo::is_isomorphic(&a, &b));
+}
+
+#[bench]
+fn praust_dir_no_iso_bench(bench: &mut test::Bencher)
+{
+    let a = str_to_digraph(PRAUST_A);
+    let b = str_to_digraph(PRAUST_B);
+
+    bench.iter(|| petgraph::algo::is_isomorphic(&a, &b));
+}
+
+#[bench]
+fn praust_undir_no_iso_bench(bench: &mut test::Bencher)
+{
+    let a = str_to_graph(PRAUST_A);
+    let b = str_to_graph(PRAUST_B);
+
+    bench.iter(|| petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -277,7 +355,7 @@ fn coxeter_di_iso()
     // The correct isomorphism is
     let a = str_to_digraph(COXETER_A);
     let b = str_to_digraph(COXETER_B);
-    assert!(petgraph::graph::is_isomorphic(&a, &b));
+    assert!(petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -286,7 +364,7 @@ fn coxeter_undi_iso()
     // The correct isomorphism is
     let a = str_to_graph(COXETER_A);
     let b = str_to_graph(COXETER_B);
-    assert!(petgraph::graph::is_isomorphic(&a, &b));
+    assert!(petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -294,7 +372,7 @@ fn g14_dir_not_iso()
 {
     let a = str_to_digraph(G1D);
     let b = str_to_digraph(G4D);
-    assert!(!petgraph::graph::is_isomorphic(&a, &b));
+    assert!(!petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -302,7 +380,7 @@ fn g14_undir_not_iso()
 {
     let a = str_to_digraph(G1U);
     let b = str_to_digraph(G4U);
-    assert!(!petgraph::graph::is_isomorphic(&a, &b));
+    assert!(!petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -310,7 +388,7 @@ fn g12_undir_iso()
 {
     let a = str_to_digraph(G1U);
     let b = str_to_digraph(G2U);
-    assert!(petgraph::graph::is_isomorphic(&a, &b));
+    assert!(petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -318,7 +396,7 @@ fn g3_not_iso()
 {
     let a = str_to_digraph(G3_1);
     let b = str_to_digraph(G3_2);
-    assert!(!petgraph::graph::is_isomorphic(&a, &b));
+    assert!(!petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -328,7 +406,17 @@ fn g8_not_iso()
     let b = str_to_digraph(G8_2);
     assert_eq!(a.edge_count(), b.edge_count());
     assert_eq!(a.node_count(), b.node_count());
-    assert!(!petgraph::graph::is_isomorphic(&a, &b));
+    assert!(!petgraph::algo::is_isomorphic(&a, &b));
+}
+
+#[test]
+fn s12_not_iso()
+{
+    let a = str_to_digraph(S1);
+    let b = str_to_digraph(S2);
+    assert_eq!(a.edge_count(), b.edge_count());
+    assert_eq!(a.node_count(), b.node_count());
+    assert!(!petgraph::algo::is_isomorphic(&a, &b));
 }
 
 #[test]
@@ -336,23 +424,23 @@ fn iso1()
 {
     let mut g0 = Graph::<_, ()>::new();
     let mut g1 = Graph::<_, ()>::new();
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
 
     // very simple cases
     let a0 = g0.add_node(0);
     let a1 = g1.add_node(0);
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
     let b0 = g0.add_node(1);
     let b1 = g1.add_node(1);
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
     let c0 = g0.add_node(2);
-    assert!(!petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(!petgraph::algo::is_isomorphic(&g0, &g1));
     let c1 = g1.add_node(2);
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
     g0.add_edge(a0, b0, ());
-    assert!(!petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(!petgraph::algo::is_isomorphic(&g0, &g1));
     g1.add_edge(a1, b1, ());
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
 }
 
 #[test]
@@ -369,7 +457,7 @@ fn iso2()
     let c1 = g1.add_node(2);
     g0.add_edge(a0, b0, ());
     g1.add_edge(c1, b1, ());
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
     // a -> b
     // a -> c
     // vs.
@@ -377,7 +465,7 @@ fn iso2()
     // c -> a
     g0.add_edge(a0, c0, ());
     g1.add_edge(c1, a1, ());
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
 
     // add
     // b -> c
@@ -386,12 +474,12 @@ fn iso2()
 
     let e0 = g0.add_edge(b0, c0, ());
     let e1 = g1.add_edge(b1, a1, ());
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
     let d0 = g0.add_node(3);
     let d1 = g1.add_node(3);
     let e0 = g0.add_node(4);
     let e1 = g1.add_node(4);
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
     // add
     // b -> e -> d
     // vs
@@ -400,7 +488,7 @@ fn iso2()
     g0.add_edge(e0, d0, ());
     g1.add_edge(b1, d1, ());
     g1.add_edge(d1, e1, ());
-    assert!(petgraph::graph::is_isomorphic(&g0, &g1));
+    assert!(petgraph::algo::is_isomorphic(&g0, &g1));
 }
 
 

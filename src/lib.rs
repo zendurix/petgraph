@@ -1,4 +1,4 @@
-#![allow(unstable)]
+#![feature(core, hash, std_misc)]
 
 //! **petgraph** is a graph data structure library.
 //!
@@ -25,12 +25,15 @@ pub use visit::{
 };
 
 mod scored;
+pub mod algo;
 pub mod graphmap;
 pub mod graph;
 pub mod visit;
 
 pub mod unionfind;
 mod isomorphism;
+mod dijkstra;
+mod traits_graph;
 
 // Index into the NodeIndex and EdgeIndex arrays
 /// Edge direction
@@ -56,10 +59,12 @@ pub trait EdgeType {
 }
 
 impl EdgeType for Directed {
+    #[inline]
     fn is_directed() -> bool { true }
 }
 
 impl EdgeType for Undirected {
+    #[inline]
     fn is_directed() -> bool { false }
 }
 

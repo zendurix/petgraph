@@ -1,20 +1,12 @@
 //! Graph visitor algorithms.
 //!
 
-use std::default::Default;
-use std::ops::{Add};
 use std::collections::{
-    BinaryHeap,
     HashSet,
-    HashMap,
     BitvSet,
     RingBuf,
 };
 use std::collections::hash_map::Hasher;
-use std::collections::hash_map::Entry::{
-    Occupied,
-    Vacant,
-};
 use std::hash::Hash;
 
 use super::{
@@ -24,7 +16,6 @@ use super::{
     EdgeDirection,
     Graph,
     GraphMap,
-    MinScored,
 };
 
 use graph::{
@@ -93,7 +84,7 @@ impl<'a, 'b, N, E, Ty, Ix> NeighborIter<'a, graph::NodeIndex<Ix>> for Reversed<&
 pub trait VisitMap<N> {
     /// Return **true** if the value is not already present.
     fn visit(&mut self, N) -> bool;
-    fn contains(&self, &N) -> bool;
+    fn is_visited(&self, &N) -> bool;
 }
 
 impl<Ix> VisitMap<graph::NodeIndex<Ix>> for BitvSet where
@@ -102,7 +93,7 @@ impl<Ix> VisitMap<graph::NodeIndex<Ix>> for BitvSet where
     fn visit(&mut self, x: graph::NodeIndex<Ix>) -> bool {
         self.insert(x.index())
     }
-    fn contains(&self, x: &graph::NodeIndex<Ix>) -> bool {
+    fn is_visited(&self, x: &graph::NodeIndex<Ix>) -> bool {
         self.contains(&x.index())
     }
 }
@@ -111,7 +102,7 @@ impl<N: Eq + Hash<Hasher>> VisitMap<N> for HashSet<N> {
     fn visit(&mut self, x: N) -> bool {
         self.insert(x)
     }
-    fn contains(&self, x: &N) -> bool {
+    fn is_visited(&self, x: &N) -> bool {
         self.contains(x)
     }
 }
@@ -172,6 +163,13 @@ impl<'a, V: Visitable> Visitable for Reversed<&'a V>
     fn visit_map(&self) -> <V as Visitable>::Map {
         self.0.visit_map()
     }
+}
+
+/// Create or access the adjacency matrix of a graph
+pub trait HasAdjacencyMatrix : Graphlike {
+    type Map;
+    fn adjacency_matrix(&self) -> Self::Map;
+    fn is_adjacent(&self, matrix: &Self::Map, a: Self::NodeId, b: Self::NodeId) -> bool;
 }
 
 /// A depth first search (DFS) of a graph.
@@ -244,7 +242,6 @@ impl<N, VM> Dfs<N, VM> where
     /// Return the next node in the dfs, or **None** if the traversal is done.
     pub fn next<'a, G>(&mut self, graph: &'a G) -> Option<N> where
         G: for<'b> NeighborIter<'b, N>,
-        <G as NeighborIter<'a, N>>::Iter: Iterator<Item=N>,
     {
         while let Some(node) = self.stack.pop() {
             for succ in graph.neighbors(node.clone()) {
@@ -283,7 +280,6 @@ impl<'a, G: Visitable, VM> Iterator for DfsIter<'a, G, G::NodeId, VM> where
     G: 'a,
     VM: VisitMap<G::NodeId>,
     G: for<'b> NeighborIter<'b, G::NodeId>,
-    <G as NeighborIter<'a, G::NodeId>>::Iter: Iterator<Item=G::NodeId>,
 {
     type Item = G::NodeId;
     fn next(&mut self) -> Option<G::NodeId>
@@ -348,7 +344,6 @@ impl<N, VM> Bfs<N, VM> where
     /// Return the next node in the dfs, or **None** if the traversal is done.
     pub fn next<'a, G>(&mut self, graph: &'a G) -> Option<N> where
         G: for<'b> NeighborIter<'b, N>,
-        <G as NeighborIter<'a, N>>::Iter: Iterator<Item=N>,
     {
         while let Some(node) = self.stack.pop_front() {
             for succ in graph.neighbors(node.clone()) {
@@ -410,61 +405,10 @@ impl<'a, G, N, VM> Iterator for BfsIter<'a, G, N, VM> where
     N: Clone,
     VM: VisitMap<N>,
     G: for<'b> NeighborIter<'b, N>,
-    <G as NeighborIter<'a, N>>::Iter: Iterator<Item=N>,
 {
     type Item = N;
     fn next(&mut self) -> Option<N>
     {
         self.bfs.next(self.graph)
     }
-}
-
-/// Dijkstra's shortest path algorithm.
-pub fn dijkstra<'a, G, N, K, F, Edges>(graph: &'a G,
-                                       start: N,
-                                       goal: Option<N>,
-                                       mut edges: F) -> HashMap<N, K> where
-    G: Visitable<NodeId=N>,
-    N: Clone + Eq + Hash<Hasher>,
-    K: Default + Add<Output=K> + Copy + PartialOrd,
-    F: FnMut(&'a G, N) -> Edges,
-    Edges: Iterator<Item=(N, K)>,
-    <G as Visitable>::Map: VisitMap<N>,
-{
-    let mut visited = graph.visit_map();
-    let mut scores = HashMap::new();
-    let mut predecessor = HashMap::new();
-    let mut visit_next = BinaryHeap::new();
-    let zero_score: K = Default::default();
-    scores.insert(start.clone(), zero_score);
-    visit_next.push(MinScored(zero_score, start));
-    while let Some(MinScored(node_score, node)) = visit_next.pop() {
-        if visited.contains(&node) {
-            continue
-        }
-        for (next, edge) in edges(graph, node.clone()) {
-            if visited.contains(&next) {
-                continue
-            }
-            let mut next_score = node_score + edge;
-            match scores.entry(next.clone()) {
-                Occupied(ent) => if next_score < *ent.get() {
-                    *ent.into_mut() = next_score;
-                    predecessor.insert(next.clone(), node.clone());
-                } else {
-                    next_score = *ent.get();
-                },
-                Vacant(ent) => {
-                    ent.insert(next_score);
-                    predecessor.insert(next.clone(), node.clone());
-                }
-            }
-            visit_next.push(MinScored(next_score, next));
-        }
-        if goal.as_ref() == Some(&node) {
-            break
-        }
-        visited.visit(node);
-    }
-    scores
 }
