@@ -167,8 +167,13 @@
 <span id="125">125</span>
 <span id="126">126</span>
 <span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
 </pre><pre class='rust '>
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>allow</span>(<span class='ident'>unstable</span>)]</span>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>core</span>, <span class='ident'>hash</span>, <span class='ident'>std_misc</span>)]</span>
 
 <span class='doccomment'>//! **petgraph** is a graph data structure library.</span>
 <span class='doccomment'>//!</span>
@@ -195,12 +200,15 @@
 };
 
 <span class='kw'>mod</span> <span class='ident'>scored</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>algo</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>graphmap</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>graph</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>visit</span>;
 
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>unionfind</span>;
 <span class='kw'>mod</span> <span class='ident'>isomorphism</span>;
+<span class='kw'>mod</span> <span class='ident'>dijkstra</span>;
+<span class='kw'>mod</span> <span class='ident'>traits_graph</span>;
 
 <span class='comment'>// Index into the NodeIndex and EdgeIndex arrays</span>
 <span class='doccomment'>/// Edge direction</span>
@@ -226,10 +234,12 @@
 }
 
 <span class='kw'>impl</span> <span class='ident'>EdgeType</span> <span class='kw'>for</span> <span class='ident'>Directed</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>is_directed</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>true</span> }
 }
 
 <span class='kw'>impl</span> <span class='ident'>EdgeType</span> <span class='kw'>for</span> <span class='ident'>Undirected</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>is_directed</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>false</span> }
 }
 

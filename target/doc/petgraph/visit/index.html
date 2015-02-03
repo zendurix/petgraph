@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='../graph/index.html' title='**Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.'>graph</a><a class='mod ' href='../graphmap/index.html' title='**GraphMap\&lt;N, E\&gt;** is an undirected graph where node values are mapping keys.'>graphmap</a><a class='mod ' href='../unionfind/index.html' title='**UnionFind\&lt;K\&gt;** is a disjoint-set data structure.'>unionfind</a><a class='mod current' href='../visit/index.html' title='Graph visitor algorithms. '>visit</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='../struct.Directed.html' title='Marker type for a directed graph.'>Directed</a><a class='struct ' href='../struct.MinScored.html' title='**MinScored\&lt;K, T\&gt;** holds a score **K** and a scored object **T** in a pair for use with a **BinaryHeap**.'>MinScored</a><a class='struct ' href='../struct.Ptr.html' title='A reference that is hashed and compared by its pointer value.'>Ptr</a><a class='struct ' href='../struct.Undirected.html' title='Marker type for an undirected graph.'>Undirected</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='../enum.EdgeDirection.html' title='Edge direction'>EdgeDirection</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='../trait.EdgeType.html' title='A graph&#39;s edge type determines whether is has directed edges or not.'>EdgeType</a></div>
+        <p class='location'><a href='../index.html'>petgraph</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='../algo/index.html' title='Graph algorithms.'>algo</a><a class='mod ' href='../graph/index.html' title='**Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.'>graph</a><a class='mod ' href='../graphmap/index.html' title='**GraphMap\&lt;N, E\&gt;** is an undirected graph where node values are mapping keys.'>graphmap</a><a class='mod ' href='../unionfind/index.html' title='**UnionFind\&lt;K\&gt;** is a disjoint-set data structure.'>unionfind</a><a class='mod current' href='../visit/index.html' title='Graph visitor algorithms. '>visit</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='../struct.Directed.html' title='Marker type for a directed graph.'>Directed</a><a class='struct ' href='../struct.MinScored.html' title='**MinScored\&lt;K, T\&gt;** holds a score **K** and a scored object **T** in a pair for use with a **BinaryHeap**.'>MinScored</a><a class='struct ' href='../struct.Ptr.html' title='A reference that is hashed and compared by its pointer value.'>Ptr</a><a class='struct ' href='../struct.Undirected.html' title='Marker type for an undirected graph.'>Undirected</a></div><div class='block enum'><h2>Enums</h2><a class='enum ' href='../enum.EdgeDirection.html' title='Edge direction'>EdgeDirection</a></div><div class='block trait'><h2>Traits</h2><a class='trait ' href='../trait.EdgeType.html' title='A graph&#39;s edge type determines whether is has directed edges or not.'>EdgeType</a></div>
     </section>
 
     <nav class="sub">
@@ -44,7 +44,7 @@
 <h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>petgraph</a>::<wbr><a class='mod' href=''>visit</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]
             </a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-6815' href='../../src/petgraph/visit.rs.html#1-470'>[src]</a></span></h1>
+        </span><a id='src-7060' href='../../src/petgraph/visit.rs.html#1-414'>[src]</a></span></h1>
 <div class='docblock'><p>Graph visitor algorithms.</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
@@ -98,6 +98,13 @@
                     </tr>
                 
                     <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='trait' href='trait.HasAdjacencyMatrix.html'
+                               title='petgraph::visit::HasAdjacencyMatrix'>HasAdjacencyMatrix</a></td>
+                        <td class='docblock short'><p>Create or access the adjacency matrix of a graph</p>
+</td>
+                    </tr>
+                
+                    <tr>
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='trait' href='trait.NeighborIter.html'
                                title='petgraph::visit::NeighborIter'>NeighborIter</a></td>
                         <td class='docblock short'><p>A graph trait for accessing the neighbors iterator</p>
@@ -114,14 +121,6 @@
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='trait' href='trait.Visitable.html'
                                title='petgraph::visit::Visitable'>Visitable</a></td>
                         <td class='docblock short'><p>Trait for GraphMap that knows which datastructure is the best for its visitor map</p>
-</td>
-                    </tr>
-                </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
-                    <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.dijkstra.html'
-                               title='petgraph::visit::dijkstra'>dijkstra</a></td>
-                        <td class='docblock short'><p>Dijkstra&#39;s shortest path algorithm.</p>
 </td>
                     </tr>
                 </table></section>

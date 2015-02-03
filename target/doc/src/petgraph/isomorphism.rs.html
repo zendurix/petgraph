@@ -393,7 +393,13 @@
 <span id="351">351</span>
 <span id="352">352</span>
 <span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
 </pre><pre class='rust '>
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>Bitv</span>;
+
 <span class='kw'>use</span> <span class='ident'>super</span>::{
     <span class='ident'>EdgeType</span>,
     <span class='ident'>Incoming</span>,
@@ -404,8 +410,10 @@
     <span class='ident'>NodeIndex</span>,
 };
 
+<span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>visit</span>::<span class='ident'>HasAdjacencyMatrix</span>;
+
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>struct</span> <span class='ident'>Vf2State</span><span class='op'>&lt;</span><span class='ident'>Ix</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> {
+<span class='kw'>struct</span> <span class='ident'>Vf2State</span><span class='op'>&lt;</span><span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// The current mapping M(s) of nodes from G0 → G1 and G1 → G0,</span>
     <span class='doccomment'>/// NodeIndex::end() for no mapping.</span>
     <span class='ident'>mapping</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>,
@@ -418,17 +426,26 @@
     <span class='doccomment'>/// have an edge from them into the mapping.</span>
     <span class='doccomment'>/// Unused if graph is undirected -- it&#39;s identical with out in that case.</span>
     <span class='ident'>ins</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>,
+    <span class='ident'>out_size</span>: <span class='ident'>usize</span>,
+    <span class='ident'>ins_size</span>: <span class='ident'>usize</span>,
+    <span class='ident'>adjacency_matrix</span>: <span class='ident'>Bitv</span>,
     <span class='ident'>generation</span>: <span class='ident'>usize</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='ident'>Vf2State</span><span class='op'>&lt;</span><span class='ident'>Ix</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Vf2State</span><span class='op'>&lt;</span><span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
+    <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>c0</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span>(<span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
     {
+        <span class='kw'>let</span> <span class='ident'>c0</span> <span class='op'>=</span> <span class='ident'>g</span>.<span class='ident'>node_count</span>();
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>state</span> <span class='op'>=</span> <span class='ident'>Vf2State</span> {
             <span class='ident'>mapping</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>c0</span>),
             <span class='ident'>out</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>c0</span>),
-            <span class='ident'>ins</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>c0</span> <span class='op'>*</span> <span class='op'>&lt;</span><span class='ident'>Ty</span> <span class='kw'>as</span> <span class='ident'>EdgeType</span><span class='op'>&gt;</span>::<span class='ident'>is_directed</span>() <span class='kw'>as</span> <span class='ident'>usize</span>),
+            <span class='ident'>ins</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>c0</span> <span class='op'>*</span> (<span class='ident'>g</span>.<span class='ident'>is_directed</span>() <span class='kw'>as</span> <span class='ident'>usize</span>)),
+            <span class='ident'>out_size</span>: <span class='number'>0</span>,
+            <span class='ident'>ins_size</span>: <span class='number'>0</span>,
+            <span class='ident'>adjacency_matrix</span>: <span class='ident'>g</span>.<span class='ident'>adjacency_matrix</span>(),
             <span class='ident'>generation</span>: <span class='number'>0</span>,
         };
         <span class='kw'>for</span> _ <span class='kw'>in</span> (<span class='number'>0</span>..<span class='ident'>c0</span>) {
@@ -461,6 +478,7 @@
             <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>out</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>==</span> <span class='number'>0</span> {
                 <span class='self'>self</span>.<span class='ident'>out</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>=</span> <span class='ident'>s</span>;
             }
+            <span class='self'>self</span>.<span class='ident'>out_size</span> <span class='op'>+=</span> <span class='number'>1</span>;
         }
         <span class='kw'>if</span> <span class='ident'>g</span>.<span class='ident'>is_directed</span>() {
             <span class='kw'>for</span> <span class='ident'>ix</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>neighbors_directed</span>(<span class='ident'>from</span>, <span class='ident'>Incoming</span>) {
@@ -468,6 +486,7 @@
                     <span class='self'>self</span>.<span class='ident'>ins</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>=</span> <span class='ident'>s</span>;
                 }
             }
+            <span class='self'>self</span>.<span class='ident'>ins_size</span> <span class='op'>+=</span> <span class='number'>1</span>;
         }
     }
 
@@ -486,6 +505,7 @@
             <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>out</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>==</span> <span class='ident'>s</span> {
                 <span class='self'>self</span>.<span class='ident'>out</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>=</span> <span class='number'>0</span>;
             }
+            <span class='self'>self</span>.<span class='ident'>out_size</span> <span class='op'>-=</span> <span class='number'>1</span>;
         }
         <span class='kw'>if</span> <span class='ident'>g</span>.<span class='ident'>is_directed</span>() {
             <span class='kw'>for</span> <span class='ident'>ix</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>neighbors_directed</span>(<span class='ident'>from</span>, <span class='ident'>Incoming</span>) {
@@ -493,6 +513,7 @@
                     <span class='self'>self</span>.<span class='ident'>ins</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>=</span> <span class='number'>0</span>;
                 }
             }
+            <span class='self'>self</span>.<span class='ident'>ins_size</span> <span class='op'>-=</span> <span class='number'>1</span>;
         }
     }
 
@@ -552,7 +573,7 @@
     }
 
     <span class='doccomment'>/// Return Some(bool) if isomorphism is decided, else None.</span>
-    <span class='kw'>fn</span> <span class='ident'>try_match</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>(<span class='ident'>st</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>Vf2State</span><span class='op'>&lt;</span><span class='ident'>Ix</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
+    <span class='kw'>fn</span> <span class='ident'>try_match</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span>, <span class='ident'>Ty</span><span class='op'>&gt;</span>(<span class='ident'>st</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>Vf2State</span><span class='op'>&lt;</span><span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
                                <span class='ident'>g0</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>,
                                <span class='ident'>g1</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>bool</span><span class='op'>&gt;</span> <span class='kw'>where</span>
         <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
@@ -660,6 +681,13 @@
             <span class='comment'>// Check that every neighbor of nx is mapped to a neighbor of mx,</span>
             <span class='comment'>// then check the reverse, from mx to nx. Check that they have the same</span>
             <span class='comment'>// count of edges.</span>
+            <span class='comment'>//</span>
+            <span class='comment'>// Note: We want to check the lookahead measures here if we can,</span>
+            <span class='comment'>// R_out: Equal for G0, G1: Card(Succ(G, n) ^ Tout); for both Succ and Pred</span>
+            <span class='comment'>// R_in: Same with Tin</span>
+            <span class='comment'>// R_new: Equal for G0, G1: Ñ n Pred(G, n); both Succ and Pred,</span>
+            <span class='comment'>//      Ñ is G0 - M - Tin - Tout</span>
+            <span class='comment'>// last attempt to add these did not speed up any of the testcases</span>
             <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>succ_count</span> <span class='op'>=</span> [<span class='number'>0</span>, <span class='number'>0</span>];
             <span class='kw'>for</span> <span class='ident'>j</span> <span class='kw'>in</span> <span class='ident'>graph_indices</span>.<span class='ident'>clone</span>() {
                 <span class='kw'>for</span> <span class='ident'>n_neigh</span> <span class='kw'>in</span> <span class='ident'>g</span>[<span class='ident'>j</span>].<span class='ident'>neighbors</span>(<span class='ident'>nodes</span>[<span class='ident'>j</span>]) {
@@ -668,7 +696,7 @@
                     <span class='kw'>if</span> <span class='ident'>m_neigh</span> <span class='op'>==</span> <span class='ident'>end</span> {
                         <span class='kw'>continue</span>;
                     }
-                    <span class='kw'>let</span> <span class='ident'>has_edge</span> <span class='op'>=</span> <span class='ident'>g</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>].<span class='ident'>find_edge</span>(<span class='ident'>nodes</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>], <span class='ident'>m_neigh</span>).<span class='ident'>is_some</span>();
+                    <span class='kw'>let</span> <span class='ident'>has_edge</span> <span class='op'>=</span> <span class='ident'>g</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>].<span class='ident'>is_adjacent</span>(<span class='kw-2'>&amp;</span><span class='ident'>st</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>].<span class='ident'>adjacency_matrix</span>, <span class='ident'>nodes</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>], <span class='ident'>m_neigh</span>);
                     <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>has_edge</span> {
                         <span class='kw'>continue</span> <span class='lifetime'>&#39;candidates</span>;
                     }
@@ -688,7 +716,7 @@
                         <span class='kw'>if</span> <span class='ident'>m_neigh</span> <span class='op'>==</span> <span class='ident'>end</span> {
                             <span class='kw'>continue</span>;
                         }
-                        <span class='kw'>let</span> <span class='ident'>has_edge</span> <span class='op'>=</span> <span class='ident'>g</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>].<span class='ident'>find_edge</span>(<span class='ident'>m_neigh</span>, <span class='ident'>nodes</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>]).<span class='ident'>is_some</span>();
+                        <span class='kw'>let</span> <span class='ident'>has_edge</span> <span class='op'>=</span> <span class='ident'>g</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>].<span class='ident'>is_adjacent</span>(<span class='kw-2'>&amp;</span><span class='ident'>st</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>].<span class='ident'>adjacency_matrix</span>, <span class='ident'>m_neigh</span>, <span class='ident'>nodes</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>]);
                         <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>has_edge</span> {
                             <span class='kw'>continue</span> <span class='lifetime'>&#39;candidates</span>;
                         }
@@ -699,40 +727,21 @@
                 }
             }
 
-            <span class='comment'>// Check cardinalities of open sets, important to prune</span>
-            <span class='comment'>// the search tree.</span>
-            <span class='comment'>//</span>
-            <span class='comment'>// counts in Tin/Tout</span>
-            <span class='kw'>let</span> <span class='ident'>t0in</span> <span class='op'>=</span> <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>ins</span>.<span class='ident'>iter</span>().<span class='ident'>filter</span>(<span class='op'>|</span><span class='op'>&amp;&amp;</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>x</span> <span class='op'>&gt;</span> <span class='number'>0</span>).<span class='ident'>count</span>();
-            <span class='kw'>let</span> <span class='ident'>t1in</span> <span class='op'>=</span> <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>ins</span>.<span class='ident'>iter</span>().<span class='ident'>filter</span>(<span class='op'>|</span><span class='op'>&amp;&amp;</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>x</span> <span class='op'>&gt;</span> <span class='number'>0</span>).<span class='ident'>count</span>();
-            <span class='kw'>let</span> <span class='ident'>t0out</span> <span class='op'>=</span> <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>out</span>.<span class='ident'>iter</span>().<span class='ident'>filter</span>(<span class='op'>|</span><span class='op'>&amp;&amp;</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>x</span> <span class='op'>&gt;</span> <span class='number'>0</span>).<span class='ident'>count</span>();
-            <span class='kw'>let</span> <span class='ident'>t1out</span> <span class='op'>=</span> <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>out</span>.<span class='ident'>iter</span>().<span class='ident'>filter</span>(<span class='op'>|</span><span class='op'>&amp;&amp;</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>x</span> <span class='op'>&gt;</span> <span class='number'>0</span>).<span class='ident'>count</span>();
-            <span class='kw'>if</span> <span class='ident'>t0in</span> <span class='op'>!=</span> <span class='ident'>t1in</span> <span class='op'>||</span> <span class='ident'>t0out</span> <span class='op'>!=</span> <span class='ident'>t1out</span> {
-                <span class='kw'>continue</span> <span class='lifetime'>&#39;candidates</span>;
-            }
-
-            <span class='comment'>// counts in N0 - M0 - Tin - Tout</span>
-            <span class='comment'>// equal to count in N - ins - outs</span>
-            <span class='kw'>let</span> <span class='ident'>n0</span> <span class='op'>=</span> <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>ins</span>.<span class='ident'>iter</span>().<span class='ident'>zip</span>(<span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>out</span>.<span class='ident'>iter</span>())
-                        .<span class='ident'>filter</span>(<span class='op'>|</span><span class='kw-2'>&amp;</span>(<span class='kw-2'>&amp;</span><span class='ident'>a</span>, <span class='kw-2'>&amp;</span><span class='ident'>b</span>)<span class='op'>|</span> <span class='ident'>a</span> <span class='op'>==</span> <span class='number'>0</span> <span class='op'>&amp;&amp;</span> <span class='ident'>b</span> <span class='op'>==</span> <span class='number'>0</span>)
-                        .<span class='ident'>count</span>();
-            <span class='kw'>let</span> <span class='ident'>n1</span> <span class='op'>=</span> <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>ins</span>.<span class='ident'>iter</span>().<span class='ident'>zip</span>(<span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>out</span>.<span class='ident'>iter</span>())
-                        .<span class='ident'>filter</span>(<span class='op'>|</span><span class='kw-2'>&amp;</span>(<span class='kw-2'>&amp;</span><span class='ident'>a</span>, <span class='kw-2'>&amp;</span><span class='ident'>b</span>)<span class='op'>|</span> <span class='ident'>a</span> <span class='op'>==</span> <span class='number'>0</span> <span class='op'>&amp;&amp;</span> <span class='ident'>b</span> <span class='op'>==</span> <span class='number'>0</span>)
-                        .<span class='ident'>count</span>();
-                        
-            <span class='kw'>if</span> <span class='ident'>n0</span> <span class='op'>!=</span> <span class='ident'>n1</span> {
-                <span class='kw'>continue</span> <span class='lifetime'>&#39;candidates</span>;
-            }
-
             <span class='comment'>// Add mapping nx &lt;-&gt; mx to the state</span>
             <span class='kw'>for</span> <span class='ident'>j</span> <span class='kw'>in</span> <span class='ident'>graph_indices</span>.<span class='ident'>clone</span>() {
                 <span class='ident'>st</span>[<span class='ident'>j</span>].<span class='ident'>push_mapping</span>(<span class='ident'>nodes</span>[<span class='ident'>j</span>], <span class='ident'>nodes</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>], <span class='ident'>g</span>[<span class='ident'>j</span>]);
             }
 
-            <span class='comment'>// Recurse</span>
-            <span class='kw'>match</span> <span class='ident'>try_match</span>(<span class='ident'>st</span>, <span class='ident'>g0</span>, <span class='ident'>g1</span>) {
-                <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {}
-                <span class='ident'>result</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='ident'>result</span>,
+            <span class='comment'>// Check counts in Tin/Tout</span>
+            <span class='kw'>if</span> <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>out_size</span> <span class='op'>==</span> <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>out_size</span> <span class='op'>||</span>
+               <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>ins_size</span> <span class='op'>==</span> <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>ins_size</span>
+            {
+
+                <span class='comment'>// Recurse</span>
+                <span class='kw'>match</span> <span class='ident'>try_match</span>(<span class='ident'>st</span>, <span class='ident'>g0</span>, <span class='ident'>g1</span>) {
+                    <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {}
+                    <span class='ident'>result</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='ident'>result</span>,
+                }
             }
 
             <span class='comment'>// Restore state.</span>
@@ -742,8 +751,7 @@
         }
         <span class='prelude-val'>None</span>
     }
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>st</span> <span class='op'>=</span> [<span class='ident'>Vf2State</span>::<span class='ident'>new</span>(<span class='ident'>g0</span>.<span class='ident'>node_count</span>()),
-                  <span class='ident'>Vf2State</span>::<span class='ident'>new</span>(<span class='ident'>g1</span>.<span class='ident'>node_count</span>())];
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>st</span> <span class='op'>=</span> [<span class='ident'>Vf2State</span>::<span class='ident'>new</span>(<span class='ident'>g0</span>), <span class='ident'>Vf2State</span>::<span class='ident'>new</span>(<span class='ident'>g1</span>)];
     <span class='ident'>try_match</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>st</span>, <span class='ident'>g0</span>, <span class='ident'>g1</span>).<span class='ident'>unwrap_or</span>(<span class='boolval'>false</span>)
 }
 
