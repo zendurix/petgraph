@@ -170,8 +170,6 @@
 <span id="128">128</span>
 <span id="129">129</span>
 <span id="130">130</span>
-<span id="131">131</span>
-<span id="132">132</span>
 </pre><pre class='rust '>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>core</span>, <span class='ident'>hash</span>, <span class='ident'>std_misc</span>)]</span>
 
@@ -181,9 +179,9 @@
 <span class='doccomment'>//! a directed or undirected graph with owned mutably accessible arbitrary node and edge weights.</span>
 <span class='doccomment'>//! It is based on rustc&#39;s graph implementation.</span>
 
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>hash</span>::{<span class='self'>self</span>, <span class='ident'>Hash</span>};
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>hash_map</span>::<span class='ident'>Hasher</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ops</span>::{<span class='ident'>Deref</span>};
 
@@ -194,9 +192,7 @@
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>EdgeDirection</span>::{<span class='ident'>Outgoing</span>, <span class='ident'>Incoming</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>visit</span>::{
     <span class='ident'>Bfs</span>,
-    <span class='ident'>BfsIter</span>,
     <span class='ident'>Dfs</span>,
-    <span class='ident'>DfsIter</span>,
 };
 
 <span class='kw'>mod</span> <span class='ident'>scored</span>;
@@ -229,7 +225,7 @@
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Undirected</span>;
 
 <span class='doccomment'>/// A graph&#39;s edge type determines whether is has directed edges or not.</span>
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>EdgeType</span> {
+<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>EdgeType</span> : <span class='ident'>marker</span>::<span class='ident'>MarkerTrait</span> {
     <span class='kw'>fn</span> <span class='ident'>is_directed</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span>;
 }
 
@@ -250,7 +246,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>Copy</span> <span class='kw'>for</span> <span class='ident'>Ptr</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span> {}
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='ident'>Ptr</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span>
 {
-    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> { <span class='op'>*</span><span class='self'>self</span> }
+    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='op'>*</span><span class='self'>self</span> }
 }
 
 <span class='kw'>fn</span> <span class='ident'>ptreq</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='ident'>a</span>: <span class='kw-2'>&amp;</span><span class='ident'>T</span>, <span class='ident'>b</span>: <span class='kw-2'>&amp;</span><span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
@@ -291,9 +287,9 @@
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>Eq</span> <span class='kw'>for</span> <span class='ident'>Ptr</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span> {}
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span>, <span class='ident'>H</span>: <span class='ident'>hash</span>::<span class='ident'>Writer</span> <span class='op'>+</span> <span class='ident'>hash</span>::<span class='ident'>Hasher</span><span class='op'>&gt;</span> <span class='ident'>Hash</span><span class='op'>&lt;</span><span class='ident'>H</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>Ptr</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>Hash</span> <span class='kw'>for</span> <span class='ident'>Ptr</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span>, <span class='ident'>T</span><span class='op'>&gt;</span>
 {
-    <span class='kw'>fn</span> <span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>st</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>H</span>)
+    <span class='kw'>fn</span> <span class='ident'>hash</span><span class='op'>&lt;</span><span class='ident'>H</span>: <span class='ident'>hash</span>::<span class='ident'>Hasher</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>st</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>H</span>)
     {
         <span class='kw'>let</span> <span class='ident'>ptr</span> <span class='op'>=</span> (<span class='self'>self</span>.<span class='number'>0</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> _;
         <span class='ident'>ptr</span>.<span class='ident'>hash</span>(<span class='ident'>st</span>)

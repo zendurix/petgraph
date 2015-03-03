@@ -1005,12 +1005,15 @@
 <span id="963">963</span>
 <span id="964">964</span>
 <span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! **Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.</span>
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>slice</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>iter</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ops</span>::{<span class='ident'>Index</span>, <span class='ident'>IndexMut</span>};
 
 <span class='kw'>use</span> <span class='ident'>super</span>::{
@@ -1028,27 +1031,27 @@
 <span class='doccomment'>/// Trait for the unsigned integer type used for node and edge indices.</span>
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>IndexType</span> : <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Clone</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='op'>+</span> <span class='lifetime'>&#39;static</span>
 {
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>;
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>;
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span>;
-    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span>;
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span>;
 }
 
 <span class='kw'>impl</span> <span class='ident'>IndexType</span> <span class='kw'>for</span> <span class='ident'>usize</span> {
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> { <span class='ident'>x</span> }
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='ident'>x</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> { <span class='op'>*</span><span class='self'>self</span> }
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='op'>*</span><span class='self'>self</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>usize</span>::<span class='ident'>MAX</span> }
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>usize</span>::<span class='ident'>MAX</span> }
 }
 
 <span class='kw'>impl</span> <span class='ident'>IndexType</span> <span class='kw'>for</span> <span class='ident'>u32</span> {
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u32</span> }
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u32</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='op'>*</span><span class='self'>self</span> <span class='kw'>as</span> <span class='ident'>usize</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u32</span>::<span class='ident'>MAX</span> }
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u32</span>::<span class='ident'>MAX</span> }
 }
 
 <span class='comment'>// FIXME: These aren&#39;t stable, so a public wrapper of node/edge indices</span>
@@ -1060,7 +1063,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
         <span class='ident'>NodeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>new</span>(<span class='ident'>x</span>))
     }
 
@@ -1071,7 +1074,7 @@
     }
 
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span>
     {
         <span class='ident'>NodeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>max</span>())
     }
@@ -1084,7 +1087,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
         <span class='ident'>EdgeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>new</span>(<span class='ident'>x</span>))
     }
 
@@ -1097,7 +1100,7 @@
     <span class='doccomment'>/// An invalid **EdgeIndex** used to denote absence of an edge, for example</span>
     <span class='doccomment'>/// to end an adjacency list.</span>
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
         <span class='ident'>EdgeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>max</span>())
     }
 }
@@ -1193,6 +1196,7 @@
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span> <span class='op'>=</span> <span class='ident'>Directed</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
     <span class='ident'>nodes</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>,
     <span class='ident'>edges</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>,
+    <span class='ident'>_ty</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>Ty</span><span class='op'>&gt;</span>,
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
@@ -1236,18 +1240,20 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Directed</span><span class='op'>&gt;</span>
 {
     <span class='doccomment'>/// Create a new **Graph** with directed edges.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span>
     {
-        <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>()}
+        <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+              <span class='ident'>_ty</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span>}
     }
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Undirected</span><span class='op'>&gt;</span>
 {
     <span class='doccomment'>/// Create a new **Graph** with undirected edges.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new_undirected</span>() <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new_undirected</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span>
     {
-        <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>()}
+        <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+              <span class='ident'>_ty</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span>}
     }
 }
 
@@ -1256,9 +1262,10 @@
     <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='doccomment'>/// Create a new **Graph** with estimated capacity.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>: <span class='ident'>usize</span>, <span class='ident'>edges</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>: <span class='ident'>usize</span>, <span class='ident'>edges</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
     {
-        <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>edges</span>)}
+        <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>edges</span>),
+              <span class='ident'>_ty</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span>}
     }
 
     <span class='doccomment'>/// Return the number of nodes (vertices) in the graph.</span>
@@ -1296,7 +1303,8 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>into_edge_type</span><span class='op'>&lt;</span><span class='ident'>NewTy</span><span class='op'>&gt;</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>NewTy</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
         <span class='ident'>NewTy</span>: <span class='ident'>EdgeType</span>
     {
-        <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='self'>self</span>.<span class='ident'>nodes</span>, <span class='ident'>edges</span>: <span class='self'>self</span>.<span class='ident'>edges</span>}
+        <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='self'>self</span>.<span class='ident'>nodes</span>, <span class='ident'>edges</span>: <span class='self'>self</span>.<span class='ident'>edges</span>,
+              <span class='ident'>_ty</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span>}
     }
 
     <span class='doccomment'>/// Add a node (also called vertex) with weight **w** to the graph.</span>
@@ -1421,30 +1429,26 @@
     {
         <span class='kw'>let</span> <span class='ident'>edge_idx</span> <span class='op'>=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>len</span>());
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>edge_idx</span> <span class='op'>!=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>());
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>edge</span> <span class='op'>=</span> <span class='ident'>Edge</span> {
+            <span class='ident'>weight</span>: <span class='ident'>weight</span>,
+            <span class='ident'>node</span>: [<span class='ident'>a</span>, <span class='ident'>b</span>],
+            <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>(); <span class='number'>2</span>],
+        };
         <span class='kw'>match</span> <span class='ident'>index_twice</span>(<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>as_mut_slice</span>(), <span class='ident'>a</span>.<span class='ident'>index</span>(), <span class='ident'>b</span>.<span class='ident'>index</span>()) {
-            <span class='ident'>Pair</span>::<span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;NodeIndices out of bounds&quot;</span>),
+            <span class='ident'>Pair</span>::<span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Graph::add_edge: node indices out of bounds&quot;</span>),
             <span class='ident'>Pair</span>::<span class='ident'>One</span>(<span class='ident'>an</span>) <span class='op'>=&gt;</span> {
-                <span class='kw'>let</span> <span class='ident'>edge</span> <span class='op'>=</span> <span class='ident'>Edge</span> {
-                    <span class='ident'>weight</span>: <span class='ident'>weight</span>,
-                    <span class='ident'>node</span>: [<span class='ident'>a</span>, <span class='ident'>b</span>],
-                    <span class='ident'>next</span>: <span class='ident'>an</span>.<span class='ident'>next</span>,
-                };
+                <span class='ident'>edge</span>.<span class='ident'>next</span> <span class='op'>=</span> <span class='ident'>an</span>.<span class='ident'>next</span>;
                 <span class='ident'>an</span>.<span class='ident'>next</span>[<span class='number'>0</span>] <span class='op'>=</span> <span class='ident'>edge_idx</span>;
                 <span class='ident'>an</span>.<span class='ident'>next</span>[<span class='number'>1</span>] <span class='op'>=</span> <span class='ident'>edge_idx</span>;
-                <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>push</span>(<span class='ident'>edge</span>);
             }
             <span class='ident'>Pair</span>::<span class='ident'>Both</span>(<span class='ident'>an</span>, <span class='ident'>bn</span>) <span class='op'>=&gt;</span> {
                 <span class='comment'>// a and b are different indices</span>
-                <span class='kw'>let</span> <span class='ident'>edge</span> <span class='op'>=</span> <span class='ident'>Edge</span> {
-                    <span class='ident'>weight</span>: <span class='ident'>weight</span>,
-                    <span class='ident'>node</span>: [<span class='ident'>a</span>, <span class='ident'>b</span>],
-                    <span class='ident'>next</span>: [<span class='ident'>an</span>.<span class='ident'>next</span>[<span class='number'>0</span>], <span class='ident'>bn</span>.<span class='ident'>next</span>[<span class='number'>1</span>]],
-                };
+                <span class='ident'>edge</span>.<span class='ident'>next</span> <span class='op'>=</span> [<span class='ident'>an</span>.<span class='ident'>next</span>[<span class='number'>0</span>], <span class='ident'>bn</span>.<span class='ident'>next</span>[<span class='number'>1</span>]];
                 <span class='ident'>an</span>.<span class='ident'>next</span>[<span class='number'>0</span>] <span class='op'>=</span> <span class='ident'>edge_idx</span>;
                 <span class='ident'>bn</span>.<span class='ident'>next</span>[<span class='number'>1</span>] <span class='op'>=</span> <span class='ident'>edge_idx</span>;
-                <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>push</span>(<span class='ident'>edge</span>);
             }
         }
+        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>push</span>(<span class='ident'>edge</span>);
         <span class='ident'>edge_idx</span>
     }
 
@@ -1747,7 +1751,8 @@
     <span class='doccomment'>/// The whole iteration computes in **O(|V|)** time.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>without_edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
-        <span class='ident'>WithoutEdges</span>{<span class='ident'>iter</span>: <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>().<span class='ident'>enumerate</span>(), <span class='ident'>dir</span>: <span class='ident'>dir</span>}
+        <span class='ident'>WithoutEdges</span>{<span class='ident'>iter</span>: <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>().<span class='ident'>enumerate</span>(), <span class='ident'>dir</span>: <span class='ident'>dir</span>,
+                     <span class='ident'>_ty</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span>}
     }
 }
 
@@ -1755,6 +1760,7 @@
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
     <span class='ident'>iter</span>: <span class='ident'>iter</span>::<span class='ident'>Enumerate</span><span class='op'>&lt;</span><span class='ident'>slice</span>::<span class='ident'>Iter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span>,
     <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>,
+    <span class='ident'>_ty</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>Ty</span><span class='op'>&gt;</span>,
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>: <span class='lifetime'>&#39;a</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
@@ -1851,7 +1857,7 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>EdgesMut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
     <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>], <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>Self</span>
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>], <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
     {
         <span class='ident'>EdgesMut</span>{
             <span class='ident'>edges</span>: <span class='ident'>edges</span>,
@@ -1937,7 +1943,6 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
     <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>N</span>;
     <span class='doccomment'>/// Index the **Graph** by **NodeIndex** to access node weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the node doesn&#39;t exist.</span>
@@ -1963,7 +1968,6 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
     <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>type</span> <span class='ident'>Output</span> <span class='op'>=</span> <span class='ident'>E</span>;
     <span class='doccomment'>/// Index the **Graph** by **EdgeIndex** to access edge weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the edge doesn&#39;t exist.</span>
