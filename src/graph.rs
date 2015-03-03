@@ -3,6 +3,7 @@
 use std::fmt;
 use std::slice;
 use std::iter;
+use std::marker;
 use std::ops::{Index, IndexMut};
 
 use super::{
@@ -185,6 +186,7 @@ impl<E, Ix: IndexType = DefIndex> Edge<E, Ix>
 pub struct Graph<N, E, Ty = Directed, Ix: IndexType = DefIndex> {
     nodes: Vec<Node<N, Ix>>,
     edges: Vec<Edge<E, Ix>>,
+    _ty: marker::PhantomData<Ty>,
 }
 
 impl<N, E, Ty, Ix> fmt::Debug for Graph<N, E, Ty, Ix> where
@@ -230,7 +232,8 @@ impl<N, E> Graph<N, E, Directed>
     /// Create a new **Graph** with directed edges.
     pub fn new() -> Self
     {
-        Graph{nodes: Vec::new(), edges: Vec::new()}
+        Graph{nodes: Vec::new(), edges: Vec::new(),
+              _ty: marker::PhantomData}
     }
 }
 
@@ -239,7 +242,8 @@ impl<N, E> Graph<N, E, Undirected>
     /// Create a new **Graph** with undirected edges.
     pub fn new_undirected() -> Self
     {
-        Graph{nodes: Vec::new(), edges: Vec::new()}
+        Graph{nodes: Vec::new(), edges: Vec::new(),
+              _ty: marker::PhantomData}
     }
 }
 
@@ -250,7 +254,8 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     /// Create a new **Graph** with estimated capacity.
     pub fn with_capacity(nodes: usize, edges: usize) -> Self
     {
-        Graph{nodes: Vec::with_capacity(nodes), edges: Vec::with_capacity(edges)}
+        Graph{nodes: Vec::with_capacity(nodes), edges: Vec::with_capacity(edges),
+              _ty: marker::PhantomData}
     }
 
     /// Return the number of nodes (vertices) in the graph.
@@ -288,7 +293,8 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     pub fn into_edge_type<NewTy>(self) -> Graph<N, E, NewTy, Ix> where
         NewTy: EdgeType
     {
-        Graph{nodes: self.nodes, edges: self.edges}
+        Graph{nodes: self.nodes, edges: self.edges,
+              _ty: marker::PhantomData}
     }
 
     /// Add a node (also called vertex) with weight **w** to the graph.
@@ -413,30 +419,26 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     {
         let edge_idx = EdgeIndex::new(self.edges.len());
         assert!(edge_idx != EdgeIndex::end());
+        let mut edge = Edge {
+            weight: weight,
+            node: [a, b],
+            next: [EdgeIndex::end(); 2],
+        };
         match index_twice(self.nodes.as_mut_slice(), a.index(), b.index()) {
-            Pair::None => panic!("NodeIndices out of bounds"),
+            Pair::None => panic!("Graph::add_edge: node indices out of bounds"),
             Pair::One(an) => {
-                let edge = Edge {
-                    weight: weight,
-                    node: [a, b],
-                    next: an.next,
-                };
+                edge.next = an.next;
                 an.next[0] = edge_idx;
                 an.next[1] = edge_idx;
-                self.edges.push(edge);
             }
             Pair::Both(an, bn) => {
                 // a and b are different indices
-                let edge = Edge {
-                    weight: weight,
-                    node: [a, b],
-                    next: [an.next[0], bn.next[1]],
-                };
+                edge.next = [an.next[0], bn.next[1]];
                 an.next[0] = edge_idx;
                 bn.next[1] = edge_idx;
-                self.edges.push(edge);
             }
         }
+        self.edges.push(edge);
         edge_idx
     }
 
@@ -739,7 +741,8 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     /// The whole iteration computes in **O(|V|)** time.
     pub fn without_edges(&self, dir: EdgeDirection) -> WithoutEdges<N, Ty, Ix>
     {
-        WithoutEdges{iter: self.nodes.iter().enumerate(), dir: dir}
+        WithoutEdges{iter: self.nodes.iter().enumerate(), dir: dir,
+                     _ty: marker::PhantomData}
     }
 }
 
@@ -747,6 +750,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
 pub struct WithoutEdges<'a, N: 'a, Ty, Ix: IndexType = DefIndex> {
     iter: iter::Enumerate<slice::Iter<'a, Node<N, Ix>>>,
     dir: EdgeDirection,
+    _ty: marker::PhantomData<Ty>,
 }
 
 impl<'a, N: 'a, Ty, Ix> Iterator for WithoutEdges<'a, N, Ty, Ix> where
@@ -929,7 +933,6 @@ impl<N, E, Ty, Ix> IndexMut<NodeIndex<Ix>> for Graph<N, E, Ty, Ix> where
     Ty: EdgeType,
     Ix: IndexType,
 {
-    type Output = N;
     /// Index the **Graph** by **NodeIndex** to access node weights.
     ///
     /// **Panics** if the node doesn't exist.
@@ -955,7 +958,6 @@ impl<N, E, Ty, Ix> IndexMut<EdgeIndex<Ix>> for Graph<N, E, Ty, Ix> where
     Ty: EdgeType,
     Ix: IndexType,
 {
-    type Output = E;
     /// Index the **Graph** by **EdgeIndex** to access edge weights.
     ///
     /// **Panics** if the edge doesn't exist.

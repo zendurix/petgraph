@@ -1,12 +1,12 @@
 //! Graph visitor algorithms.
 //!
 
+use std::marker;
 use std::collections::{
     HashSet,
-    BitvSet,
-    RingBuf,
+    BitSet,
+    VecDeque,
 };
-use std::collections::hash_map::Hasher;
 use std::hash::Hash;
 
 use super::{
@@ -22,17 +22,17 @@ use graph::{
     IndexType,
 };
 
-pub trait Graphlike {
+pub trait Graphlike : marker::MarkerTrait {
     type NodeId: Clone;
 }
 
 /// A graph trait for accessing the neighbors iterator
-pub trait NeighborIter<'a, N> {
-    type Iter: Iterator<Item=N>;
-    fn neighbors(&'a self, n: N) -> Self::Iter;
+pub trait NeighborIter<'a> : Graphlike{
+    type Iter: Iterator<Item=Self::NodeId>;
+    fn neighbors(&'a self, n: Self::NodeId) -> Self::Iter;
 }
 
-impl<'a, N, E, Ty, Ix> NeighborIter<'a, graph::NodeIndex<Ix>> for Graph<N, E, Ty, Ix> where
+impl<'a, N, E, Ty, Ix> NeighborIter<'a> for Graph<N, E, Ty, Ix> where
     Ty: EdgeType,
     Ix: IndexType,
 {
@@ -43,8 +43,8 @@ impl<'a, N, E, Ty, Ix> NeighborIter<'a, graph::NodeIndex<Ix>> for Graph<N, E, Ty
     }
 }
 
-impl<'a, N, E> NeighborIter<'a, N> for GraphMap<N, E>
-where N: Copy + Clone + Ord + Hash<Hasher> + Eq
+impl<'a, N, E> NeighborIter<'a> for GraphMap<N, E>
+where N: Copy + Clone + Ord + Hash + Eq
 {
     type Iter = graphmap::Neighbors<'a, N>;
     fn neighbors(&'a self, n: N) -> graphmap::Neighbors<'a, N>
@@ -58,7 +58,7 @@ pub struct AsUndirected<G>(pub G);
 /// Wrapper type for walking edges the other way
 pub struct Reversed<G>(pub G);
 
-impl<'a, 'b, N, E, Ty, Ix> NeighborIter<'a, graph::NodeIndex<Ix>> for AsUndirected<&'b Graph<N, E, Ty, Ix>> where
+impl<'a, 'b, N, E, Ty, Ix> NeighborIter<'a> for AsUndirected<&'b Graph<N, E, Ty, Ix>> where
     Ty: EdgeType,
     Ix: IndexType,
 {
@@ -70,7 +70,7 @@ impl<'a, 'b, N, E, Ty, Ix> NeighborIter<'a, graph::NodeIndex<Ix>> for AsUndirect
     }
 }
 
-impl<'a, 'b, N, E, Ty, Ix> NeighborIter<'a, graph::NodeIndex<Ix>> for Reversed<&'b Graph<N, E, Ty, Ix>> where
+impl<'a, 'b, N, E, Ty, Ix> NeighborIter<'a> for Reversed<&'b Graph<N, E, Ty, Ix>> where
     Ty: EdgeType,
     Ix: IndexType,
 {
@@ -87,7 +87,7 @@ pub trait VisitMap<N> {
     fn is_visited(&self, &N) -> bool;
 }
 
-impl<Ix> VisitMap<graph::NodeIndex<Ix>> for BitvSet where
+impl<Ix> VisitMap<graph::NodeIndex<Ix>> for BitSet where
     Ix: IndexType,
 {
     fn visit(&mut self, x: graph::NodeIndex<Ix>) -> bool {
@@ -98,7 +98,7 @@ impl<Ix> VisitMap<graph::NodeIndex<Ix>> for BitvSet where
     }
 }
 
-impl<N: Eq + Hash<Hasher>> VisitMap<N> for HashSet<N> {
+impl<N: Eq + Hash> VisitMap<N> for HashSet<N> {
     fn visit(&mut self, x: N) -> bool {
         self.insert(x)
     }
@@ -123,8 +123,8 @@ impl<N, E, Ty, Ix> Visitable for Graph<N, E, Ty, Ix> where
     Ty: EdgeType,
     Ix: IndexType,
 {
-    type Map = BitvSet;
-    fn visit_map(&self) -> BitvSet { BitvSet::with_capacity(self.node_count()) }
+    type Map = BitSet;
+    fn visit_map(&self) -> BitSet { BitSet::with_capacity(self.node_count()) }
 }
 
 impl<N: Clone, E> Graphlike for GraphMap<N, E>
@@ -133,7 +133,7 @@ impl<N: Clone, E> Graphlike for GraphMap<N, E>
 }
 
 impl<N, E> Visitable for GraphMap<N, E>
-    where N: Copy + Clone + Ord + Eq + Hash<Hasher>
+    where N: Copy + Clone + Ord + Eq + Hash
 {
     type Map = HashSet<N>;
     fn visit_map(&self) -> HashSet<N> { HashSet::with_capacity(self.node_count()) }
@@ -166,10 +166,10 @@ impl<'a, V: Visitable> Visitable for Reversed<&'a V>
 }
 
 /// Create or access the adjacency matrix of a graph
-pub trait HasAdjacencyMatrix : Graphlike {
-    type Map;
-    fn adjacency_matrix(&self) -> Self::Map;
-    fn is_adjacent(&self, matrix: &Self::Map, a: Self::NodeId, b: Self::NodeId) -> bool;
+pub trait GetAdjacencyMatrix : Graphlike {
+    type AdjMatrix;
+    fn adjacency_matrix(&self) -> Self::AdjMatrix;
+    fn is_adjacent(&self, matrix: &Self::AdjMatrix, a: Self::NodeId, b: Self::NodeId) -> bool;
 }
 
 /// A depth first search (DFS) of a graph.
@@ -200,7 +200,7 @@ pub struct Dfs<N, VM> {
     pub discovered: VM,
 }
 
-impl<G: Visitable> Dfs<G::NodeId, <G as Visitable>::Map>
+impl<G: Visitable> Dfs<G::NodeId, G::Map>
 {
     /// Create a new **Dfs**, using the graph's visitor map, and put **start**
     /// in the stack of nodes to visit.
@@ -241,7 +241,8 @@ impl<N, VM> Dfs<N, VM> where
 {
     /// Return the next node in the dfs, or **None** if the traversal is done.
     pub fn next<'a, G>(&mut self, graph: &'a G) -> Option<N> where
-        G: for<'b> NeighborIter<'b, N>,
+        G: Graphlike<NodeId=N>,
+        G: for<'b> NeighborIter<'b>,
     {
         while let Some(node) = self.stack.pop() {
             for succ in graph.neighbors(node.clone()) {
@@ -253,38 +254,6 @@ impl<N, VM> Dfs<N, VM> where
             return Some(node);
         }
         None
-    }
-}
-
-/// An iterator for a depth first traversal of a graph.
-#[derive(Clone)]
-pub struct DfsIter<'a, G, N, VM> where
-    G: 'a,
-{
-    graph: &'a G,
-    dfs: Dfs<N, VM>,
-}
-
-impl<'a, G: Visitable> DfsIter<'a, G, G::NodeId, <G as Visitable>::Map>
-{
-    pub fn new(graph: &'a G, start: G::NodeId) -> DfsIter<'a, G, G::NodeId, <G as Visitable>::Map>
-    {
-        DfsIter {
-            graph: graph,
-            dfs: Dfs::new(graph, start)
-        }
-    }
-}
-
-impl<'a, G: Visitable, VM> Iterator for DfsIter<'a, G, G::NodeId, VM> where
-    G: 'a,
-    VM: VisitMap<G::NodeId>,
-    G: for<'b> NeighborIter<'b, G::NodeId>,
-{
-    type Item = G::NodeId;
-    fn next(&mut self) -> Option<G::NodeId>
-    {
-        self.dfs.next(self.graph)
     }
 }
 
@@ -312,22 +281,20 @@ impl<'a, G: Visitable, VM> Iterator for DfsIter<'a, G, G::NodeId, VM> where
 /// during iteration. It may not necessarily visit added nodes or edges.
 #[derive(Clone)]
 pub struct Bfs<N, VM> {
-    pub stack: RingBuf<N>,
+    pub stack: VecDeque<N>,
     pub discovered: VM,
 }
 
-impl<N, G> Bfs<N, <G as Visitable>::Map> where
-    N: Clone,
-    G: Visitable<NodeId=N>,
-    <G as Visitable>::Map: VisitMap<N>,
+impl<G: Visitable> Bfs<G::NodeId, <G as Visitable>::Map> where
+    G::NodeId: Clone,
 {
     /// Create a new **Bfs**, using the graph's visitor map, and put **start**
     /// in the stack of nodes to visit.
-    pub fn new(graph: &G, start: N) -> Self
+    pub fn new(graph: &G, start: G::NodeId) -> Self
     {
         let mut discovered = graph.visit_map();
         discovered.visit(start.clone());
-        let mut stack = RingBuf::new();
+        let mut stack = VecDeque::new();
         stack.push_front(start.clone());
         Bfs {
             stack: stack,
@@ -343,7 +310,8 @@ impl<N, VM> Bfs<N, VM> where
 {
     /// Return the next node in the dfs, or **None** if the traversal is done.
     pub fn next<'a, G>(&mut self, graph: &'a G) -> Option<N> where
-        G: for<'b> NeighborIter<'b, N>,
+        G: Graphlike<NodeId=N>,
+        G: for<'b> NeighborIter<'b>,
     {
         while let Some(node) = self.stack.pop_front() {
             for succ in graph.neighbors(node.clone()) {
@@ -377,38 +345,3 @@ pub fn visitor<G>(graph: &G, start: <G as Graphlike>::NodeId) -> Visitor<G> wher
 }
 */
 
-/// An iterator for a breadth first traversal of a graph.
-#[derive(Clone)]
-pub struct BfsIter<'a, G, N, VM> where
-    G: 'a,
-{
-    graph: &'a G,
-    bfs: Bfs<N, VM>,
-}
-
-impl<'a, G, N> BfsIter<'a, G, N, <G as Visitable>::Map> where
-    N: Clone,
-    G: Visitable<NodeId=N>,
-    <G as Visitable>::Map: VisitMap<N>,
-{
-    pub fn new(graph: &'a G, start: N) -> BfsIter<'a, G, N, <G as Visitable>::Map>
-    {
-        BfsIter {
-            graph: graph,
-            bfs: Bfs::new(graph, start)
-        }
-    }
-}
-
-impl<'a, G, N, VM> Iterator for BfsIter<'a, G, N, VM> where
-    G: 'a,
-    N: Clone,
-    VM: VisitMap<N>,
-    G: for<'b> NeighborIter<'b, N>,
-{
-    type Item = N;
-    fn next(&mut self) -> Option<N>
-    {
-        self.bfs.next(self.graph)
-    }
-}

@@ -1,4 +1,5 @@
-use std::collections::Bitv;
+use std::marker;
+use std::collections::BitVec;
 
 use super::{
     EdgeType,
@@ -10,7 +11,7 @@ use super::graph::{
     NodeIndex,
 };
 
-use super::visit::HasAdjacencyMatrix;
+use super::visit::GetAdjacencyMatrix;
 
 #[derive(Debug)]
 struct Vf2State<Ty, Ix> {
@@ -28,8 +29,9 @@ struct Vf2State<Ty, Ix> {
     ins: Vec<usize>,
     out_size: usize,
     ins_size: usize,
-    adjacency_matrix: Bitv,
+    adjacency_matrix: BitVec,
     generation: usize,
+    _etype: marker::PhantomData<Ty>,
 }
 
 impl<Ty, Ix> Vf2State<Ty, Ix> where
@@ -47,6 +49,7 @@ impl<Ty, Ix> Vf2State<Ty, Ix> where
             ins_size: 0,
             adjacency_matrix: g.adjacency_matrix(),
             generation: 0,
+            _etype: marker::PhantomData,
         };
         for _ in (0..c0) {
             state.mapping.push(NodeIndex::end());
@@ -180,7 +183,7 @@ pub fn is_isomorphic<N, E, Ix, Ty>(g0: &Graph<N, E, Ty, Ix>,
         Ty: EdgeType,
     {
         let g = [g0, g1];
-        let graph_indices = 0..2us;
+        let graph_indices = 0..2;
         let end = NodeIndex::end();
 
         // if all are mapped -- we are done and have an iso
