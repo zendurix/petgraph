@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `scc` fn in crate `petgraph`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, scc">
+    <meta name="description" content="API documentation for the Rust `is_cyclic_undirected` fn in crate `petgraph`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, is_cyclic_undirected">
 
-    <title>petgraph::algo::scc - Rust</title>
+    <title>petgraph::algo::is_cyclic_undirected - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><script>window.sidebarCurrent = {name: 'scc', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><script>window.sidebarCurrent = {name: 'is_cyclic_undirected', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -41,14 +41,12 @@
     </nav>
 
     <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a>::<wbr><a class='fn' href=''>scc</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a>::<wbr><a class='fn' href=''>is_cyclic_undirected</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-575' href='../../src/petgraph/algo.rs.html#125-166'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn scc&lt;N, E, Ty, Ix&gt;(g: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='http://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;&gt;&gt; <span class='where'>where Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></pre><div class='docblock'><p>Compute <em>Strongly connected components</em> using Kosaraju&#39;s algorithm.</p>
+        </span><a id='src-282' href='../../src/petgraph/algo.rs.html#36-51'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn is_cyclic_undirected&lt;N, E, Ty, Ix&gt;(g: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a> <span class='where'>where Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></pre><div class='docblock'><p>Return <strong>true</strong> if the input graph contains a cycle.</p>
 
-<p>Return a vector where each element is an scc.</p>
-
-<p>For an undirected graph, the sccs are simply the connected components.</p>
+<p>Treat the input graph as undirected.</p>
 </div></section>
     <section id='search' class="content hidden"></section>
 
