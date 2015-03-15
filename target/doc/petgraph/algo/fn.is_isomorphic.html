@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.connected_components.html' title='Return the number of connected components of the graph.'>connected_components</a><a class='fn ' href='fn.dijkstra.html' title='Dijkstra&#39;s shortest path algorithm.'>dijkstra</a><a class='fn ' href='fn.is_cyclic.html' title='Return **true** if the input graph contains a cycle.'>is_cyclic</a><a class='fn current' href='fn.is_isomorphic.html' title='Return **true** if the graphs **g0** and **g1** are isomorphic.'>is_isomorphic</a><a class='fn ' href='fn.min_spanning_tree.html' title='Return a *Minimum Spanning Tree* of a graph.'>min_spanning_tree</a><a class='fn ' href='fn.scc.html' title='Compute *Strongly connected components* using Kosaraju&#39;s algorithm.'>scc</a><a class='fn ' href='fn.toposort.html' title='Perform a topological sort of a directed graph.'>toposort</a></div>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><script>window.sidebarCurrent = {name: 'is_isomorphic', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -43,7 +43,7 @@
     <section id='main' class="content fn">
 <h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a>::<wbr><a class='fn' href=''>is_isomorphic</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-8741' href='../../src/petgraph/isomorphism.rs.html#169-359'>[src]</a></span></h1>
+        </span><a id='src-8525' href='../../src/petgraph/isomorphism.rs.html#169-359'>[src]</a></span></h1>
 <pre class='rust fn'>pub fn is_isomorphic&lt;N, E, Ix, Ty&gt;(g0: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;, g1: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a> <span class='where'>where Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a>, Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a></span></pre><div class='docblock'><p>Return <strong>true</strong> if the graphs <strong>g0</strong> and <strong>g1</strong> are isomorphic.</p>
 
 <p>Using the VF2 algorithm.</p>

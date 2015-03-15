@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.connected_components.html' title='Return the number of connected components of the graph.'>connected_components</a><a class='fn ' href='fn.dijkstra.html' title='Dijkstra&#39;s shortest path algorithm.'>dijkstra</a><a class='fn ' href='fn.is_cyclic.html' title='Return **true** if the input graph contains a cycle.'>is_cyclic</a><a class='fn ' href='fn.is_isomorphic.html' title='Return **true** if the graphs **g0** and **g1** are isomorphic.'>is_isomorphic</a><a class='fn ' href='fn.min_spanning_tree.html' title='Return a *Minimum Spanning Tree* of a graph.'>min_spanning_tree</a><a class='fn current' href='fn.scc.html' title='Compute *Strongly connected components* using Kosaraju&#39;s algorithm.'>scc</a><a class='fn ' href='fn.toposort.html' title='Perform a topological sort of a directed graph.'>toposort</a></div>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><script>window.sidebarCurrent = {name: 'scc', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -43,7 +43,7 @@
     <section id='main' class="content fn">
 <h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a>::<wbr><a class='fn' href=''>scc</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-430' href='../../src/petgraph/algo.rs.html#74-115'>[src]</a></span></h1>
+        </span><a id='src-401' href='../../src/petgraph/algo.rs.html#74-115'>[src]</a></span></h1>
 <pre class='rust fn'>pub fn scc&lt;N, E, Ty, Ix&gt;(g: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='http://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;&gt;&gt; <span class='where'>where Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></pre><div class='docblock'><p>Compute <em>Strongly connected components</em> using Kosaraju&#39;s algorithm.</p>
 
 <p>Return a vector where each element is an scc.</p>

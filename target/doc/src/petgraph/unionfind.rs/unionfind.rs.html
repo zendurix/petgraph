@@ -9,7 +9,7 @@
 
     <title>unionfind.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
 
     
     
@@ -230,7 +230,7 @@
 }
 
 <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-<span class='kw'>fn</span> <span class='ident'>to_uint</span><span class='op'>&lt;</span><span class='ident'>K</span>: <span class='ident'>num</span>::<span class='ident'>UnsignedInt</span><span class='op'>&gt;</span>(<span class='ident'>x</span>: <span class='ident'>K</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='ident'>x</span>.<span class='ident'>to_uint</span>().<span class='ident'>unwrap</span>() }
+<span class='kw'>fn</span> <span class='ident'>to_uint</span><span class='op'>&lt;</span><span class='ident'>K</span>: <span class='ident'>num</span>::<span class='ident'>UnsignedInt</span><span class='op'>&gt;</span>(<span class='ident'>x</span>: <span class='ident'>K</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='ident'>x</span>.<span class='ident'>to_usize</span>().<span class='ident'>unwrap</span>() }
 
 <span class='attribute'>#[<span class='ident'>inline</span>]</span>
 <span class='kw'>unsafe</span> <span class='kw'>fn</span> <span class='ident'>get_unchecked</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;</span>(<span class='ident'>xs</span>: <span class='kw-2'>&amp;</span>[<span class='ident'>K</span>], <span class='ident'>index</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>K</span>
@@ -401,13 +401,13 @@
     
 
     <script>
-        window.rootPath = "../../";
+        window.rootPath = "../../../";
         window.currentCrate = "petgraph";
         window.playgroundUrl = "";
     </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script async src="../../../search-index.js"></script>
 </body>
 </html>
