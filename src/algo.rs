@@ -30,6 +30,78 @@ use super::graph::{
 pub use super::isomorphism::is_isomorphic;
 pub use super::dijkstra::dijkstra;
 
+/// Return **true** if the input graph contains a cycle.
+///
+/// Treat the input graph as undirected.
+pub fn is_cyclic_undirected<N, E, Ty, Ix>(g: &Graph<N, E, Ty, Ix>) -> bool where
+    Ty: EdgeType,
+    Ix: IndexType,
+{
+    let mut edge_sets = UnionFind::new(g.node_count());
+    for edge in g.raw_edges().iter() {
+        let (a, b) = (edge.source(), edge.target());
+
+        // union the two vertices of the edge
+        //  -- if they were already the same, then we have a cycle
+        if !edge_sets.union(a.index(), b.index()) {
+            return true
+        }
+    }
+    false
+}
+
+/// **Deprecated: Renamed to *is_cyclic_undirected*.**
+pub fn is_cyclic<N, E, Ty, Ix>(g: &Graph<N, E, Ty, Ix>) -> bool where
+    Ty: EdgeType,
+    Ix: IndexType,
+{
+    is_cyclic_undirected(g)
+}
+
+/// Perform a topological sort of a directed graph.
+///
+/// Visit each node in order (if it is part of a topological order.
+fn generic_toposort<N, E, Ix, F>(g: &Graph<N, E, Directed, Ix>,
+                                 mut visit: F) where
+    Ix: IndexType,
+    F: FnMut(&NodeIndex<Ix>),
+{
+    let mut ordered = g.visit_map();
+    let mut tovisit = Vec::new();
+
+    // find all initial nodes
+    tovisit.extend(g.without_edges(Incoming));
+
+    // Take an unvisited element and find which of its neighbors are next
+    while let Some(nix) = tovisit.pop() {
+        if ordered.is_visited(&nix) {
+            continue;
+        }
+        visit(&nix);
+        ordered.visit(nix);
+        for neigh in g.neighbors_directed(nix, Outgoing) {
+            // Look at each neighbor, and those that only have incoming edges
+            // from the already ordered list, they are the next to visit.
+            if g.neighbors_directed(neigh, Incoming).all(|b| ordered.is_visited(&b)) {
+                tovisit.push(neigh);
+            }
+        }
+    }
+}
+
+/// Check if a directed graph contains cycles.
+///
+/// Using the topological sort algorithm.
+///
+/// Return **true** if the graph had a cycle.
+pub fn is_cyclic_directed<N, E, Ix>(g: &Graph<N, E, Directed, Ix>) -> bool where
+    Ix: IndexType,
+{
+    let mut n_ordered = 0;
+    generic_toposort(g, |_| n_ordered += 1);
+    n_ordered != g.node_count()
+}
+
 /// Perform a topological sort of a directed graph.
 ///
 /// Return a vector of nodes in topological order: each node is ordered
@@ -41,28 +113,7 @@ pub fn toposort<N, E, Ix>(g: &Graph<N, E, Directed, Ix>) -> Vec<NodeIndex<Ix>> w
     Ix: IndexType,
 {
     let mut order = Vec::with_capacity(g.node_count());
-    let mut ordered = g.visit_map();
-    let mut tovisit = Vec::new();
-
-    // find all initial nodes
-    tovisit.extend(g.without_edges(Incoming));
-
-    // Take an unvisited element and 
-    while let Some(nix) = tovisit.pop() {
-        if ordered.is_visited(&nix) {
-            continue;
-        }
-        order.push(nix);
-        ordered.visit(nix);
-        for neigh in g.neighbors_directed(nix, Outgoing) {
-            // Look at each neighbor, and those that only have incoming edges
-            // from the already ordered list, they are the next to visit.
-            if g.neighbors_directed(neigh, Incoming).all(|b| ordered.is_visited(&b)) {
-                tovisit.push(neigh);
-            }
-        }
-    }
-
+    generic_toposort(g, |&ix| order.push(ix));
     order
 }
 
@@ -112,26 +163,6 @@ pub fn scc<N, E, Ty, Ix>(g: &Graph<N, E, Ty, Ix>) -> Vec<Vec<NodeIndex<Ix>>> whe
         sccs.push(scc);
     }
     sccs
-}
-
-/// Return **true** if the input graph contains a cycle.
-///
-/// Treat the input graph as undirected.
-pub fn is_cyclic<N, E, Ty, Ix>(g: &Graph<N, E, Ty, Ix>) -> bool where
-    Ty: EdgeType,
-    Ix: IndexType,
-{
-    let mut edge_sets = UnionFind::new(g.node_count());
-    for edge in g.raw_edges().iter() {
-        let (a, b) = (edge.source(), edge.target());
-
-        // union the two vertices of the edge
-        //  -- if they were already the same, then we have a cycle
-        if !edge_sets.union(a.index(), b.index()) {
-            return true
-        }
-    }
-    false
 }
 
 /// Return the number of connected components of the graph.
