@@ -44,6 +44,24 @@ impl IndexType for u32 {
     fn max() -> Self { ::std::u32::MAX }
 }
 
+impl IndexType for u16 {
+    #[inline(always)]
+    fn new(x: usize) -> Self { x as u16 }
+    #[inline(always)]
+    fn index(&self) -> usize { *self as usize }
+    #[inline(always)]
+    fn max() -> Self { ::std::u16::MAX }
+}
+
+impl IndexType for u8 {
+    #[inline(always)]
+    fn new(x: usize) -> Self { x as u8 }
+    #[inline(always)]
+    fn index(&self) -> usize { *self as usize }
+    #[inline(always)]
+    fn max() -> Self { ::std::u8::MAX }
+}
+
 // FIXME: These aren't stable, so a public wrapper of node/edge indices
 // should be lifetimed just like pointers.
 /// Node identifier.
@@ -193,12 +211,23 @@ impl<N, E, Ty, Ix> fmt::Debug for Graph<N, E, Ty, Ix> where
     N: fmt::Debug, E: fmt::Debug, Ty: EdgeType, Ix: IndexType
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let indent = "    ";
+        let etype = if self.is_directed() { "Directed" } else { "Undirected" };
+        if self.node_count() == 0 {
+            return write!(f, "Graph<{}> {{}}", etype);
+        }
+        try!(writeln!(f, "Graph<{}> {{", etype));
         for (index, n) in self.nodes.iter().enumerate() {
-            try!(writeln!(f, "{}: {:?}", index, n));
+            try!(writeln!(f, "{}{}: Node({:?}),", indent, index, n.weight));
         }
-        for (index, n) in self.edges.iter().enumerate() {
-            try!(writeln!(f, "{}: {:?}", index, n));
+        for (index, e) in self.edges.iter().enumerate() {
+            try!(writeln!(f, "{}{}: Edge(from={}, to={}, weight={:?}),",
+                          indent, index,
+                          e.source().index(),
+                          e.target().index(),
+                          e.weight));
         }
+        try!(write!(f, "}}"));
         Ok(())
     }
 }
@@ -302,6 +331,9 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     /// Computes in **O(1)** time.
     ///
     /// Return the index of the new node.
+    ///
+    /// **Panics** if the Graph is at the maximum number of nodes for its index
+    /// type.
     pub fn add_node(&mut self, w: N) -> NodeIndex<Ix>
     {
         let node = Node{weight: w, next: [EdgeIndex::end(), EdgeIndex::end()]};
@@ -415,6 +447,9 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     /// Return the index of the new edge.
     ///
     /// **Panics** if any of the nodes don't exist.
+    ///
+    /// **Panics** if the Graph is at the maximum number of edges for its index
+    /// type.
     pub fn add_edge(&mut self, a: NodeIndex<Ix>, b: NodeIndex<Ix>, weight: E) -> EdgeIndex<Ix>
     {
         let edge_idx = EdgeIndex::new(self.edges.len());
@@ -632,6 +667,10 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     /// Lookup an edge between **a** and **b**, in either direction.
     ///
     /// If the graph is undirected, then this is equivalent to *.find_edge()*.
+    ///
+    /// Return the edge index and its directionality, with *Outgoing* meaning
+    /// from **a** to **b** and *Incoming* the reverse,
+    /// or **None** if the edge does not exist.
     pub fn find_edge_undirected(&self, a: NodeIndex<Ix>, b: NodeIndex<Ix>) -> Option<(EdgeIndex<Ix>, EdgeDirection)>
     {
         match self.nodes.get(a.index()) {
