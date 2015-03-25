@@ -1,5 +1,4 @@
 #![feature(core,
-           std_misc,
            collections)]
 
 //! **petgraph** is a graph data structure library.
@@ -28,6 +27,7 @@ mod scored;
 pub mod algo;
 pub mod graphmap;
 pub mod graph;
+pub mod parse;
 pub mod visit;
 
 pub mod unionfind;
