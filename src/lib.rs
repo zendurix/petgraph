@@ -27,7 +27,6 @@ mod scored;
 pub mod algo;
 pub mod graphmap;
 pub mod graph;
-pub mod parse;
 pub mod visit;
 
 pub mod unionfind;
@@ -120,7 +119,7 @@ impl<'b, T> Hash for Ptr<'b, T>
 {
     fn hash<H: hash::Hasher>(&self, st: &mut H)
     {
-        let ptr = (self.0) as *const _;
+        let ptr = (self.0) as *const T;
         ptr.hash(st)
     }
 }
