@@ -2012,7 +2012,7 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     <span class='doccomment'>/// Index the **Graph** by **NodeIndex** to access node weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the node doesn&#39;t exist.</span>
-    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>N</span> {
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>index</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>N</span> {
         <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='ident'>index</span>.<span class='ident'>index</span>()].<span class='ident'>weight</span>
     }
 }
@@ -2024,7 +2024,7 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     <span class='doccomment'>/// Index the **Graph** by **NodeIndex** to access node weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the node doesn&#39;t exist.</span>
-    <span class='kw'>fn</span> <span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>N</span> {
+    <span class='kw'>fn</span> <span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>N</span> {
         <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='ident'>index</span>.<span class='ident'>index</span>()].<span class='ident'>weight</span>
     }
 
@@ -2037,7 +2037,7 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     <span class='doccomment'>/// Index the **Graph** by **EdgeIndex** to access edge weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the edge doesn&#39;t exist.</span>
-    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>E</span> {
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>index</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>E</span> {
         <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>edges</span>[<span class='ident'>index</span>.<span class='ident'>index</span>()].<span class='ident'>weight</span>
     }
 }
@@ -2049,7 +2049,7 @@ impl&lt;&#39;a, E&gt; Iterator for DiNeighbors&lt;&#39;a, E&gt;
     <span class='doccomment'>/// Index the **Graph** by **EdgeIndex** to access edge weights.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the edge doesn&#39;t exist.</span>
-    <span class='kw'>fn</span> <span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='kw-2'>&amp;</span><span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>E</span> {
+    <span class='kw'>fn</span> <span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>index</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>E</span> {
         <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>edges</span>[<span class='ident'>index</span>.<span class='ident'>index</span>()].<span class='ident'>weight</span>
     }
 }
