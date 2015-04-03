@@ -172,14 +172,14 @@
 <span id="130">130</span>
 <span id="131">131</span>
 </pre><pre class='rust '>
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>core</span>,
-           <span class='ident'>collections</span>)]</span>
 
 <span class='doccomment'>//! **petgraph** is a graph data structure library.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! The most interesting type is [**Graph**](./graph/struct.Graph.html) which is</span>
 <span class='doccomment'>//! a directed or undirected graph with owned mutably accessible arbitrary node and edge weights.</span>
 <span class='doccomment'>//! It is based on rustc&#39;s graph implementation.</span>
+
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>fixedbitset</span> <span class='kw'>as</span> <span class='ident'>fb</span>;
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>;

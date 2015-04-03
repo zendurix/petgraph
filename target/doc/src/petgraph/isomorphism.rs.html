@@ -402,7 +402,7 @@
 <span id="360">360</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>BitVec</span>;
+<span class='kw'>use</span> <span class='ident'>fb</span>::<span class='ident'>FixedBitSet</span>;
 
 <span class='kw'>use</span> <span class='ident'>super</span>::{
     <span class='ident'>EdgeType</span>,
@@ -432,7 +432,7 @@
     <span class='ident'>ins</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>,
     <span class='ident'>out_size</span>: <span class='ident'>usize</span>,
     <span class='ident'>ins_size</span>: <span class='ident'>usize</span>,
-    <span class='ident'>adjacency_matrix</span>: <span class='ident'>BitVec</span>,
+    <span class='ident'>adjacency_matrix</span>: <span class='ident'>FixedBitSet</span>,
     <span class='ident'>generation</span>: <span class='ident'>usize</span>,
     <span class='ident'>_etype</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>Ty</span><span class='op'>&gt;</span>,
 }
