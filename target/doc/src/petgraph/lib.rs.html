@@ -170,7 +170,6 @@
 <span id="128">128</span>
 <span id="129">129</span>
 <span id="130">130</span>
-<span id="131">131</span>
 </pre><pre class='rust '>
 
 <span class='doccomment'>//! **petgraph** is a graph data structure library.</span>
@@ -181,7 +180,6 @@
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>fixedbitset</span> <span class='kw'>as</span> <span class='ident'>fb</span>;
 
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>hash</span>::{<span class='self'>self</span>, <span class='ident'>Hash</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
@@ -227,7 +225,7 @@
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Undirected</span>;
 
 <span class='doccomment'>/// A graph&#39;s edge type determines whether is has directed edges or not.</span>
-<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>EdgeType</span> : <span class='ident'>marker</span>::<span class='ident'>MarkerTrait</span> {
+<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>EdgeType</span> {
     <span class='kw'>fn</span> <span class='ident'>is_directed</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span>;
 }
 
