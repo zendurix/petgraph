@@ -46,7 +46,7 @@ impl<'a, N, E, Ty, Ix> NeighborIter<'a> for Graph<N, E, Ty, Ix> where
 }
 
 impl<'a, N, E> NeighborIter<'a> for GraphMap<N, E>
-where N: Copy + Clone + Ord + Hash + Eq
+where N: Copy + Ord + Hash + Eq
 {
     type Iter = graphmap::Neighbors<'a, N>;
     fn neighbors(&'a self, n: N) -> graphmap::Neighbors<'a, N>
@@ -137,7 +137,7 @@ impl<N: Clone, E> Graphlike for GraphMap<N, E>
 }
 
 impl<N, E> Visitable for GraphMap<N, E>
-    where N: Copy + Clone + Ord + Eq + Hash
+    where N: Copy + Ord + Eq + Hash
 {
     type Map = HashSet<N>;
     fn visit_map(&self) -> HashSet<N> { HashSet::with_capacity(self.node_count()) }
@@ -176,8 +176,9 @@ pub trait GetAdjacencyMatrix : Graphlike {
     fn is_adjacent(&self, matrix: &Self::AdjMatrix, a: Self::NodeId, b: Self::NodeId) -> bool;
 }
 
+/// The **GraphMap** keeps an adjacency matrix internally.
 impl<N, E> GetAdjacencyMatrix for GraphMap<N, E>
-    where N: Copy + Clone + Ord + Eq + Hash
+    where N: Copy + Ord + Eq + Hash
 {
     type AdjMatrix = ();
     #[inline]
@@ -256,9 +257,9 @@ impl<N, VM> Dfs<N, VM> where
     VM: VisitMap<N>
 {
     /// Return the next node in the dfs, or **None** if the traversal is done.
-    pub fn next<'a, G>(&mut self, graph: &'a G) -> Option<N> where
+    pub fn next<G>(&mut self, graph: &G) -> Option<N> where
         G: Graphlike<NodeId=N>,
-        G: for<'b> NeighborIter<'b>,
+        G: for<'a> NeighborIter<'a>,
     {
         while let Some(node) = self.stack.pop() {
             for succ in graph.neighbors(node.clone()) {
@@ -301,8 +302,7 @@ pub struct Bfs<N, VM> {
     pub discovered: VM,
 }
 
-impl<G: Visitable> Bfs<G::NodeId, G::Map> where
-    G::NodeId: Clone,
+impl<G: Visitable> Bfs<G::NodeId, G::Map>
 {
     /// Create a new **Bfs**, using the graph's visitor map, and put **start**
     /// in the stack of nodes to visit.
@@ -325,9 +325,9 @@ impl<N, VM> Bfs<N, VM> where
     VM: VisitMap<N>
 {
     /// Return the next node in the dfs, or **None** if the traversal is done.
-    pub fn next<'a, G>(&mut self, graph: &'a G) -> Option<N> where
+    pub fn next<G>(&mut self, graph: &G) -> Option<N> where
         G: Graphlike<NodeId=N>,
-        G: for<'b> NeighborIter<'b>,
+        G: for<'a> NeighborIter<'a>,
     {
         while let Some(node) = self.stack.pop_front() {
             for succ in graph.neighbors(node.clone()) {
@@ -342,22 +342,3 @@ impl<N, VM> Bfs<N, VM> where
     }
 
 }
-
-/*
-pub struct Visitor<G> where
-    G: Visitable,
-{
-    stack: Vec<<G as Graphlike>::NodeId>,
-    discovered: <G as Visitable>::Map,
-}
-
-pub fn visitor<G>(graph: &G, start: <G as Graphlike>::NodeId) -> Visitor<G> where
-    G: Visitable
-{
-    Visitor{
-        stack: vec![start],
-        discovered: graph.visit_map(),
-    }
-}
-*/
-

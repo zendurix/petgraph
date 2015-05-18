@@ -6,10 +6,6 @@ use std::iter::Map;
 use std::collections::hash_map::{
     Keys,
 };
-use std::collections::hash_map::Entry::{
-    Occupied,
-    Vacant,
-};
 use std::slice::{
     Iter,
 };
@@ -95,10 +91,7 @@ impl<N, E> GraphMap<N, E> where N: NodeTrait
 
     /// Add node **n** to the graph.
     pub fn add_node(&mut self, n: N) -> N {
-        match self.nodes.entry(n) {
-            Occupied(_) => {}
-            Vacant(ent) => { ent.insert(Vec::new()); }
-        }
+        self.nodes.entry(n).or_insert_with(|| Vec::new());
         n
     }
 
@@ -140,14 +133,12 @@ impl<N, E> GraphMap<N, E> where N: NodeTrait
     pub fn add_edge(&mut self, a: N, b: N, edge: E) -> bool
     {
         // Use Ord to order the edges
-        match self.nodes.entry(a) {
-            Occupied(ent) => { ent.into_mut().push(b); }
-            Vacant(ent) => { ent.insert(vec![b]); }
-        }
-        match self.nodes.entry(b) {
-            Occupied(ent) => { ent.into_mut().push(a); }
-            Vacant(ent) => { ent.insert(vec![a]); }
-        }
+        self.nodes.entry(a)
+                  .or_insert_with(|| Vec::with_capacity(1))
+                  .push(b);
+        self.nodes.entry(b)
+                  .or_insert_with(|| Vec::with_capacity(1))
+                  .push(a);
         self.edges.insert(edge_key(a, b), edge).is_none()
     }
 
@@ -252,40 +243,47 @@ impl<N, E> GraphMap<N, E> where N: NodeTrait
     }
 }
 
-macro_rules! iterator_methods {
-    () => (
-        #[inline]
-        fn next(&mut self) -> Option<Self::Item>
-        {
-            self.iter.next()
-        }
-
-        #[inline]
-        fn size_hint(&self) -> (usize, Option<usize>)
-        {
-            self.iter.size_hint()
-        }
-    )
+/// Utitily macro -- reinterpret passed in macro arguments as items
+macro_rules! items {
+    ($($item:item)*) => ($($item)*);
 }
 
-pub struct Nodes<'a, N: 'a> {
+macro_rules! iterator_wrap {
+    ($name: ident <$($typarm:tt),*> where { $($bounds: tt)* }
+     item: $item: ty,
+     iter: $iter: ty,
+     ) => (
+        items! {
+            pub struct $name <$($typarm),*> where $($bounds)* {
+                iter: $iter,
+            }
+            impl<$($typarm),*> Iterator for $name <$($typarm),*>
+            {
+                type Item = $item;
+                #[inline]
+                fn next(&mut self) -> Option<Self::Item> {
+                    self.iter.next()
+                }
+
+                #[inline]
+                fn size_hint(&self) -> (usize, Option<usize>) {
+                    self.iter.size_hint()
+                }
+            }
+        }
+    );
+}
+
+iterator_wrap! {
+    Nodes <'a, N> where { N: 'a }
+    item: N,
     iter: Map<Keys<'a, N, Vec<N>>, fn(&N) -> N>,
 }
 
-impl<'a, N> Iterator for Nodes<'a, N>
-{
-    type Item = N;
-    iterator_methods!();
-}
-
-pub struct Neighbors<'a, N: 'a> {
+iterator_wrap! {
+    Neighbors <'a, N> where { N: 'a }
+    item: N,
     iter: Map<Iter<'a, N>, fn(&N) -> N>,
-}
-
-impl<'a, N> Iterator for Neighbors<'a, N>
-{
-    type Item = N;
-    iterator_methods!();
 }
 
 pub struct Edges<'a, N, E: 'a> where N: 'a + NodeTrait
