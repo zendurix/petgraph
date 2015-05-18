@@ -324,7 +324,7 @@
     <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>edge_sets</span> <span class='op'>=</span> <span class='ident'>UnionFind</span>::<span class='ident'>new</span>(<span class='ident'>g</span>.<span class='ident'>node_count</span>());
-    <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>raw_edges</span>().<span class='ident'>iter</span>() {
+    <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>raw_edges</span>() {
         <span class='kw'>let</span> (<span class='ident'>a</span>, <span class='ident'>b</span>) <span class='op'>=</span> (<span class='ident'>edge</span>.<span class='ident'>source</span>(), <span class='ident'>edge</span>.<span class='ident'>target</span>());
 
         <span class='comment'>// union the two vertices of the edge</span>
@@ -459,7 +459,7 @@
     <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>vertex_sets</span> <span class='op'>=</span> <span class='ident'>UnionFind</span>::<span class='ident'>new</span>(<span class='ident'>g</span>.<span class='ident'>node_count</span>());
-    <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>raw_edges</span>().<span class='ident'>iter</span>() {
+    <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>raw_edges</span>() {
         <span class='kw'>let</span> (<span class='ident'>a</span>, <span class='ident'>b</span>) <span class='op'>=</span> (<span class='ident'>edge</span>.<span class='ident'>source</span>(), <span class='ident'>edge</span>.<span class='ident'>target</span>());
 
         <span class='comment'>// union the two vertices of the edge</span>
@@ -494,7 +494,7 @@
 
     <span class='comment'>// Create a mst skeleton by copying all nodes</span>
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>mst</span> <span class='op'>=</span> <span class='ident'>Graph</span>::<span class='ident'>with_capacity</span>(<span class='ident'>g</span>.<span class='ident'>node_count</span>(), <span class='ident'>g</span>.<span class='ident'>node_count</span>() <span class='op'>-</span> <span class='number'>1</span>);
-    <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>raw_nodes</span>().<span class='ident'>iter</span>() {
+    <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>raw_nodes</span>() {
         <span class='ident'>mst</span>.<span class='ident'>add_node</span>(<span class='ident'>node</span>.<span class='ident'>weight</span>.<span class='ident'>clone</span>());
     }
 
@@ -503,7 +503,7 @@
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>subgraphs</span> <span class='op'>=</span> <span class='ident'>UnionFind</span>::<span class='ident'>new</span>(<span class='ident'>g</span>.<span class='ident'>node_count</span>());
 
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>sort_edges</span> <span class='op'>=</span> <span class='ident'>BinaryHeap</span>::<span class='ident'>with_capacity</span>(<span class='ident'>g</span>.<span class='ident'>edge_count</span>());
-    <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>raw_edges</span>().<span class='ident'>iter</span>() {
+    <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>raw_edges</span>() {
         <span class='ident'>sort_edges</span>.<span class='ident'>push</span>(<span class='ident'>MinScored</span>(<span class='ident'>edge</span>.<span class='ident'>weight</span>.<span class='ident'>clone</span>(), (<span class='ident'>edge</span>.<span class='ident'>source</span>(), <span class='ident'>edge</span>.<span class='ident'>target</span>())));
     }
 
@@ -560,6 +560,10 @@
                 <code>struct</code>, <code>enum</code>,
                 <code>trait</code>, <code>typedef</code> (or
                 <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
             </p>
         </div>
     </div>

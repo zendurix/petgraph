@@ -85,6 +85,8 @@
 <span id="43">43</span>
 <span id="44">44</span>
 <span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>fb</span>::<span class='ident'>FixedBitSet</span>;
 
@@ -100,6 +102,8 @@
 
 <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>visit</span>::<span class='ident'>GetAdjacencyMatrix</span>;
 
+<span class='doccomment'>/// The adjacency matrix for **Graph** is a bitmap that&#39;s computed by</span>
+<span class='doccomment'>/// *.adjacency_matrix()*.</span>
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>GetAdjacencyMatrix</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
     <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
     <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
@@ -164,6 +168,10 @@
                 <code>struct</code>, <code>enum</code>,
                 <code>trait</code>, <code>typedef</code> (or
                 <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
             </p>
         </div>
     </div>

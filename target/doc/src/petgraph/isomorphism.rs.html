@@ -389,17 +389,6 @@
 <span id="347">347</span>
 <span id="348">348</span>
 <span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
-<span id="355">355</span>
-<span id="356">356</span>
-<span id="357">357</span>
-<span id="358">358</span>
-<span id="359">359</span>
-<span id="360">360</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>marker</span>;
 <span class='kw'>use</span> <span class='ident'>fb</span>::<span class='ident'>FixedBitSet</span>;
@@ -666,17 +655,6 @@
 
             <span class='kw'>let</span> <span class='ident'>nodes</span> <span class='op'>=</span> [<span class='ident'>nx</span>, <span class='ident'>mx</span>];
 
-            <span class='comment'>/*
-            print!(&quot;Mapping state: &quot;);
-            for (index, nmap) in st.mapping[0].iter().enumerate() {
-                if *nmap == end {
-                    continue;
-                }
-                print!(&quot;{} =&gt; {}, &quot;, index, nmap.index());
-            }
-            println!(&quot;{} =&gt; {}&quot;, nx.index(), mx.index());
-            */</span>
-        
             <span class='comment'>// Check syntactic feasibility of mapping by ensuring adjacencies</span>
             <span class='comment'>// of nx map to adjacencies of mx.</span>
             <span class='comment'>//</span>
@@ -794,6 +772,10 @@
                 <code>struct</code>, <code>enum</code>,
                 <code>trait</code>, <code>typedef</code> (or
                 <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
             </p>
         </div>
     </div>

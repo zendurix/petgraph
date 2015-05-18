@@ -170,13 +170,21 @@
 <span id="128">128</span>
 <span id="129">129</span>
 <span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
 </pre><pre class='rust '>
 
 <span class='doccomment'>//! **petgraph** is a graph data structure library.</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! The most interesting type is [**Graph**](./graph/struct.Graph.html) which is</span>
-<span class='doccomment'>//! a directed or undirected graph with owned mutably accessible arbitrary node and edge weights.</span>
+<span class='doccomment'>//! The most prominent type is [**Graph**](./graph/struct.Graph.html) which is</span>
+<span class='doccomment'>//! a directed or undirected graph with arbitrary mutable node and edge weights.</span>
 <span class='doccomment'>//! It is based on rustc&#39;s graph implementation.</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! Petgraph also provides [**GraphMap**](./graphmap/struct.GraphMap.html) which</span>
+<span class='doccomment'>//! is an undirected hashmap-backed graph which only allows simple node identifiers</span>
+<span class='doccomment'>//! (such as integers or references).</span>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>fixedbitset</span> <span class='kw'>as</span> <span class='ident'>fb</span>;
 
@@ -334,6 +342,10 @@
                 <code>struct</code>, <code>enum</code>,
                 <code>trait</code>, <code>typedef</code> (or
                 <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
             </p>
         </div>
     </div>
