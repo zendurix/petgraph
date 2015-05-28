@@ -83,6 +83,7 @@ impl<'a, 'b, N, E, Ty, Ix> NeighborIter<'a> for Reversed<&'b Graph<N, E, Ty, Ix>
     }
 }
 
+/// A mapping from node → is_visited.
 pub trait VisitMap<N> {
     /// Return **true** if the value is not already present.
     fn visit(&mut self, N) -> bool;
@@ -213,7 +214,9 @@ impl<N, E> GetAdjacencyMatrix for GraphMap<N, E>
 /// during iteration. It may not necessarily visit added nodes or edges.
 #[derive(Clone, Debug)]
 pub struct Dfs<N, VM> {
+    /// The stack of nodes to visit
     pub stack: Vec<N>,
+    /// The map of discovered nodes
     pub discovered: VM,
 }
 
@@ -250,12 +253,7 @@ impl<N, VM> Dfs<N, VM> where
         self.stack.clear();
         self.stack.push(start);
     }
-}
 
-impl<N, VM> Dfs<N, VM> where
-    N: Clone,
-    VM: VisitMap<N>
-{
     /// Return the next node in the dfs, or **None** if the traversal is done.
     pub fn next<G>(&mut self, graph: &G) -> Option<N> where
         G: Graphlike<NodeId=N>,
@@ -294,15 +292,40 @@ impl<'a, G: Visitable> DfsIter<'a, G>
             dfs: dfs,
         }
     }
+
+    /// Keep the discovered map, but clear the visit stack and restart
+    /// the DFS traversal from a particular node.
+    pub fn move_to(&mut self, start: G::NodeId)
+    {
+        self.dfs.move_to(start)
+    }
 }
 
 impl<'a, G: 'a + Visitable> Iterator for DfsIter<'a, G> where
     G: for<'b> NeighborIter<'b>,
 {
     type Item = G::NodeId;
+
+    #[inline]
     fn next(&mut self) -> Option<G::NodeId>
     {
         self.dfs.next(self.graph)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>)
+    {
+        // Very vauge info about size of traversal
+        (self.dfs.stack.len(), None)
+    }
+}
+
+impl<'a, G: Visitable> Clone for DfsIter<'a, G> where Dfs<G::NodeId, G::Map>: Clone
+{
+    fn clone(&self) -> Self {
+        DfsIter {
+            graph: self.graph,
+            dfs: self.dfs.clone(),
+        }
     }
 }
 
@@ -330,7 +353,9 @@ impl<'a, G: 'a + Visitable> Iterator for DfsIter<'a, G> where
 /// during iteration. It may not necessarily visit added nodes or edges.
 #[derive(Clone)]
 pub struct Bfs<N, VM> {
+    /// The queue of nodes to visit
     pub stack: VecDeque<N>,
+    /// The map of discovered nodes
     pub discovered: VM,
 }
 
@@ -412,5 +437,20 @@ impl<'a, G: 'a + Visitable> Iterator for BfsIter<'a, G> where
     fn next(&mut self) -> Option<G::NodeId>
     {
         self.bfs.next(self.graph)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>)
+    {
+        (self.bfs.stack.len(), None)
+    }
+}
+
+impl<'a, G: Visitable> Clone for BfsIter<'a, G> where Bfs<G::NodeId, G::Map>: Clone
+{
+    fn clone(&self) -> Self {
+        BfsIter {
+            graph: self.graph,
+            bfs: self.bfs.clone(),
+        }
     }
 }
