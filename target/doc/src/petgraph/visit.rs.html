@@ -545,7 +545,7 @@
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>NeighborIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>GraphMap</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
-<span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>Hash</span> <span class='op'>+</span> <span class='ident'>Eq</span>
+<span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>Hash</span>
 {
     <span class='kw'>type</span> <span class='ident'>Iter</span> <span class='op'>=</span> <span class='ident'>graphmap</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;</span>;
     <span class='kw'>fn</span> <span class='ident'>neighbors</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>, <span class='ident'>n</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='ident'>graphmap</span>::<span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>N</span><span class='op'>&gt;</span>
@@ -637,7 +637,7 @@
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>Visitable</span> <span class='kw'>for</span> <span class='ident'>GraphMap</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
-    <span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span>
+    <span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>Hash</span>
 {
     <span class='kw'>type</span> <span class='ident'>Map</span> <span class='op'>=</span> <span class='ident'>HashSet</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>;
     <span class='kw'>fn</span> <span class='ident'>visit_map</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>HashSet</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span> { <span class='ident'>HashSet</span>::<span class='ident'>with_capacity</span>(<span class='self'>self</span>.<span class='ident'>node_count</span>()) }
@@ -678,7 +678,7 @@
 
 <span class='doccomment'>/// The **GraphMap** keeps an adjacency matrix internally.</span>
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span> <span class='ident'>GetAdjacencyMatrix</span> <span class='kw'>for</span> <span class='ident'>GraphMap</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span><span class='op'>&gt;</span>
-    <span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span>
+    <span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>Hash</span>
 {
     <span class='kw'>type</span> <span class='ident'>AdjMatrix</span> <span class='op'>=</span> ();
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
