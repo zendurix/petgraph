@@ -740,13 +740,48 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     }
     */
 
-    /// Access the internal node array
+    /// Return an iterator over either the nodes without edges to them or from them.
+    ///
+    /// The nodes in *.without_edges(Incoming)* are the initial nodes and 
+    /// *.without_edges(Outgoing)* are the terminals.
+    ///
+    /// For an undirected graph, the initials/terminals are just the vertices without edges.
+    ///
+    /// The whole iteration computes in **O(|V|)** time.
+    pub fn without_edges(&self, dir: EdgeDirection) -> WithoutEdges<N, Ty, Ix>
+    {
+        WithoutEdges{iter: self.nodes.iter().enumerate(), dir: dir,
+                     _ty: marker::PhantomData}
+    }
+
+    /// Return an iterator yielding mutable access to all node weights.
+    ///
+    /// The order in which weights are yielded matches the order of their
+    /// node indices.
+    pub fn node_weights_mut<'a>(&'a mut self) -> NodeWeightsMut<'a, N, Ix>
+    {
+        NodeWeightsMut { nodes: self.nodes.iter_mut() }
+    }
+
+    /// Return an iterator yielding mutable access to all edge weights.
+    ///
+    /// The order in which weights are yielded matches the order of their
+    /// edge indices.
+    pub fn edge_weights_mut<'a>(&'a mut self) -> EdgeWeightsMut<'a, E, Ix>
+    {
+        EdgeWeightsMut { edges: self.edges.iter_mut() }
+    }
+
+    // Remaining methods are of the more internal flavour, read-only access to
+    // the data structure's internals.
+
+    /// Access the internal node array.
     pub fn raw_nodes(&self) -> &[Node<N, Ix>]
     {
         &self.nodes
     }
 
-    /// Access the internal edge array
+    /// Access the internal edge array.
     pub fn raw_edges(&self) -> &[Edge<E, Ix>]
     {
         &self.edges
@@ -778,20 +813,6 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
                 } else { Some(edix) }
             }
         }
-    }
-
-    /// Return an iterator over either the nodes without edges to them or from them.
-    ///
-    /// The nodes in *.without_edges(Incoming)* are the initial nodes and 
-    /// *.without_edges(Outgoing)* are the terminals.
-    ///
-    /// For an undirected graph, the initials/terminals are just the vertices without edges.
-    ///
-    /// The whole iteration computes in **O(|V|)** time.
-    pub fn without_edges(&self, dir: EdgeDirection) -> WithoutEdges<N, Ty, Ix>
-    {
-        WithoutEdges{iter: self.nodes.iter().enumerate(), dir: dir,
-                     _ty: marker::PhantomData}
     }
 }
 
@@ -935,6 +956,44 @@ impl<'a, E, Ix> Iterator for Edges<'a, E, Ix> where
                 Some((edge.node[0], &edge.weight))
             }
         }
+    }
+}
+
+/// Iterator yielding mutable access to all node weights.
+pub struct NodeWeightsMut<'a, N: 'a, Ix: IndexType = DefIndex> {
+    nodes: ::std::slice::IterMut<'a, Node<N, Ix>>,
+}
+
+impl<'a, N, Ix> Iterator for NodeWeightsMut<'a, N, Ix> where
+    Ix: IndexType,
+{
+    type Item = &'a mut N;
+
+    fn next(&mut self) -> Option<&'a mut N> {
+        self.nodes.next().map(|node| &mut node.weight)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.nodes.size_hint()
+    }
+}
+
+/// Iterator yielding mutable access to all edge weights.
+pub struct EdgeWeightsMut<'a, E: 'a, Ix: IndexType = DefIndex> {
+    edges: ::std::slice::IterMut<'a, Edge<E, Ix>>,
+}
+
+impl<'a, E, Ix> Iterator for EdgeWeightsMut<'a, E, Ix> where
+    Ix: IndexType,
+{
+    type Item = &'a mut E;
+
+    fn next(&mut self) -> Option<&'a mut E> {
+        self.edges.next().map(|edge| &mut edge.weight)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.edges.size_hint()
     }
 }
 
