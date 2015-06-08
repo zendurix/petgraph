@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `is_isomorphic` fn in crate `petgraph`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, is_isomorphic">
+    <meta name="description" content="API documentation for the Rust `GraphIndex` trait in crate `petgraph`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, GraphIndex">
 
-    <title>petgraph::algo::is_isomorphic - Rust</title>
+    <title>petgraph::graph::GraphIndex - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><script>window.sidebarCurrent = {name: 'is_isomorphic', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>graph</a></p><script>window.sidebarCurrent = {name: 'GraphIndex', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -40,26 +40,21 @@
         </form>
     </nav>
 
-    <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a>::<wbr><a class='fn' href=''>is_isomorphic</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content trait">
+<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>graph</a>::<wbr><a class='trait' href=''>GraphIndex</a></span><span class='out-of-band'><span id='render-detail'>
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-9802' class='srclink' href='../../src/petgraph/isomorphism.rs.html#169-348' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn is_isomorphic&lt;N, E, Ty, Ix&gt;(g0: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;, g1: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a> <span class='where'>where Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></pre><div class='docblock'><p>Return <strong>true</strong> if the graphs <strong>g0</strong> and <strong>g1</strong> are isomorphic.</p>
-
-<p>Using the VF2 algorithm.</p>
-
-<p>Not implemented: Vertex or edge weight matching.</p>
-
-<h2 id="references" class='section-header'><a
-                           href="#references">References</a></h2>
-<ul>
-<li>A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs
-Luigi P. Cordella, Pasquale Foggia, Carlo Sansone,
-and Mario Vento</li>
-</ul>
-</div></section>
+        </span><a id='src-7026' class='srclink' href='../../src/petgraph/graph.rs.html#1125-1130' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait GraphIndex: <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> { }</pre><div class='docblock'><p>A  <strong>GraphIndex</strong> is a node or edge index.</p>
+</div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><code>impl&lt;Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a>&gt; <a class='trait' href='../../petgraph/graph/trait.GraphIndex.html' title='petgraph::graph::GraphIndex'>GraphIndex</a> for <a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;</code></li>
+<li><code>impl&lt;Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a>&gt; <a class='trait' href='../../petgraph/graph/trait.GraphIndex.html' title='petgraph::graph::GraphIndex'>GraphIndex</a> for <a class='struct' href='../../petgraph/graph/struct.EdgeIndex.html' title='petgraph::graph::EdgeIndex'>EdgeIndex</a>&lt;Ix&gt;</code></li>
+</ul><script type="text/javascript" async
+                              src="../../implementors/petgraph/graph/trait.GraphIndex.js">
+                      </script></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

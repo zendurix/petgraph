@@ -228,6 +228,43 @@ edge indices.</p>
 <div class='docblock'><p>Accessor for data structure internals: the first edge in the given direction.</p>
 </div><h4 id='method.next_edge' class='method'><code>fn <a href='#method.next_edge' class='fnname'>next_edge</a>(&amp;self, e: <a class='struct' href='../../petgraph/graph/struct.EdgeIndex.html' title='petgraph::graph::EdgeIndex'>EdgeIndex</a>&lt;Ix&gt;, dir: <a class='enum' href='../../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../petgraph/graph/struct.EdgeIndex.html' title='petgraph::graph::EdgeIndex'>EdgeIndex</a>&lt;Ix&gt;&gt;</code></h4>
 <div class='docblock'><p>Accessor for data structure internals: the next edge for the given direction.</p>
+</div><h4 id='method.walk_edges_directed' class='method'><code>fn <a href='#method.walk_edges_directed' class='fnname'>walk_edges_directed</a>(&amp;self, a: <a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;, dir: <a class='enum' href='../../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a>) -&gt; <a class='struct' href='../../petgraph/graph/struct.WalkEdges.html' title='petgraph::graph::WalkEdges'>WalkEdges</a>&lt;Ix&gt;</code></h4>
+<div class='docblock'><p>Return a “walker” object that can be used to step through the edges
+of the node <strong>a</strong> in direction <strong>dir</strong>.</p>
+
+<p>Note: The walker does not borrow from the graph, this is to allow mixing
+edge walking with mutating the graph&#39;s weights.</p>
+</div><h4 id='method.index_twice_mut' class='method'><code>fn <a href='#method.index_twice_mut' class='fnname'>index_twice_mut</a>&lt;T, U&gt;(&amp;mut self, i: T, j: U) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;mut Self::Output, &amp;mut Self::Output)</a> <span class='where'>where Self: <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>&lt;T&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>&lt;U&gt;, T: <a class='trait' href='../../petgraph/graph/trait.GraphIndex.html' title='petgraph::graph::GraphIndex'>GraphIndex</a>, U: <a class='trait' href='../../petgraph/graph/trait.GraphIndex.html' title='petgraph::graph::GraphIndex'>GraphIndex</a></span></code></h4>
+<div class='docblock'><p>Index the <strong>Graph</strong> by a tuple of two indices, any combination of
+node or edge indices is fine.</p>
+
+<p><strong>Panics</strong> if the indices are equal or if they are out of bounds.</p>
+<pre id='rust-example-rendered' class='rust '>
+<span class='kw'>use</span> <span class='ident'>petgraph</span>::{<span class='ident'>Graph</span>, <span class='ident'>Dfs</span>, <span class='ident'>Incoming</span>};
+
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>gr</span> <span class='op'>=</span> <span class='ident'>Graph</span>::<span class='op'>&lt;</span>_,_<span class='op'>&gt;</span>::<span class='ident'>new</span>();
+<span class='kw'>let</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>gr</span>.<span class='ident'>add_node</span>(<span class='number'>0.</span>);
+<span class='kw'>let</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>gr</span>.<span class='ident'>add_node</span>(<span class='number'>0.</span>);
+<span class='kw'>let</span> <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>gr</span>.<span class='ident'>add_node</span>(<span class='number'>0.</span>);
+<span class='ident'>gr</span>.<span class='ident'>add_edge</span>(<span class='ident'>a</span>, <span class='ident'>b</span>, <span class='number'>3.</span>);
+<span class='ident'>gr</span>.<span class='ident'>add_edge</span>(<span class='ident'>b</span>, <span class='ident'>c</span>, <span class='number'>2.</span>);
+<span class='ident'>gr</span>.<span class='ident'>add_edge</span>(<span class='ident'>c</span>, <span class='ident'>b</span>, <span class='number'>1.</span>);
+
+<span class='comment'>// walk the graph and sum incoming edges into the node weight</span>
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>dfs</span> <span class='op'>=</span> <span class='ident'>Dfs</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>gr</span>, <span class='ident'>a</span>);
+<span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=</span> <span class='ident'>dfs</span>.<span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='ident'>gr</span>) {
+    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>edges</span> <span class='op'>=</span> <span class='ident'>gr</span>.<span class='ident'>walk_edges_directed</span>(<span class='ident'>node</span>, <span class='ident'>Incoming</span>);
+    <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=</span> <span class='ident'>edges</span>.<span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='ident'>gr</span>) {
+        <span class='kw'>let</span> (<span class='ident'>nw</span>, <span class='ident'>ew</span>) <span class='op'>=</span> <span class='ident'>gr</span>.<span class='ident'>index_twice_mut</span>(<span class='ident'>node</span>, <span class='ident'>edge</span>);
+        <span class='op'>*</span><span class='ident'>nw</span> <span class='op'>+=</span> <span class='op'>*</span><span class='ident'>ew</span>;
+    }
+}
+
+<span class='comment'>// check the result</span>
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>gr</span>[<span class='ident'>a</span>], <span class='number'>0.</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>gr</span>[<span class='ident'>b</span>], <span class='number'>4.</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>gr</span>[<span class='ident'>c</span>], <span class='number'>2.</span>);
+</pre>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl&lt;N, E, Ty, Ix&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt; <span class='where'>where N: <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, E: <a class='trait' href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='http://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div><h3 class='impl'><code>impl&lt;N, E, Ty, Ix&gt; <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.Index.html' title='core::ops::Index'>Index</a>&lt;<a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;&gt; for <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt; <span class='where'>where Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></h3><div class='docblock'><p>Index the <strong>Graph</strong> by <strong>NodeIndex</strong> to access node weights.</p>
 
