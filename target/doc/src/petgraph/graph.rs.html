@@ -1089,6 +1089,20 @@
 <span id="1047">1047</span>
 <span id="1048">1048</span>
 <span id="1049">1049</span>
+<span id="1050">1050</span>
+<span id="1051">1051</span>
+<span id="1052">1052</span>
+<span id="1053">1053</span>
+<span id="1054">1054</span>
+<span id="1055">1055</span>
+<span id="1056">1056</span>
+<span id="1057">1057</span>
+<span id="1058">1058</span>
+<span id="1059">1059</span>
+<span id="1060">1060</span>
+<span id="1061">1061</span>
+<span id="1062">1062</span>
+<span id="1063">1063</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! **Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.</span>
 
@@ -1323,10 +1337,11 @@
     <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>let</span> <span class='ident'>indent</span> <span class='op'>=</span> <span class='string'>&quot;    &quot;</span>;
         <span class='kw'>let</span> <span class='ident'>etype</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>is_directed</span>() { <span class='string'>&quot;Directed&quot;</span> } <span class='kw'>else</span> { <span class='string'>&quot;Undirected&quot;</span> };
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;Graph&lt;{}&gt; {{&quot;</span>, <span class='ident'>etype</span>));
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>node_count</span>() <span class='op'>==</span> <span class='number'>0</span> {
-            <span class='kw'>return</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;Graph&lt;{}&gt; {{}}&quot;</span>, <span class='ident'>etype</span>);
+            <span class='kw'>return</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;}}&quot;</span>);
         }
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>writeln</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;Graph&lt;{}&gt; {{&quot;</span>, <span class='ident'>etype</span>));
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>writeln</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;&quot;</span>));
         <span class='kw'>for</span> (<span class='ident'>index</span>, <span class='ident'>n</span>) <span class='kw'>in</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>().<span class='ident'>enumerate</span>() {
             <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>writeln</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;{}{}: Node({:?}),&quot;</span>, <span class='ident'>indent</span>, <span class='ident'>index</span>, <span class='ident'>n</span>.<span class='ident'>weight</span>));
         }
@@ -1523,9 +1538,22 @@
     <span class='doccomment'>/// Iterator element type is **(NodeIndex&lt;Ix&gt;, &amp;&#39;a E)**.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
+        <span class='self'>self</span>.<span class='ident'>edges_directed</span>(<span class='ident'>a</span>, <span class='ident'>EdgeDirection</span>::<span class='ident'>Outgoing</span>)
+    }
+
+    <span class='doccomment'>/// Return an iterator of all neighbors that have an edge between them and **a**,</span>
+    <span class='doccomment'>/// in the specified direction, paired with the respective edge weights.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// If the graph is undirected, this is equivalent to *.edges(a)*.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Produces an empty iterator if the node doesn&#39;t exist.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Iterator element type is **(NodeIndex&lt;Ix&gt;, &amp;&#39;a E)**.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edges_directed</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
+    {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>iter</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges_both</span>(<span class='ident'>a</span>);
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>is_directed</span>() {
-            <span class='ident'>iter</span>.<span class='ident'>next</span>[<span class='ident'>Incoming</span> <span class='kw'>as</span> <span class='ident'>usize</span>] <span class='op'>=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>();
+            <span class='ident'>iter</span>.<span class='ident'>next</span>[<span class='number'>1</span> <span class='op'>-</span> <span class='ident'>dir</span> <span class='kw'>as</span> <span class='ident'>usize</span>] <span class='op'>=</span> <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>();
         }
         <span class='ident'>iter</span>
     }
@@ -1538,7 +1566,7 @@
     <span class='doccomment'>/// Iterator element type is **(NodeIndex&lt;Ix&gt;, &amp;&#39;a E)**.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>edges_both</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
-        <span class='ident'>Edges</span>{
+        <span class='ident'>Edges</span> {
             <span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>edges</span>,
             <span class='ident'>next</span>: <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
                 <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> [<span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>(), <span class='ident'>EdgeIndex</span>::<span class='ident'>end</span>()],

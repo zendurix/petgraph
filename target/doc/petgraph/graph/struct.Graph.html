@@ -133,6 +133,15 @@ weights.</p>
 <p>Produces an empty iterator if the node doesn&#39;t exist.</p>
 
 <p>Iterator element type is <strong>(NodeIndex<Ix>, &amp;&#39;a E)</strong>.</p>
+</div><h4 id='method.edges_directed' class='method'><code>fn <a href='#method.edges_directed' class='fnname'>edges_directed</a>(&amp;self, a: <a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;, dir: <a class='enum' href='../../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a>) -&gt; <a class='struct' href='../../petgraph/graph/struct.Edges.html' title='petgraph::graph::Edges'>Edges</a>&lt;E, Ix&gt;</code></h4>
+<div class='docblock'><p>Return an iterator of all neighbors that have an edge between them and <strong>a</strong>,
+in the specified direction, paired with the respective edge weights.</p>
+
+<p>If the graph is undirected, this is equivalent to <em>.edges(a)</em>.</p>
+
+<p>Produces an empty iterator if the node doesn&#39;t exist.</p>
+
+<p>Iterator element type is <strong>(NodeIndex<Ix>, &amp;&#39;a E)</strong>.</p>
 </div><h4 id='method.edges_both' class='method'><code>fn <a href='#method.edges_both' class='fnname'>edges_both</a>(&amp;self, a: <a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='struct' href='../../petgraph/graph/struct.Edges.html' title='petgraph::graph::Edges'>Edges</a>&lt;E, Ix&gt;</code></h4>
 <div class='docblock'><p>Return an iterator over the edgs from <strong>a</strong> to its neighbors, then <em>to</em> <strong>a</strong> from its
 neighbors.</p>
