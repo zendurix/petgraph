@@ -19,9 +19,13 @@ __ http://bluss.github.io/petulant-avenger-graphlibrary/
 Recent Changes
 --------------
 
+- 0.1.7
+
+  - Add Graph::edges_directed()
+
 - 0.1.6
 
-  - Add Graph::node_weigths_mut and Graph::edge_weights_mut
+  - Add Graph::node_weights_mut and Graph::edge_weights_mut
 
 - 0.1.4
 

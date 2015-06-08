@@ -231,10 +231,11 @@ impl<N, E, Ty, Ix> fmt::Debug for Graph<N, E, Ty, Ix> where
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let indent = "    ";
         let etype = if self.is_directed() { "Directed" } else { "Undirected" };
+        try!(write!(f, "Graph<{}> {{", etype));
         if self.node_count() == 0 {
-            return write!(f, "Graph<{}> {{}}", etype);
+            return write!(f, "}}");
         }
-        try!(writeln!(f, "Graph<{}> {{", etype));
+        try!(writeln!(f, ""));
         for (index, n) in self.nodes.iter().enumerate() {
             try!(writeln!(f, "{}{}: Node({:?}),", indent, index, n.weight));
         }
@@ -431,9 +432,22 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     /// Iterator element type is **(NodeIndex<Ix>, &'a E)**.
     pub fn edges(&self, a: NodeIndex<Ix>) -> Edges<E, Ix>
     {
+        self.edges_directed(a, EdgeDirection::Outgoing)
+    }
+
+    /// Return an iterator of all neighbors that have an edge between them and **a**,
+    /// in the specified direction, paired with the respective edge weights.
+    ///
+    /// If the graph is undirected, this is equivalent to *.edges(a)*.
+    ///
+    /// Produces an empty iterator if the node doesn't exist.
+    ///
+    /// Iterator element type is **(NodeIndex<Ix>, &'a E)**.
+    pub fn edges_directed(&self, a: NodeIndex<Ix>, dir: EdgeDirection) -> Edges<E, Ix>
+    {
         let mut iter = self.edges_both(a);
         if self.is_directed() {
-            iter.next[Incoming as usize] = EdgeIndex::end();
+            iter.next[1 - dir as usize] = EdgeIndex::end();
         }
         iter
     }
@@ -446,7 +460,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     /// Iterator element type is **(NodeIndex<Ix>, &'a E)**.
     pub fn edges_both(&self, a: NodeIndex<Ix>) -> Edges<E, Ix>
     {
-        Edges{
+        Edges {
             edges: &self.edges,
             next: match self.nodes.get(a.index()) {
                 None => [EdgeIndex::end(), EdgeIndex::end()],
