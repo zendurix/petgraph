@@ -235,14 +235,14 @@ of the node <strong>a</strong> in direction <strong>dir</strong>.</p>
 <p>Note: The walker does not borrow from the graph, this is to allow mixing
 edge walking with mutating the graph&#39;s weights.</p>
 </div><h4 id='method.index_twice_mut' class='method'><code>fn <a href='#method.index_twice_mut' class='fnname'>index_twice_mut</a>&lt;T, U&gt;(&amp;mut self, i: T, j: U) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(&amp;mut Self::Output, &amp;mut Self::Output)</a> <span class='where'>where Self: <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>&lt;T&gt; + <a class='trait' href='http://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>&lt;U&gt;, T: <a class='trait' href='../../petgraph/graph/trait.GraphIndex.html' title='petgraph::graph::GraphIndex'>GraphIndex</a>, U: <a class='trait' href='../../petgraph/graph/trait.GraphIndex.html' title='petgraph::graph::GraphIndex'>GraphIndex</a></span></code></h4>
-<div class='docblock'><p>Index the <strong>Graph</strong> by a tuple of two indices, any combination of
+<div class='docblock'><p>Index the <strong>Graph</strong> by two indices, any combination of
 node or edge indices is fine.</p>
 
 <p><strong>Panics</strong> if the indices are equal or if they are out of bounds.</p>
-<pre id='rust-example-rendered' class='rust '>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>petgraph</span>::{<span class='ident'>Graph</span>, <span class='ident'>Dfs</span>, <span class='ident'>Incoming</span>};
 
-<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>gr</span> <span class='op'>=</span> <span class='ident'>Graph</span>::<span class='op'>&lt;</span>_,_<span class='op'>&gt;</span>::<span class='ident'>new</span>();
+<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>gr</span> <span class='op'>=</span> <span class='ident'>Graph</span>::<span class='ident'>new</span>();
 <span class='kw'>let</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>gr</span>.<span class='ident'>add_node</span>(<span class='number'>0.</span>);
 <span class='kw'>let</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>gr</span>.<span class='ident'>add_node</span>(<span class='number'>0.</span>);
 <span class='kw'>let</span> <span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>gr</span>.<span class='ident'>add_node</span>(<span class='number'>0.</span>);

@@ -1203,6 +1203,10 @@
 <span id="1161">1161</span>
 <span id="1162">1162</span>
 <span id="1163">1163</span>
+<span id="1164">1164</span>
+<span id="1165">1165</span>
+<span id="1166">1166</span>
+<span id="1167">1167</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! **Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.</span>
 
@@ -2045,7 +2049,7 @@
         <span class='ident'>WalkEdges</span> { <span class='ident'>next</span>: <span class='self'>self</span>.<span class='ident'>first_edge</span>(<span class='ident'>a</span>, <span class='ident'>dir</span>), <span class='ident'>direction</span>: <span class='ident'>dir</span> }
     }
 
-    <span class='doccomment'>/// Index the **Graph** by a tuple of two indices, any combination of</span>
+    <span class='doccomment'>/// Index the **Graph** by two indices, any combination of</span>
     <span class='doccomment'>/// node or edge indices is fine.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// **Panics** if the indices are equal or if they are out of bounds.</span>
@@ -2053,7 +2057,7 @@
     <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use petgraph::{Graph, Dfs, Incoming};</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let mut gr = Graph::&lt;_,_&gt;::new();</span>
+    <span class='doccomment'>/// let mut gr = Graph::new();</span>
     <span class='doccomment'>/// let a = gr.add_node(0.);</span>
     <span class='doccomment'>/// let b = gr.add_node(0.);</span>
     <span class='doccomment'>/// let c = gr.add_node(0.);</span>
@@ -2336,12 +2340,16 @@
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>GraphIndex</span> <span class='kw'>for</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='ident'>NodeIndex</span>::<span class='ident'>index</span>(<span class='op'>*</span><span class='self'>self</span>) }
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>is_node_index</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>true</span> }
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>GraphIndex</span> <span class='kw'>for</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='ident'>EdgeIndex</span>::<span class='ident'>index</span>(<span class='op'>*</span><span class='self'>self</span>) }
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>is_node_index</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>false</span> }
 }
 
