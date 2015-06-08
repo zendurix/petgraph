@@ -636,3 +636,48 @@ fn test_weight_iterators() {
         assert_eq!(edge.weight, -1. * old[EdgeIndex::new(index)]);
     }
 }
+
+#[test]
+fn index_twice_mut() {
+    let mut gr = Graph::<_,_>::new();
+    let a = gr.add_node(0.);
+    let b = gr.add_node(0.);
+    let c = gr.add_node(0.);
+    let d = gr.add_node(0.);
+    let e = gr.add_node(0.);
+    let f = gr.add_node(0.);
+    let g = gr.add_node(0.);
+    gr.add_edge(a, b, 7.0);
+    gr.add_edge(a, d, 5.);
+    gr.add_edge(d, b, 9.);
+    gr.add_edge(b, c, 8.);
+    gr.add_edge(b, e, 7.);
+    gr.add_edge(c, e, 5.);
+    gr.add_edge(d, e, 15.);
+    gr.add_edge(d, f, 6.);
+    gr.add_edge(f, e, 8.);
+    gr.add_edge(f, g, 11.);
+    gr.add_edge(e, g, 9.);
+
+    for dir in &[Incoming, Outgoing] {
+        for nw in gr.node_weights_mut() { *nw = 0.; }
+
+        // walk the graph and sum incoming edges
+        let mut dfs = Dfs::new(&gr, a);
+        while let Some(node) = dfs.next(&gr) {
+            let mut edges = gr.walk_edges_directed(node, *dir);
+            while let Some(edge) = edges.next(&gr) {
+                let (nw, ew) = gr.index_twice_mut(node, edge);
+                *nw += *ew;
+            }
+        }
+
+        // check the sums
+        for i in 0..gr.node_count() {
+            let ni = NodeIndex::new(i);
+            let s = gr.edges_directed(ni, *dir).map(|(_, &ew)| ew).fold(0., |a, b| a + b);
+            assert_eq!(s, gr[ni]);
+        }
+        println!("Sum {:?}: {:?}", dir, gr);
+    }
+}

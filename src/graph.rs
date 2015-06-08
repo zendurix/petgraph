@@ -828,6 +828,65 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
             }
         }
     }
+
+    /// Return a “walker” object that can be used to step through the edges
+    /// of the node **a** in direction **dir**.
+    ///
+    /// Note: The walker does not borrow from the graph, this is to allow mixing
+    /// edge walking with mutating the graph's weights.
+    pub fn walk_edges_directed(&self, a: NodeIndex<Ix>, dir: EdgeDirection) -> WalkEdges<Ix>
+    {
+        WalkEdges { next: self.first_edge(a, dir), direction: dir }
+    }
+
+    /// Index the **Graph** by a tuple of two indices, any combination of
+    /// node or edge indices is fine.
+    ///
+    /// **Panics** if the indices are equal or if they are out of bounds.
+    ///
+    /// ```
+    /// use petgraph::{Graph, Dfs, Incoming};
+    ///
+    /// let mut gr = Graph::<_,_>::new();
+    /// let a = gr.add_node(0.);
+    /// let b = gr.add_node(0.);
+    /// let c = gr.add_node(0.);
+    /// gr.add_edge(a, b, 3.);
+    /// gr.add_edge(b, c, 2.);
+    /// gr.add_edge(c, b, 1.);
+    ///
+    /// // walk the graph and sum incoming edges into the node weight
+    /// let mut dfs = Dfs::new(&gr, a);
+    /// while let Some(node) = dfs.next(&gr) {
+    ///     let mut edges = gr.walk_edges_directed(node, Incoming);
+    ///     while let Some(edge) = edges.next(&gr) {
+    ///         let (nw, ew) = gr.index_twice_mut(node, edge);
+    ///         *nw += *ew;
+    ///     }
+    /// }
+    ///
+    /// // check the result
+    /// assert_eq!(gr[a], 0.);
+    /// assert_eq!(gr[b], 4.);
+    /// assert_eq!(gr[c], 2.);
+    /// ```
+    pub fn index_twice_mut<T, U>(&mut self, i: T, j: U)
+        -> (&mut <Self as Index<T>>::Output,
+            &mut <Self as Index<U>>::Output)
+        where Self: IndexMut<T> + IndexMut<U>,
+              T: GraphIndex,
+              U: GraphIndex,
+    {
+        assert!(T::is_node_index() != U::is_node_index() ||
+                i.index() != j.index());
+
+        // Allow two mutable indexes here -- they are nonoverlapping
+        unsafe {
+            let self_mut = self as *mut _;
+            (<Self as IndexMut<T>>::index_mut(&mut *self_mut, i),
+             <Self as IndexMut<U>>::index_mut(&mut *self_mut, j))
+        }
+    }
 }
 
 /// An iterator over either the nodes without edges to them or from them.
@@ -1059,5 +1118,46 @@ impl<N, E, Ty, Ix> IndexMut<EdgeIndex<Ix>> for Graph<N, E, Ty, Ix> where
 {
     fn index_mut(&mut self, index: EdgeIndex<Ix>) -> &mut E {
         &mut self.edges[index.index()].weight
+    }
+}
+
+/// A  **GraphIndex** is a node or edge index.
+pub trait GraphIndex : Copy {
+    #[doc(hidden)]
+    fn index(&self) -> usize;
+    #[doc(hidden)]
+    fn is_node_index() -> bool;
+}
+
+impl<Ix: IndexType> GraphIndex for NodeIndex<Ix> {
+    fn index(&self) -> usize { NodeIndex::index(*self) }
+    fn is_node_index() -> bool { true }
+}
+
+impl<Ix: IndexType> GraphIndex for EdgeIndex<Ix> {
+    fn index(&self) -> usize { EdgeIndex::index(*self) }
+    fn is_node_index() -> bool { false }
+}
+
+/// A “walker” object that can be used to step through the edge list of a node.
+///
+/// See [*.walk_edges_directed()*](struct.Graph.html#method.walk_edges_directed)
+/// for more information.
+#[derive(Clone, Debug)]
+pub struct WalkEdges<Ix: IndexType> {
+    next: Option<EdgeIndex<Ix>>,
+    direction: EdgeDirection,
+}
+
+impl<Ix: IndexType> WalkEdges<Ix> {
+    /// Fetch the next edge index in the walk for graph **g**.
+    pub fn next<N, E, Ty: EdgeType>(&mut self, g: &Graph<N, E, Ty, Ix>) -> Option<EdgeIndex<Ix>> {
+        match self.next.take() {
+            None => None,
+            Some(eix) => {
+                self.next = g.next_edge(eix, self.direction);
+                Some(eix)
+            }
+        }
     }
 }
