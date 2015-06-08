@@ -839,7 +839,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
         WalkEdges { next: self.first_edge(a, dir), direction: dir }
     }
 
-    /// Index the **Graph** by a tuple of two indices, any combination of
+    /// Index the **Graph** by two indices, any combination of
     /// node or edge indices is fine.
     ///
     /// **Panics** if the indices are equal or if they are out of bounds.
@@ -847,7 +847,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix> where
     /// ```
     /// use petgraph::{Graph, Dfs, Incoming};
     ///
-    /// let mut gr = Graph::<_,_>::new();
+    /// let mut gr = Graph::new();
     /// let a = gr.add_node(0.);
     /// let b = gr.add_node(0.);
     /// let c = gr.add_node(0.);
@@ -1130,12 +1130,16 @@ pub trait GraphIndex : Copy {
 }
 
 impl<Ix: IndexType> GraphIndex for NodeIndex<Ix> {
+    #[inline]
     fn index(&self) -> usize { NodeIndex::index(*self) }
+    #[inline]
     fn is_node_index() -> bool { true }
 }
 
 impl<Ix: IndexType> GraphIndex for EdgeIndex<Ix> {
+    #[inline]
     fn index(&self) -> usize { EdgeIndex::index(*self) }
+    #[inline]
     fn is_node_index() -> bool { false }
 }
 
