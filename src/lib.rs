@@ -43,7 +43,7 @@ mod traits_graph;
 /// Edge direction
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum EdgeDirection {
-    /// A **Outgoing** edge is an outward edge *from* the current node.
+    /// An **Outgoing** edge is an outward edge *from* the current node.
     Outgoing = 0,
     /// An **Incoming** edge is an inbound edge *to* the current node.
     Incoming = 1
@@ -82,15 +82,15 @@ impl<'b, T> Clone for Ptr<'b, T>
     fn clone(&self) -> Self { *self }
 }
 
-fn ptreq<T>(a: &T, b: &T) -> bool {
-    a as *const _ == b as *const _
+fn ptr_eq<T>(a: *const T, b: *const T) -> bool {
+    a == b
 }
 
 impl<'b, T> PartialEq for Ptr<'b, T>
 {
     /// Ptr compares by pointer equality, i.e if they point to the same value
     fn eq(&self, other: &Ptr<'b, T>) -> bool {
-        ptreq(self.0, other.0)
+        ptr_eq(self.0, other.0)
     }
 }
 
