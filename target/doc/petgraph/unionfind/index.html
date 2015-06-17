@@ -12,7 +12,14 @@
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
-    
+        <script type="text/javascript">
+    var parts = window.location.pathname.split("/target");
+    if (parts.length > 1) {
+        window.location.replace(parts[0] + parts[1]);
+    }
+    </script>
+
+
 </head>
 <body class="rustdoc">
     <!--[if lte IE 8]>
@@ -45,7 +52,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-8497' class='srclink' href='../../src/petgraph/unionfind.rs.html#1-162' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-8594' class='srclink' href='../../src/petgraph/unionfind.rs.html#1-162' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p><strong>UnionFind&lt;K&gt;</strong> is a disjoint-set data structure.</p>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>

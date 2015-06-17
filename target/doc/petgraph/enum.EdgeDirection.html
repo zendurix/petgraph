@@ -12,7 +12,14 @@
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     
-    
+        <script type="text/javascript">
+    var parts = window.location.pathname.split("/target");
+    if (parts.length > 1) {
+        window.location.replace(parts[0] + parts[1]);
+    }
+    </script>
+
+
 </head>
 <body class="rustdoc">
     <!--[if lte IE 8]>
@@ -45,13 +52,13 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-11146' class='srclink' href='../src/petgraph/lib.rs.html#45-50' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-11243' class='srclink' href='../src/petgraph/lib.rs.html#45-50' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum EdgeDirection {
     Outgoing,
     Incoming,
 }</pre><div class='docblock'><p>Edge direction</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.Outgoing'><code>Outgoing</code></td><td><div class='docblock'><p>A <strong>Outgoing</strong> edge is an outward edge <em>from</em> the current node.</p>
+<table><tr><td id='variant.Outgoing'><code>Outgoing</code></td><td><div class='docblock'><p>An <strong>Outgoing</strong> edge is an outward edge <em>from</em> the current node.</p>
 </div></td></tr><tr><td id='variant.Incoming'><code>Incoming</code></td><td><div class='docblock'><p>An <strong>Incoming</strong> edge is an inbound edge <em>to</em> the current node.</p>
 </div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='http://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='enum' href='../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a>) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <h4 id='method.ne' class='method'><code>fn <a href='http://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a>) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>

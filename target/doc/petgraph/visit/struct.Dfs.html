@@ -12,7 +12,14 @@
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
-    
+        <script type="text/javascript">
+    var parts = window.location.pathname.split("/target");
+    if (parts.length > 1) {
+        window.location.replace(parts[0] + parts[1]);
+    }
+    </script>
+
+
 </head>
 <body class="rustdoc">
     <!--[if lte IE 8]>
@@ -45,7 +52,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-7786' class='srclink' href='../../src/petgraph/visit.rs.html#216-221' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-7876' class='srclink' href='../../src/petgraph/visit.rs.html#229-234' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Dfs&lt;N, VM&gt; {
     pub stack: <a class='struct' href='http://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;N&gt;,
     pub discovered: VM,
@@ -75,12 +82,12 @@ during iteration. It may not necessarily visit added nodes or edges.</p>
                                   <td id='structfield.stack'><code>stack</code></td><td><div class='docblock'><p>The stack of nodes to visit</p>
 </div></td></tr><tr class='stab '>
                                   <td id='structfield.discovered'><code>discovered</code></td><td><div class='docblock'><p>The map of discovered nodes</p>
-</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;G: <a class='trait' href='../../petgraph/visit/trait.Visitable.html' title='petgraph::visit::Visitable'>Visitable</a>&gt; <a class='struct' href='../../petgraph/visit/struct.Dfs.html' title='petgraph::visit::Dfs'>Dfs</a>&lt;G::NodeId, G::Map&gt;</code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(graph: &amp;G, start: G::NodeId) -&gt; Self</code></h4>
+</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;N, VM&gt; <a class='struct' href='../../petgraph/visit/struct.Dfs.html' title='petgraph::visit::Dfs'>Dfs</a>&lt;N, VM&gt; <span class='where'>where N: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, VM: <a class='trait' href='../../petgraph/visit/trait.VisitMap.html' title='petgraph::visit::VisitMap'>VisitMap</a>&lt;N&gt;</span></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>&lt;G&gt;(graph: &amp;G, start: N) -&gt; Self <span class='where'>where G: <a class='trait' href='../../petgraph/visit/trait.Visitable.html' title='petgraph::visit::Visitable'>Visitable</a>&lt;NodeId=N, Map=VM&gt;</span></code></h4>
 <div class='docblock'><p>Create a new <strong>Dfs</strong>, using the graph&#39;s visitor map, and put <strong>start</strong>
 in the stack of nodes to visit.</p>
-</div><h4 id='method.empty' class='method'><code>fn <a href='#method.empty' class='fnname'>empty</a>(graph: &amp;G) -&gt; Self</code></h4>
+</div><h4 id='method.empty' class='method'><code>fn <a href='#method.empty' class='fnname'>empty</a>&lt;G&gt;(graph: &amp;G) -&gt; Self <span class='where'>where G: <a class='trait' href='../../petgraph/visit/trait.Visitable.html' title='petgraph::visit::Visitable'>Visitable</a>&lt;NodeId=N, Map=VM&gt;</span></code></h4>
 <div class='docblock'><p>Create a new <strong>Dfs</strong> using the graph&#39;s visitor map, and no stack.</p>
-</div></div><h3 class='impl'><code>impl&lt;N, VM&gt; <a class='struct' href='../../petgraph/visit/struct.Dfs.html' title='petgraph::visit::Dfs'>Dfs</a>&lt;N, VM&gt; <span class='where'>where N: <a class='trait' href='http://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, VM: <a class='trait' href='../../petgraph/visit/trait.VisitMap.html' title='petgraph::visit::VisitMap'>VisitMap</a>&lt;N&gt;</span></code></h3><div class='impl-items'><h4 id='method.move_to' class='method'><code>fn <a href='#method.move_to' class='fnname'>move_to</a>(&amp;mut self, start: N)</code></h4>
+</div><h4 id='method.move_to' class='method'><code>fn <a href='#method.move_to' class='fnname'>move_to</a>(&amp;mut self, start: N)</code></h4>
 <div class='docblock'><p>Keep the discovered map, but clear the visit stack and restart
 the dfs from a particular node.</p>
 </div><h4 id='method.next' class='method'><code>fn <a href='#method.next' class='fnname'>next</a>&lt;G&gt;(&amp;mut self, graph: &amp;G) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;N&gt; <span class='where'>where G: <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a>&lt;NodeId=N&gt;, G: for&lt;'a&gt; <a class='trait' href='../../petgraph/visit/trait.NeighborIter.html' title='petgraph::visit::NeighborIter'>NeighborIter</a>&lt;'a&gt;</span></code></h4>

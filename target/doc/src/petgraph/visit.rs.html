@@ -12,7 +12,14 @@
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
-    
+        <script type="text/javascript">
+    var parts = window.location.pathname.split("/target");
+    if (parts.length > 1) {
+        window.location.replace(parts[0] + parts[1]);
+    }
+    </script>
+
+
 </head>
 <body class="rustdoc">
     <!--[if lte IE 8]>
@@ -496,6 +503,14 @@
 <span id="454">454</span>
 <span id="455">455</span>
 <span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Graph visitor algorithms.</span>
 <span class='doccomment'>//!</span>
@@ -598,6 +613,19 @@
         <span class='op'>!</span><span class='ident'>present</span>
     }
     <span class='kw'>fn</span> <span class='ident'>is_visited</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>x</span>: <span class='kw-2'>&amp;</span><span class='ident'>graph</span>::<span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+        <span class='self'>self</span>.<span class='ident'>contains</span>(<span class='ident'>x</span>.<span class='ident'>index</span>())
+    }
+}
+
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>graph</span>::<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span> <span class='kw'>for</span> <span class='ident'>FixedBitSet</span> <span class='kw'>where</span>
+    <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
+{
+    <span class='kw'>fn</span> <span class='ident'>visit</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>x</span>: <span class='ident'>graph</span>::<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+        <span class='kw'>let</span> <span class='ident'>present</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>contains</span>(<span class='ident'>x</span>.<span class='ident'>index</span>());
+        <span class='self'>self</span>.<span class='ident'>insert</span>(<span class='ident'>x</span>.<span class='ident'>index</span>());
+        <span class='op'>!</span><span class='ident'>present</span>
+    }
+    <span class='kw'>fn</span> <span class='ident'>is_visited</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>x</span>: <span class='kw-2'>&amp;</span><span class='ident'>graph</span>::<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
         <span class='self'>self</span>.<span class='ident'>contains</span>(<span class='ident'>x</span>.<span class='ident'>index</span>())
     }
 }
@@ -719,11 +747,14 @@
     <span class='kw'>pub</span> <span class='ident'>discovered</span>: <span class='ident'>VM</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&gt;</span> <span class='ident'>Dfs</span><span class='op'>&lt;</span><span class='ident'>G</span>::<span class='ident'>NodeId</span>, <span class='ident'>G</span>::<span class='ident'>Map</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='ident'>Dfs</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span>
+    <span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Clone</span>,
+          <span class='ident'>VM</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>,
 {
     <span class='doccomment'>/// Create a new **Dfs**, using the graph&#39;s visitor map, and put **start**</span>
     <span class='doccomment'>/// in the stack of nodes to visit.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>G</span>::<span class='ident'>NodeId</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span><span class='op'>&lt;</span><span class='ident'>G</span><span class='op'>&gt;</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+        <span class='kw'>where</span> <span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span>, <span class='ident'>Map</span><span class='op'>=</span><span class='ident'>VM</span><span class='op'>&gt;</span>
     {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>dfs</span> <span class='op'>=</span> <span class='ident'>Dfs</span>::<span class='ident'>empty</span>(<span class='ident'>graph</span>);
         <span class='ident'>dfs</span>.<span class='ident'>move_to</span>(<span class='ident'>start</span>);
@@ -731,19 +762,15 @@
     }
 
     <span class='doccomment'>/// Create a new **Dfs** using the graph&#39;s visitor map, and no stack.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>empty</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>empty</span><span class='op'>&lt;</span><span class='ident'>G</span><span class='op'>&gt;</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+        <span class='kw'>where</span> <span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span>, <span class='ident'>Map</span><span class='op'>=</span><span class='ident'>VM</span><span class='op'>&gt;</span>
     {
         <span class='ident'>Dfs</span> {
             <span class='ident'>stack</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
             <span class='ident'>discovered</span>: <span class='ident'>graph</span>.<span class='ident'>visit_map</span>(),
         }
     }
-}
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='ident'>Dfs</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>N</span>: <span class='ident'>Clone</span>,
-    <span class='ident'>VM</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>
-{
     <span class='doccomment'>/// Keep the discovered map, but clear the visit stack and restart</span>
     <span class='doccomment'>/// the dfs from a particular node.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>move_to</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>start</span>: <span class='ident'>N</span>)
@@ -858,11 +885,14 @@
     <span class='kw'>pub</span> <span class='ident'>discovered</span>: <span class='ident'>VM</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&gt;</span> <span class='ident'>Bfs</span><span class='op'>&lt;</span><span class='ident'>G</span>::<span class='ident'>NodeId</span>, <span class='ident'>G</span>::<span class='ident'>Map</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='ident'>Bfs</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span>
+    <span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Clone</span>,
+          <span class='ident'>VM</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>,
 {
     <span class='doccomment'>/// Create a new **Bfs**, using the graph&#39;s visitor map, and put **start**</span>
     <span class='doccomment'>/// in the stack of nodes to visit.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>G</span>::<span class='ident'>NodeId</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span><span class='op'>&lt;</span><span class='ident'>G</span><span class='op'>&gt;</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>, <span class='ident'>start</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+        <span class='kw'>where</span> <span class='ident'>G</span>: <span class='ident'>Visitable</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span>, <span class='ident'>Map</span><span class='op'>=</span><span class='ident'>VM</span><span class='op'>&gt;</span>
     {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>discovered</span> <span class='op'>=</span> <span class='ident'>graph</span>.<span class='ident'>visit_map</span>();
         <span class='ident'>discovered</span>.<span class='ident'>visit</span>(<span class='ident'>start</span>.<span class='ident'>clone</span>());
@@ -873,13 +903,7 @@
             <span class='ident'>discovered</span>: <span class='ident'>discovered</span>,
         }
     }
-}
 
-
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='ident'>Bfs</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>VM</span><span class='op'>&gt;</span> <span class='kw'>where</span>
-    <span class='ident'>N</span>: <span class='ident'>Clone</span>,
-    <span class='ident'>VM</span>: <span class='ident'>VisitMap</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>
-{
     <span class='doccomment'>/// Return the next node in the dfs, or **None** if the traversal is done.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next</span><span class='op'>&lt;</span><span class='ident'>G</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='ident'>G</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span> <span class='kw'>where</span>
         <span class='ident'>G</span>: <span class='ident'>Graphlike</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span><span class='op'>&gt;</span>,
@@ -900,8 +924,7 @@
 }
 
 <span class='doccomment'>/// An iterator for a breadth first traversal of a graph.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>BfsIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>: <span class='lifetime'>&#39;a</span> <span class='op'>+</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span>
-{
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>BfsIter</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span>: <span class='lifetime'>&#39;a</span> <span class='op'>+</span> <span class='ident'>Visitable</span><span class='op'>&gt;</span> {
     <span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>,
     <span class='ident'>bfs</span>: <span class='ident'>Bfs</span><span class='op'>&lt;</span><span class='ident'>G</span>::<span class='ident'>NodeId</span>, <span class='ident'>G</span>::<span class='ident'>Map</span><span class='op'>&gt;</span>,
 }
