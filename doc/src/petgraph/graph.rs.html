@@ -1229,6 +1229,11 @@
 <span id="1187">1187</span>
 <span id="1188">1188</span>
 <span id="1189">1189</span>
+<span id="1190">1190</span>
+<span id="1191">1191</span>
+<span id="1192">1192</span>
+<span id="1193">1193</span>
+<span id="1194">1194</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! **Graph\&lt;N, E, Ty, Ix\&gt;** is a graph datastructure using an adjacency list representation.</span>
 
@@ -2406,7 +2411,12 @@
         <span class='self'>self</span>.<span class='ident'>next_neighbor</span>(<span class='ident'>g</span>).<span class='ident'>map</span>(<span class='op'>|</span>(<span class='ident'>e</span>, _)<span class='op'>|</span> <span class='ident'>e</span>)
     }
 
-    <span class='doccomment'>/// Fetch the next edge index and the edge&#39;s target node index in the walk for graph **g**.</span>
+    <span class='doccomment'>/// Fetch the next edge index and the next node index in the walk for graph **g**.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// The next node indices are always the others than the starting point</span>
+    <span class='doccomment'>/// where the **WalkEdges** value was created.</span>
+    <span class='doccomment'>/// For an **Outgoing** walk, the target nodes,</span>
+    <span class='doccomment'>/// for an **Incoming** walk, the source nodes of the edge.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_neighbor</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>g</span>: <span class='kw-2'>&amp;</span><span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>)
         <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>(<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>)<span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='ident'>g</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='self'>self</span>.<span class='ident'>next</span>.<span class='ident'>index</span>()) {
@@ -2414,7 +2424,7 @@
             <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=&gt;</span> {
                 <span class='kw'>let</span> <span class='ident'>edge_index</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>next</span>;
                 <span class='self'>self</span>.<span class='ident'>next</span> <span class='op'>=</span> <span class='ident'>edge</span>.<span class='ident'>next</span>[<span class='self'>self</span>.<span class='ident'>direction</span> <span class='kw'>as</span> <span class='ident'>usize</span>];
-                <span class='prelude-val'>Some</span>((<span class='ident'>edge_index</span>, <span class='ident'>edge</span>.<span class='ident'>node</span>[<span class='self'>self</span>.<span class='ident'>direction</span> <span class='kw'>as</span> <span class='ident'>usize</span>]))
+                <span class='prelude-val'>Some</span>((<span class='ident'>edge_index</span>, <span class='ident'>edge</span>.<span class='ident'>node</span>[<span class='number'>1</span> <span class='op'>-</span> <span class='self'>self</span>.<span class='ident'>direction</span> <span class='kw'>as</span> <span class='ident'>usize</span>]))
             }
         }
     }
