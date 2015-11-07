@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `AsUndirected` struct in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, AsUndirected">
 
-    <title>petgraph 0.1.11 - petgraph::visit::AsUndirected - Rust</title>
+    <title>petgraph 0.1.12 - petgraph::visit::AsUndirected - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -24,10 +24,10 @@
 
     
 
-    <section class="sidebar">
+    <nav class="sidebar">
         
         <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>visit</a></p><script>window.sidebarCurrent = {name: 'AsUndirected', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
-    </section>
+    </nav>
 
     <nav class="sub">
         <form class="search-form js-only">
@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-7308' class='srclink' href='../../src/petgraph/visit.rs.html#59' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-1190' class='srclink' href='../../src/petgraph/visit.rs.html#59' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct AsUndirected&lt;G&gt;(pub G);</pre><div class='docblock'><p>Wrapper type for walking the graph as if it is undirected</p>
 </div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl&lt;'a, 'b, N, E: 'a, Ty, Ix&gt; <a class='trait' href='../../petgraph/visit/trait.NeighborIter.html' title='petgraph::visit::NeighborIter'>NeighborIter</a>&lt;'a&gt; for <a class='struct' href='../../petgraph/visit/struct.AsUndirected.html' title='petgraph::visit::AsUndirected'>AsUndirected</a>&lt;&amp;'b <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;&gt; <span class='where'>where Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></h3><div class='impl-items'><h4 id='assoc_type.Iter' class='type'><code>type Iter = <a class='struct' href='../../petgraph/graph/struct.Neighbors.html' title='petgraph::graph::Neighbors'>Neighbors</a>&lt;'a, E, Ix&gt;</code></h4>
 <h4 id='method.neighbors' class='method'><code>fn <a href='../../petgraph/visit/trait.NeighborIter.html#method.neighbors' class='fnname'>neighbors</a>(&amp;'a self, n: <a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='struct' href='../../petgraph/graph/struct.Neighbors.html' title='petgraph::graph::Neighbors'>Neighbors</a>&lt;'a, E, Ix&gt;</code></h4>
@@ -57,10 +57,12 @@
 
     <section class="footer"></section>
 
-    <div id="help" class="hidden">
+    <aside id="help" class="hidden">
         <div>
+            <h1 class="hidden">Help</h1>
+
             <div class="shortcuts">
-                <h1>Keyboard Shortcuts</h1>
+                <h2>Keyboard Shortcuts</h2>
 
                 <dl>
                     <dt>?</dt>
@@ -77,7 +79,7 @@
             </div>
 
             <div class="infos">
-                <h1>Search Tricks</h1>
+                <h2>Search Tricks</h2>
 
                 <p>
                     Prefix searches with a type followed by a colon (e.g.
@@ -97,7 +99,7 @@
                 </p>
             </div>
         </div>
-    </div>
+    </aside>
 
     
 

@@ -24,10 +24,10 @@
 
     
 
-    <section class="sidebar">
+    <nav class="sidebar">
         
         
-    </section>
+    </nav>
 
     <nav class="sub">
         <form class="search-form js-only">
@@ -98,14 +98,14 @@
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>;
 
-<span class='doccomment'>/// **MinScored\&lt;K, T\&gt;** holds a score **K** and a scored object **T** in</span>
-<span class='doccomment'>/// a pair for use with a **BinaryHeap**.</span>
+<span class='doccomment'>/// `MinScored&lt;K, T&gt;` holds a score `K` and a scored object `T` in</span>
+<span class='doccomment'>/// a pair for use with a `BinaryHeap`.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// MinScored compares in reverse order by the score, so that we can</span>
 <span class='doccomment'>/// use BinaryHeap as a min-heap to extract the score-value pair with the</span>
 <span class='doccomment'>/// least score.</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// **Note:** MinScored implements a total order (**Ord**), so that it is possible</span>
+<span class='doccomment'>/// **Note:** MinScored implements a total order (`Ord`), so that it is possible</span>
 <span class='doccomment'>/// to use float types as scores.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>MinScored</span><span class='op'>&lt;</span><span class='ident'>K</span>, <span class='ident'>T</span><span class='op'>&gt;</span>(<span class='kw'>pub</span> <span class='ident'>K</span>, <span class='kw'>pub</span> <span class='ident'>T</span>);
@@ -157,10 +157,12 @@
 
     <section class="footer"></section>
 
-    <div id="help" class="hidden">
+    <aside id="help" class="hidden">
         <div>
+            <h1 class="hidden">Help</h1>
+
             <div class="shortcuts">
-                <h1>Keyboard Shortcuts</h1>
+                <h2>Keyboard Shortcuts</h2>
 
                 <dl>
                     <dt>?</dt>
@@ -177,7 +179,7 @@
             </div>
 
             <div class="infos">
-                <h1>Search Tricks</h1>
+                <h2>Search Tricks</h2>
 
                 <p>
                     Prefix searches with a type followed by a colon (e.g.
@@ -197,7 +199,7 @@
                 </p>
             </div>
         </div>
-    </div>
+    </aside>
 
     
 

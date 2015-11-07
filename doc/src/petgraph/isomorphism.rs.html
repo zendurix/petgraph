@@ -24,10 +24,10 @@
 
     
 
-    <section class="sidebar">
+    <nav class="sidebar">
         
         
-    </section>
+    </nav>
 
     <nav class="sub">
         <form class="search-form js-only">
@@ -443,7 +443,7 @@
             <span class='ident'>generation</span>: <span class='number'>0</span>,
             <span class='ident'>_etype</span>: <span class='ident'>marker</span>::<span class='ident'>PhantomData</span>,
         };
-        <span class='kw'>for</span> _ <span class='kw'>in</span> (<span class='number'>0</span>..<span class='ident'>c0</span>) {
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='ident'>c0</span> {
             <span class='ident'>state</span>.<span class='ident'>mapping</span>.<span class='ident'>push</span>(<span class='ident'>NodeIndex</span>::<span class='ident'>end</span>());
             <span class='ident'>state</span>.<span class='ident'>out</span>.<span class='ident'>push</span>(<span class='number'>0</span>);
             <span class='kw'>if</span> <span class='ident'>Ty</span>::<span class='ident'>is_directed</span>() {
@@ -745,10 +745,12 @@
 
     <section class="footer"></section>
 
-    <div id="help" class="hidden">
+    <aside id="help" class="hidden">
         <div>
+            <h1 class="hidden">Help</h1>
+
             <div class="shortcuts">
-                <h1>Keyboard Shortcuts</h1>
+                <h2>Keyboard Shortcuts</h2>
 
                 <dl>
                     <dt>?</dt>
@@ -765,7 +767,7 @@
             </div>
 
             <div class="infos">
-                <h1>Search Tricks</h1>
+                <h2>Search Tricks</h2>
 
                 <p>
                     Prefix searches with a type followed by a colon (e.g.
@@ -785,7 +787,7 @@
                 </p>
             </div>
         </div>
-    </div>
+    </aside>
 
     
 
