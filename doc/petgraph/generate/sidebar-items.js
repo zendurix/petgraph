@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Generator","A graph generator of “all” graphs of a particular size."]]});
