@@ -176,6 +176,17 @@
 <span id="134">134</span>
 <span id="135">135</span>
 <span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
 </pre><pre class='rust '>
 
 <span class='doccomment'>//! **petgraph** is a graph data structure library.</span>
@@ -188,7 +199,7 @@
 <span class='doccomment'>//! is an undirected hashmap-backed graph which only allows simple node identifiers</span>
 <span class='doccomment'>//! (such as integers or references).</span>
 
-<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>fixedbitset</span> <span class='kw'>as</span> <span class='ident'>fb</span>;
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>fixedbitset</span>;
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>hash</span>::{<span class='self'>self</span>, <span class='ident'>Hash</span>};
@@ -209,13 +220,14 @@
 
 <span class='kw'>mod</span> <span class='ident'>scored</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>algo</span>;
+<span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span> <span class='comment'>// Not for public consumption -- only for testing</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>generate</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>graphmap</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>graph</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>visit</span>;
-
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>unionfind</span>;
-<span class='kw'>mod</span> <span class='ident'>isomorphism</span>;
 <span class='kw'>mod</span> <span class='ident'>dijkstra</span>;
+<span class='kw'>mod</span> <span class='ident'>isomorphism</span>;
 <span class='kw'>mod</span> <span class='ident'>traits_graph</span>;
 
 <span class='comment'>// Index into the NodeIndex and EdgeIndex arrays</span>
@@ -226,6 +238,16 @@
     <span class='ident'>Outgoing</span> <span class='op'>=</span> <span class='number'>0</span>,
     <span class='doccomment'>/// An `Incoming` edge is an inbound edge *to* the current node.</span>
     <span class='ident'>Incoming</span> <span class='op'>=</span> <span class='number'>1</span>
+}
+
+<span class='kw'>impl</span> <span class='ident'>EdgeDirection</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>opposite</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeDirection</span> {
+        <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
+            <span class='ident'>Outgoing</span> <span class='op'>=&gt;</span> <span class='ident'>Incoming</span>,
+            <span class='ident'>Incoming</span> <span class='op'>=&gt;</span> <span class='ident'>Outgoing</span>,
+        }
+    }
 }
 
 <span class='doccomment'>/// Marker type for a directed graph.</span>

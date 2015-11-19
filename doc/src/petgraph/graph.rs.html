@@ -2036,10 +2036,10 @@
 
     <span class='doccomment'>/// Return an iterator over either the nodes without edges to them or from them.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// The nodes in *.without_edges(Incoming)* are the initial nodes and</span>
-    <span class='doccomment'>/// *.without_edges(Outgoing)* are the terminals.</span>
+    <span class='doccomment'>/// The nodes in *.without_edges(Incoming)* are the source nodes and</span>
+    <span class='doccomment'>/// *.without_edges(Outgoing)* are the sinks.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// For an undirected graph, the initials/terminals are just the vertices without edges.</span>
+    <span class='doccomment'>/// For an undirected graph, the sinks/sources are just the vertices without edges.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// The whole iteration computes in **O(|V|)** time.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>without_edges</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>WithoutEdges</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
