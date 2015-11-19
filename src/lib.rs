@@ -9,7 +9,7 @@
 //! is an undirected hashmap-backed graph which only allows simple node identifiers
 //! (such as integers or references).
 
-extern crate fixedbitset as fb;
+extern crate fixedbitset;
 
 use std::cmp::Ordering;
 use std::hash::{self, Hash};
@@ -30,13 +30,14 @@ pub use visit::{
 
 mod scored;
 pub mod algo;
+#[doc(hidden)] // Not for public consumption -- only for testing
+pub mod generate;
 pub mod graphmap;
 pub mod graph;
 pub mod visit;
-
 pub mod unionfind;
-mod isomorphism;
 mod dijkstra;
+mod isomorphism;
 mod traits_graph;
 
 // Index into the NodeIndex and EdgeIndex arrays
@@ -47,6 +48,16 @@ pub enum EdgeDirection {
     Outgoing = 0,
     /// An `Incoming` edge is an inbound edge *to* the current node.
     Incoming = 1
+}
+
+impl EdgeDirection {
+    #[inline]
+    fn opposite(&self) -> EdgeDirection {
+        match *self {
+            Outgoing => Incoming,
+            Incoming => Outgoing,
+        }
+    }
 }
 
 /// Marker type for a directed graph.
