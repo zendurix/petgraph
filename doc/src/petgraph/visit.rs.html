@@ -653,6 +653,14 @@
 <span id="611">611</span>
 <span id="612">612</span>
 <span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Graph visitor algorithms.</span>
 <span class='doccomment'>//!</span>
@@ -876,6 +884,14 @@
     <span class='kw'>fn</span> <span class='ident'>reset_map</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>map</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Self</span>::<span class='ident'>Map</span>) {
         <span class='ident'>map</span>.<span class='ident'>clear</span>();
         <span class='ident'>map</span>.<span class='ident'>grow</span>(<span class='self'>self</span>.<span class='ident'>node_count</span>());
+    }
+}
+
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span><span class='op'>&gt;</span> <span class='ident'>Revisitable</span> <span class='kw'>for</span> <span class='ident'>Reversed</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span><span class='op'>&gt;</span>
+    <span class='kw'>where</span> <span class='ident'>G</span>: <span class='ident'>Revisitable</span>
+{
+    <span class='kw'>fn</span> <span class='ident'>reset_map</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>map</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Self</span>::<span class='ident'>Map</span>) {
+        <span class='self'>self</span>.<span class='number'>0</span>.<span class='ident'>reset_map</span>(<span class='ident'>map</span>);
     }
 }
 

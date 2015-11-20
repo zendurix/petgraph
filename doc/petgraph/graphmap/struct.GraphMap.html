@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `GraphMap` struct in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, GraphMap">
 
-    <title>petgraph 0.1.14 - petgraph::graphmap::GraphMap - Rust</title>
+    <title>petgraph 0.1.15 - petgraph::graphmap::GraphMap - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-231' class='srclink' href='../../src/petgraph/graphmap.rs.html#29-32' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-232' class='srclink' href='../../src/petgraph/graphmap.rs.html#29-32' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct GraphMap&lt;N, E&gt; {
     // some fields omitted
 }</pre><div class='docblock'><p><code>GraphMap&lt;N, E&gt;</code> is an undirected graph, with generic node values <code>N</code> and edge weights <code>E</code>.</p>
@@ -108,33 +108,33 @@ order the pair (<code>a</code>, <code>b</code>) for an edge connecting any two n
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>g</span>.<span class='ident'>edge_count</span>(), <span class='number'>0</span>);</pre>
 </div><h4 id='method.contains_edge' class='method'><code>fn <a href='#method.contains_edge' class='fnname'>contains_edge</a>(&amp;self, a: N, b: N) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <div class='docblock'><p>Return <code>true</code> if the edge connecting <code>a</code> with <code>b</code> is contained in the graph.</p>
-</div><h4 id='method.nodes' class='method'><code>fn <a href='#method.nodes' class='fnname'>nodes</a>&lt;'a&gt;(&amp;'a self) -&gt; <a class='struct' href='../../petgraph/graphmap/struct.Nodes.html' title='petgraph::graphmap::Nodes'>Nodes</a>&lt;'a, N&gt;</code></h4>
+</div><h4 id='method.nodes' class='method'><code>fn <a href='#method.nodes' class='fnname'>nodes</a>(&amp;self) -&gt; <a class='struct' href='../../petgraph/graphmap/struct.Nodes.html' title='petgraph::graphmap::Nodes'>Nodes</a>&lt;N&gt;</code></h4>
 <div class='docblock'><p>Return an iterator over the nodes of the graph.</p>
 
 <p>Iterator element type is <code>N</code>.</p>
-</div><h4 id='method.neighbors' class='method'><code>fn <a href='#method.neighbors' class='fnname'>neighbors</a>&lt;'a&gt;(&amp;'a self, from: N) -&gt; <a class='struct' href='../../petgraph/graphmap/struct.Neighbors.html' title='petgraph::graphmap::Neighbors'>Neighbors</a>&lt;'a, N&gt;</code></h4>
+</div><h4 id='method.neighbors' class='method'><code>fn <a href='#method.neighbors' class='fnname'>neighbors</a>(&amp;self, from: N) -&gt; <a class='struct' href='../../petgraph/graphmap/struct.Neighbors.html' title='petgraph::graphmap::Neighbors'>Neighbors</a>&lt;N&gt;</code></h4>
 <div class='docblock'><p>Return an iterator over the nodes that are connected with <code>from</code> by edges.</p>
 
 <p>If the node <code>from</code> does not exist in the graph, return an empty iterator.</p>
 
 <p>Iterator element type is <code>N</code>.</p>
-</div><h4 id='method.edges' class='method'><code>fn <a href='#method.edges' class='fnname'>edges</a>&lt;'a&gt;(&amp;'a self, from: N) -&gt; <a class='struct' href='../../petgraph/graphmap/struct.Edges.html' title='petgraph::graphmap::Edges'>Edges</a>&lt;'a, N, E&gt;</code></h4>
+</div><h4 id='method.edges' class='method'><code>fn <a href='#method.edges' class='fnname'>edges</a>(&amp;self, from: N) -&gt; <a class='struct' href='../../petgraph/graphmap/struct.Edges.html' title='petgraph::graphmap::Edges'>Edges</a>&lt;N, E&gt;</code></h4>
 <div class='docblock'><p>Return an iterator over the nodes that are connected with <code>from</code> by edges,
 paired with the edge weight.</p>
 
 <p>If the node <code>from</code> does not exist in the graph, return an empty iterator.</p>
 
-<p>Iterator element type is <code>(N, &amp;&#39;a E)</code>.</p>
-</div><h4 id='method.edge_weight' class='method'><code>fn <a href='#method.edge_weight' class='fnname'>edge_weight</a>&lt;'a&gt;(&amp;'a self, a: N, b: N) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;'a E&gt;</code></h4>
+<p>Iterator element type is <code>(N, &amp;E)</code>.</p>
+</div><h4 id='method.edge_weight' class='method'><code>fn <a href='#method.edge_weight' class='fnname'>edge_weight</a>(&amp;self, a: N, b: N) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;E&gt;</code></h4>
 <div class='docblock'><p>Return a reference to the edge weight connecting <code>a</code> with <code>b</code>, or
 <code>None</code> if the edge does not exist in the graph.</p>
-</div><h4 id='method.edge_weight_mut' class='method'><code>fn <a href='#method.edge_weight_mut' class='fnname'>edge_weight_mut</a>&lt;'a&gt;(&amp;'a mut self, a: N, b: N) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;'a mut E&gt;</code></h4>
+</div><h4 id='method.edge_weight_mut' class='method'><code>fn <a href='#method.edge_weight_mut' class='fnname'>edge_weight_mut</a>(&amp;mut self, a: N, b: N) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;mut E&gt;</code></h4>
 <div class='docblock'><p>Return a mutable reference to the edge weight connecting <code>a</code> with <code>b</code>, or
 <code>None</code> if the edge does not exist in the graph.</p>
-</div><h4 id='method.all_edges' class='method'><code>fn <a href='#method.all_edges' class='fnname'>all_edges</a>&lt;'a&gt;(&amp;'a self) -&gt; <a class='struct' href='../../petgraph/graphmap/struct.AllEdges.html' title='petgraph::graphmap::AllEdges'>AllEdges</a>&lt;'a, N, E&gt;</code></h4>
+</div><h4 id='method.all_edges' class='method'><code>fn <a href='#method.all_edges' class='fnname'>all_edges</a>(&amp;self) -&gt; <a class='struct' href='../../petgraph/graphmap/struct.AllEdges.html' title='petgraph::graphmap::AllEdges'>AllEdges</a>&lt;N, E&gt;</code></h4>
 <div class='docblock'><p>Return an iterator over all edges of the graph with their weight in arbitrary order.</p>
 
-<p>Iterator element type is <code>((N,N), &amp;&#39;a E)</code></p>
+<p>Iterator element type is <code>((N, N), &amp;E)</code></p>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl&lt;N: <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>, E: <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../../petgraph/graphmap/struct.GraphMap.html' title='petgraph::graphmap::GraphMap'>GraphMap</a>&lt;N, E&gt;</code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div><h3 class='impl'><code>impl&lt;N, E&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Index.html' title='core::ops::Index'>Index</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(N, N)</a>&gt; for <a class='struct' href='../../petgraph/graphmap/struct.GraphMap.html' title='petgraph::graphmap::GraphMap'>GraphMap</a>&lt;N, E&gt; <span class='where'>where N: <a class='trait' href='../../petgraph/graphmap/trait.NodeTrait.html' title='petgraph::graphmap::NodeTrait'>NodeTrait</a></span></code></h3><div class='docblock'><p>Index <code>GraphMap</code> by node pairs to access edge weights.</p>
 </div><div class='impl-items'><h4 id='assoc_type.Output' class='type'><code>type Output = E</code></h4>
