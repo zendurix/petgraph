@@ -468,16 +468,16 @@
         <span class='kw'>for</span> <span class='ident'>ix</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>neighbors</span>(<span class='ident'>from</span>) {
             <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>out</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>==</span> <span class='number'>0</span> {
                 <span class='self'>self</span>.<span class='ident'>out</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>=</span> <span class='ident'>s</span>;
+                <span class='self'>self</span>.<span class='ident'>out_size</span> <span class='op'>+=</span> <span class='number'>1</span>;
             }
-            <span class='self'>self</span>.<span class='ident'>out_size</span> <span class='op'>+=</span> <span class='number'>1</span>;
         }
         <span class='kw'>if</span> <span class='ident'>g</span>.<span class='ident'>is_directed</span>() {
             <span class='kw'>for</span> <span class='ident'>ix</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>neighbors_directed</span>(<span class='ident'>from</span>, <span class='ident'>Incoming</span>) {
                 <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>ins</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>==</span> <span class='number'>0</span> {
                     <span class='self'>self</span>.<span class='ident'>ins</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>=</span> <span class='ident'>s</span>;
+                    <span class='self'>self</span>.<span class='ident'>ins_size</span> <span class='op'>+=</span> <span class='number'>1</span>;
                 }
             }
-            <span class='self'>self</span>.<span class='ident'>ins_size</span> <span class='op'>+=</span> <span class='number'>1</span>;
         }
     }
 
@@ -495,16 +495,16 @@
         <span class='kw'>for</span> <span class='ident'>ix</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>neighbors</span>(<span class='ident'>from</span>) {
             <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>out</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>==</span> <span class='ident'>s</span> {
                 <span class='self'>self</span>.<span class='ident'>out</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>=</span> <span class='number'>0</span>;
+                <span class='self'>self</span>.<span class='ident'>out_size</span> <span class='op'>-=</span> <span class='number'>1</span>;
             }
-            <span class='self'>self</span>.<span class='ident'>out_size</span> <span class='op'>-=</span> <span class='number'>1</span>;
         }
         <span class='kw'>if</span> <span class='ident'>g</span>.<span class='ident'>is_directed</span>() {
             <span class='kw'>for</span> <span class='ident'>ix</span> <span class='kw'>in</span> <span class='ident'>g</span>.<span class='ident'>neighbors_directed</span>(<span class='ident'>from</span>, <span class='ident'>Incoming</span>) {
                 <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>ins</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>==</span> <span class='ident'>s</span> {
                     <span class='self'>self</span>.<span class='ident'>ins</span>[<span class='ident'>ix</span>.<span class='ident'>index</span>()] <span class='op'>=</span> <span class='number'>0</span>;
+                    <span class='self'>self</span>.<span class='ident'>ins_size</span> <span class='op'>-=</span> <span class='number'>1</span>;
                 }
             }
-            <span class='self'>self</span>.<span class='ident'>ins_size</span> <span class='op'>-=</span> <span class='number'>1</span>;
         }
     }
 
@@ -712,9 +712,9 @@
                 <span class='ident'>st</span>[<span class='ident'>j</span>].<span class='ident'>push_mapping</span>(<span class='ident'>nodes</span>[<span class='ident'>j</span>], <span class='ident'>nodes</span>[<span class='number'>1</span><span class='op'>-</span><span class='ident'>j</span>], <span class='ident'>g</span>[<span class='ident'>j</span>]);
             }
 
-            <span class='comment'>// Check counts in Tin/Tout</span>
-            <span class='kw'>if</span> <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>out_size</span> <span class='op'>==</span> <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>out_size</span> <span class='op'>||</span>
-               <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>ins_size</span> <span class='op'>==</span> <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>ins_size</span>
+            <span class='comment'>// Check cardinalities of Tin, Tout sets</span>
+            <span class='kw'>if</span> <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>out_size</span> <span class='op'>==</span> <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>out_size</span> <span class='op'>&amp;&amp;</span>
+               <span class='ident'>st</span>[<span class='number'>0</span>].<span class='ident'>ins_size</span> <span class='op'>==</span> <span class='ident'>st</span>[<span class='number'>1</span>].<span class='ident'>ins_size</span>
             {
 
                 <span class='comment'>// Recurse</span>
@@ -795,6 +795,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>
