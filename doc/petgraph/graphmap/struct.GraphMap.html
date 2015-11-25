@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `GraphMap` struct in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, GraphMap">
 
-    <title>petgraph 0.1.16 - petgraph::graphmap::GraphMap - Rust</title>
+    <title>petgraph 0.1.17 - petgraph::graphmap::GraphMap - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -64,6 +64,8 @@ order the pair (<code>a</code>, <code>b</code>) for an edge connecting any two n
 <div class='docblock'><p>Create a new <code>GraphMap</code>.</p>
 </div><h4 id='method.with_capacity' class='method'><code>fn <a href='#method.with_capacity' class='fnname'>with_capacity</a>(nodes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, edges: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; Self</code></h4>
 <div class='docblock'><p>Create a new <code>GraphMap</code> with estimated capacity.</p>
+</div><h4 id='method.capacity' class='method'><code>fn <a href='#method.capacity' class='fnname'>capacity</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>)</a></code></h4>
+<div class='docblock'><p>Return the current node and edge capacity of the graph.</p>
 </div><h4 id='method.from_edges' class='method'><code>fn <a href='#method.from_edges' class='fnname'>from_edges</a>&lt;I&gt;(iterable: I) -&gt; Self <span class='where'>where I: <a class='trait' href='https://doc.rust-lang.org/nightly/core/iter/trait.IntoIterator.html' title='core::iter::IntoIterator'>IntoIterator</a>, I::Item: <a class='trait' href='../../petgraph/trait.IntoWeightedEdge.html' title='petgraph::IntoWeightedEdge'>IntoWeightedEdge</a>&lt;N, E&gt;</span></code></h4>
 <div class='docblock'><p>Create a new <code>GraphMap</code> from an iterable of edges.</p>
 

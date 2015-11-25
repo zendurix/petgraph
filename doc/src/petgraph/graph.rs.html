@@ -1475,6 +1475,40 @@
 <span id="1433">1433</span>
 <span id="1434">1434</span>
 <span id="1435">1435</span>
+<span id="1436">1436</span>
+<span id="1437">1437</span>
+<span id="1438">1438</span>
+<span id="1439">1439</span>
+<span id="1440">1440</span>
+<span id="1441">1441</span>
+<span id="1442">1442</span>
+<span id="1443">1443</span>
+<span id="1444">1444</span>
+<span id="1445">1445</span>
+<span id="1446">1446</span>
+<span id="1447">1447</span>
+<span id="1448">1448</span>
+<span id="1449">1449</span>
+<span id="1450">1450</span>
+<span id="1451">1451</span>
+<span id="1452">1452</span>
+<span id="1453">1453</span>
+<span id="1454">1454</span>
+<span id="1455">1455</span>
+<span id="1456">1456</span>
+<span id="1457">1457</span>
+<span id="1458">1458</span>
+<span id="1459">1459</span>
+<span id="1460">1460</span>
+<span id="1461">1461</span>
+<span id="1462">1462</span>
+<span id="1463">1463</span>
+<span id="1464">1464</span>
+<span id="1465">1465</span>
+<span id="1466">1466</span>
+<span id="1467">1467</span>
+<span id="1468">1468</span>
+<span id="1469">1469</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! `Graph&lt;N, E, Ty, Ix&gt;` is a graph datastructure using an adjacency list representation.</span>
 
@@ -1681,7 +1715,28 @@
 <span class='doccomment'>/// - Edge type `Ty` that determines whether the graph edges are directed or undirected.</span>
 <span class='doccomment'>/// - Index type `Ix`, which determines the maximum size of the graph.</span>
 <span class='doccomment'>///</span>
+<span class='doccomment'>/// The graph uses **O(|V| + |E|)** space, and allows fast node and edge insert</span>
+<span class='doccomment'>/// efficient graph search and graph algorithms.</span>
+<span class='doccomment'>/// It implements **O(e&#39;)** edge lookup and edge and node removals, where **e&#39;**</span>
+<span class='doccomment'>/// is some local measure of edge count.</span>
 <span class='doccomment'>/// Based on the graph datastructure used in rustc.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// ```</span>
+<span class='doccomment'>/// use petgraph::Graph;</span>
+<span class='doccomment'>/// </span>
+<span class='doccomment'>/// let mut deps = Graph::&lt;&amp;str, &amp;str&gt;::new();</span>
+<span class='doccomment'>/// let pg = deps.add_node(&quot;petgraph&quot;);</span>
+<span class='doccomment'>/// let fb = deps.add_node(&quot;fixedbitset&quot;);</span>
+<span class='doccomment'>/// let qc = deps.add_node(&quot;quickcheck&quot;);</span>
+<span class='doccomment'>/// let rand = deps.add_node(&quot;rand&quot;);</span>
+<span class='doccomment'>/// let libc = deps.add_node(&quot;libc&quot;);</span>
+<span class='doccomment'>/// deps.extend_with_edges(&amp;[</span>
+<span class='doccomment'>///     (pg, fb), (pg, qc),</span>
+<span class='doccomment'>///     (qc, rand), (rand, libc), (qc, libc),</span>
+<span class='doccomment'>/// ]);</span>
+<span class='doccomment'>/// ```</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// ![graph-example](graph-example.svg)</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// ### Graph Indices</span>
 <span class='doccomment'>///</span>
@@ -1815,6 +1870,13 @@
     {
         <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>edges</span>),
               <span class='ident'>ty</span>: <span class='ident'>PhantomData</span>}
+    }
+
+    <span class='doccomment'>/// Return the current node and edge capacity of the graph.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Computes in **O(1)** time.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>capacity</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> (<span class='ident'>usize</span>, <span class='ident'>usize</span>) {
+        (<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>capacity</span>(), <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>capacity</span>())
     }
 
     <span class='doccomment'>/// Return the number of nodes (vertices) in the graph.</span>
@@ -2376,10 +2438,16 @@
     }
 
     <span class='doccomment'>/// Reverse the direction of all edges</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reverse</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>)
-    {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reverse</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
+        <span class='comment'>// swap edge endpoints,</span>
+        <span class='comment'>// edge incoming / outgoing lists,</span>
+        <span class='comment'>// node incoming / outgoing lists</span>
         <span class='kw'>for</span> <span class='ident'>edge</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>edges</span> {
-            <span class='ident'>edge</span>.<span class='ident'>node</span>.<span class='ident'>swap</span>(<span class='number'>0</span>, <span class='number'>1</span>)
+            <span class='ident'>edge</span>.<span class='ident'>node</span>.<span class='ident'>swap</span>(<span class='number'>0</span>, <span class='number'>1</span>);
+            <span class='ident'>edge</span>.<span class='ident'>next</span>.<span class='ident'>swap</span>(<span class='number'>0</span>, <span class='number'>1</span>);
+        }
+        <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>nodes</span> {
+            <span class='ident'>node</span>.<span class='ident'>next</span>.<span class='ident'>swap</span>(<span class='number'>0</span>, <span class='number'>1</span>);
         }
     }
 
@@ -2827,7 +2895,7 @@
 <span class='doccomment'>/// See [*.walk_edges_directed()*](struct.Graph.html#method.walk_edges_directed)</span>
 <span class='doccomment'>/// for more information.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>WalkEdges</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> {
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>WalkEdges</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
     <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='comment'>// a valid index or EdgeIndex::max()</span>
     <span class='ident'>direction</span>: <span class='ident'>EdgeDirection</span>,
 }
@@ -2865,7 +2933,7 @@
 }
 
 <span class='doccomment'>/// Iterator over the node indices of a graph.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>NodeIndices</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> {
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>NodeIndices</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
     <span class='ident'>r</span>: <span class='ident'>Range</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>,
     <span class='ident'>ty</span>: <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>,
 }
@@ -2889,7 +2957,7 @@
 }
 
 <span class='doccomment'>/// Iterator over the edge indices of a graph.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>EdgeIndices</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> {
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>EdgeIndices</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> {
     <span class='ident'>r</span>: <span class='ident'>Range</span><span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>,
     <span class='ident'>ty</span>: <span class='ident'>PhantomData</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>,
 }

@@ -466,6 +466,11 @@
 <span id="424">424</span>
 <span id="425">425</span>
 <span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! `GraphMap&lt;N, E&gt;` is an undirected graph where node values are mapping keys.</span>
 
@@ -535,6 +540,11 @@
             <span class='ident'>nodes</span>: <span class='ident'>HashMap</span>::<span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>),
             <span class='ident'>edges</span>: <span class='ident'>HashMap</span>::<span class='ident'>with_capacity</span>(<span class='ident'>edges</span>),
         }
+    }
+
+    <span class='doccomment'>/// Return the current node and edge capacity of the graph.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>capacity</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> (<span class='ident'>usize</span>, <span class='ident'>usize</span>) {
+        (<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>capacity</span>(), <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>capacity</span>())
     }
 
     <span class='doccomment'>/// Create a new `GraphMap` from an iterable of edges.</span>
