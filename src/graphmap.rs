@@ -68,6 +68,11 @@ impl<N, E> GraphMap<N, E>
         }
     }
 
+    /// Return the current node and edge capacity of the graph.
+    pub fn capacity(&self) -> (usize, usize) {
+        (self.nodes.capacity(), self.edges.capacity())
+    }
+
     /// Create a new `GraphMap` from an iterable of edges.
     ///
     /// Node values are taken directly from the list.

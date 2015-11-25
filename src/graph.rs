@@ -203,7 +203,28 @@ impl<E, Ix: IndexType = DefIndex> Edge<E, Ix>
 /// - Edge type `Ty` that determines whether the graph edges are directed or undirected.
 /// - Index type `Ix`, which determines the maximum size of the graph.
 ///
+/// The graph uses **O(|V| + |E|)** space, and allows fast node and edge insert
+/// efficient graph search and graph algorithms.
+/// It implements **O(e')** edge lookup and edge and node removals, where **e'**
+/// is some local measure of edge count.
 /// Based on the graph datastructure used in rustc.
+///
+/// ```
+/// use petgraph::Graph;
+/// 
+/// let mut deps = Graph::<&str, &str>::new();
+/// let pg = deps.add_node("petgraph");
+/// let fb = deps.add_node("fixedbitset");
+/// let qc = deps.add_node("quickcheck");
+/// let rand = deps.add_node("rand");
+/// let libc = deps.add_node("libc");
+/// deps.extend_with_edges(&[
+///     (pg, fb), (pg, qc),
+///     (qc, rand), (rand, libc), (qc, libc),
+/// ]);
+/// ```
+///
+/// ![graph-example](graph-example.svg)
 ///
 /// ### Graph Indices
 ///
@@ -337,6 +358,13 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
     {
         Graph{nodes: Vec::with_capacity(nodes), edges: Vec::with_capacity(edges),
               ty: PhantomData}
+    }
+
+    /// Return the current node and edge capacity of the graph.
+    ///
+    /// Computes in **O(1)** time.
+    pub fn capacity(&self) -> (usize, usize) {
+        (self.nodes.capacity(), self.edges.capacity())
     }
 
     /// Return the number of nodes (vertices) in the graph.
@@ -898,10 +926,16 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
     }
 
     /// Reverse the direction of all edges
-    pub fn reverse(&mut self)
-    {
+    pub fn reverse(&mut self) {
+        // swap edge endpoints,
+        // edge incoming / outgoing lists,
+        // node incoming / outgoing lists
         for edge in &mut self.edges {
-            edge.node.swap(0, 1)
+            edge.node.swap(0, 1);
+            edge.next.swap(0, 1);
+        }
+        for node in &mut self.nodes {
+            node.next.swap(0, 1);
         }
     }
 
@@ -1349,7 +1383,7 @@ impl<Ix: IndexType> GraphIndex for EdgeIndex<Ix> {
 /// See [*.walk_edges_directed()*](struct.Graph.html#method.walk_edges_directed)
 /// for more information.
 #[derive(Clone, Debug)]
-pub struct WalkEdges<Ix: IndexType> {
+pub struct WalkEdges<Ix: IndexType = DefIndex> {
     next: EdgeIndex<Ix>, // a valid index or EdgeIndex::max()
     direction: EdgeDirection,
 }
@@ -1387,7 +1421,7 @@ fn enumerate<I>(iterable: I) -> ::std::iter::Enumerate<I::IntoIter>
 }
 
 /// Iterator over the node indices of a graph.
-pub struct NodeIndices<Ix: IndexType> {
+pub struct NodeIndices<Ix: IndexType = DefIndex> {
     r: Range<usize>,
     ty: PhantomData<Ix>,
 }
@@ -1411,7 +1445,7 @@ impl<Ix: IndexType> DoubleEndedIterator for NodeIndices<Ix> {
 }
 
 /// Iterator over the edge indices of a graph.
-pub struct EdgeIndices<Ix: IndexType> {
+pub struct EdgeIndices<Ix: IndexType = DefIndex> {
     r: Range<usize>,
     ty: PhantomData<Ix>,
 }
