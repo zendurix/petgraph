@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `GraphMap` struct in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, GraphMap">
 
-    <title>petgraph 0.1.17 - petgraph::graphmap::GraphMap - Rust</title>
+    <title>petgraph 0.1.18 - petgraph::graphmap::GraphMap - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -94,14 +94,13 @@ or they are filled with default values.</p>
 <div class='docblock'><p>Return <code>true</code> if node <code>n</code> was removed.</p>
 </div><h4 id='method.contains_node' class='method'><code>fn <a href='#method.contains_node' class='fnname'>contains_node</a>(&amp;self, n: N) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <div class='docblock'><p>Return <code>true</code> if the node is contained in the graph.</p>
-</div><h4 id='method.add_edge' class='method'><code>fn <a href='#method.add_edge' class='fnname'>add_edge</a>(&amp;mut self, a: N, b: N, edge: E) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+</div><h4 id='method.add_edge' class='method'><code>fn <a href='#method.add_edge' class='fnname'>add_edge</a>(&amp;mut self, a: N, b: N, edge_data: E) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <div class='docblock'><p>Add an edge connecting <code>a</code> and <code>b</code> to the graph.</p>
 
 <p>Inserts nodes <code>a</code> and/or <code>b</code> if they aren&#39;t already part of the graph.</p>
 
-<p>Return <code>true</code> if edge did not previously exist.</p>
-
-<h2 id='example' class='section-header'><a href='#example'>Example</a></h2><pre class='rust rust-example-rendered'>
+<p>Return <code>true</code> if the edge did not previously exist.</p>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>petgraph</span>::<span class='ident'>GraphMap</span>;
 
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>g</span> <span class='op'>=</span> <span class='ident'>GraphMap</span>::<span class='ident'>new</span>();
@@ -112,17 +111,14 @@ or they are filled with default values.</p>
 <div class='docblock'><p>Remove edge from <code>a</code> to <code>b</code> from the graph and return the edge weight.</p>
 
 <p>Return <code>None</code> if the edge didn&#39;t exist.</p>
-
-<h2 id='example' class='section-header'><a href='#example'>Example</a></h2><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>petgraph</span>::<span class='ident'>GraphMap</span>;
 
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>g</span> <span class='op'>=</span> <span class='ident'>GraphMap</span>::<span class='ident'>new</span>();
-<span class='ident'>g</span>.<span class='ident'>add_node</span>(<span class='number'>1</span>);
-<span class='ident'>g</span>.<span class='ident'>add_node</span>(<span class='number'>2</span>);
 <span class='ident'>g</span>.<span class='ident'>add_edge</span>(<span class='number'>1</span>, <span class='number'>2</span>, <span class='op'>-</span><span class='number'>1</span>);
 
-<span class='kw'>let</span> <span class='ident'>edge</span> <span class='op'>=</span> <span class='ident'>g</span>.<span class='ident'>remove_edge</span>(<span class='number'>2</span>, <span class='number'>1</span>);
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>edge</span>, <span class='prelude-val'>Some</span>(<span class='op'>-</span><span class='number'>1</span>));
+<span class='kw'>let</span> <span class='ident'>edge_data</span> <span class='op'>=</span> <span class='ident'>g</span>.<span class='ident'>remove_edge</span>(<span class='number'>2</span>, <span class='number'>1</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>edge_data</span>, <span class='prelude-val'>Some</span>(<span class='op'>-</span><span class='number'>1</span>));
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>g</span>.<span class='ident'>edge_count</span>(), <span class='number'>0</span>);</pre>
 </div><h4 id='method.contains_edge' class='method'><code>fn <a href='#method.contains_edge' class='fnname'>contains_edge</a>(&amp;self, a: N, b: N) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <div class='docblock'><p>Return <code>true</code> if the edge connecting <code>a</code> with <code>b</code> is contained in the graph.</p>

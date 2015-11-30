@@ -514,6 +514,7 @@
     }
 }
 
+<span class='doccomment'>/// Use their natual order to map the node pair (a, b) to a canonical edge id.</span>
 <span class='attribute'>#[<span class='ident'>inline</span>]</span>
 <span class='kw'>fn</span> <span class='ident'>edge_key</span><span class='op'>&lt;</span><span class='ident'>N</span>: <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Ord</span><span class='op'>&gt;</span>(<span class='ident'>a</span>: <span class='ident'>N</span>, <span class='ident'>b</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> (<span class='ident'>N</span>, <span class='ident'>N</span>) {
     <span class='kw'>if</span> <span class='ident'>a</span> <span class='op'>&lt;=</span> <span class='ident'>b</span> { (<span class='ident'>a</span>, <span class='ident'>b</span>) } <span class='kw'>else</span> { (<span class='ident'>b</span>, <span class='ident'>a</span>) }
@@ -617,9 +618,8 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Inserts nodes `a` and/or `b` if they aren&#39;t already part of the graph.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// Return `true` if edge did not previously exist.</span>
+    <span class='doccomment'>/// Return `true` if the edge did not previously exist.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ## Example</span>
     <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use petgraph::GraphMap;</span>
     <span class='doccomment'>///</span>
@@ -628,15 +628,19 @@
     <span class='doccomment'>/// assert_eq!(g.node_count(), 2);</span>
     <span class='doccomment'>/// assert_eq!(g.edge_count(), 1);</span>
     <span class='doccomment'>/// ```</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>add_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>N</span>, <span class='ident'>b</span>: <span class='ident'>N</span>, <span class='ident'>edge</span>: <span class='ident'>E</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='comment'>// Use Ord to order the edges</span>
-        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>entry</span>(<span class='ident'>a</span>)
-                  .<span class='ident'>or_insert_with</span>(<span class='op'>||</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='number'>1</span>))
-                  .<span class='ident'>push</span>(<span class='ident'>b</span>);
-        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>entry</span>(<span class='ident'>b</span>)
-                  .<span class='ident'>or_insert_with</span>(<span class='op'>||</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='number'>1</span>))
-                  .<span class='ident'>push</span>(<span class='ident'>a</span>);
-        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>insert</span>(<span class='ident'>edge_key</span>(<span class='ident'>a</span>, <span class='ident'>b</span>), <span class='ident'>edge</span>).<span class='ident'>is_none</span>()
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>add_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>N</span>, <span class='ident'>b</span>: <span class='ident'>N</span>, <span class='ident'>edge_data</span>: <span class='ident'>E</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+        <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>insert</span>(<span class='ident'>edge_key</span>(<span class='ident'>a</span>, <span class='ident'>b</span>), <span class='ident'>edge_data</span>).<span class='ident'>is_none</span>() {
+            <span class='comment'>// insert in the adjacency list if it&#39;s a new edge</span>
+            <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>entry</span>(<span class='ident'>a</span>)
+                      .<span class='ident'>or_insert_with</span>(<span class='op'>||</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='number'>1</span>))
+                      .<span class='ident'>push</span>(<span class='ident'>b</span>);
+            <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>entry</span>(<span class='ident'>b</span>)
+                      .<span class='ident'>or_insert_with</span>(<span class='op'>||</span> <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='number'>1</span>))
+                      .<span class='ident'>push</span>(<span class='ident'>a</span>);
+            <span class='boolval'>true</span>
+        } <span class='kw'>else</span> {
+            <span class='boolval'>false</span>
+        }
     }
 
     <span class='doccomment'>/// Remove successor relation from a to b</span>
@@ -658,18 +662,14 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Return `None` if the edge didn&#39;t exist.</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// ## Example</span>
-    <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use petgraph::GraphMap;</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// let mut g = GraphMap::new();</span>
-    <span class='doccomment'>/// g.add_node(1);</span>
-    <span class='doccomment'>/// g.add_node(2);</span>
     <span class='doccomment'>/// g.add_edge(1, 2, -1);</span>
     <span class='doccomment'>///</span>
-    <span class='doccomment'>/// let edge = g.remove_edge(2, 1);</span>
-    <span class='doccomment'>/// assert_eq!(edge, Some(-1));</span>
+    <span class='doccomment'>/// let edge_data = g.remove_edge(2, 1);</span>
+    <span class='doccomment'>/// assert_eq!(edge_data, Some(-1));</span>
     <span class='doccomment'>/// assert_eq!(g.edge_count(), 0);</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>N</span>, <span class='ident'>b</span>: <span class='ident'>N</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span> {
