@@ -5,7 +5,7 @@ extern crate petgraph;
 
 use petgraph::{Graph, GraphMap, Undirected, Directed, EdgeType, Incoming, Outgoing};
 use petgraph::algo::{min_spanning_tree, is_cyclic_undirected, is_isomorphic};
-use petgraph::graph::IndexType;
+use petgraph::graph::{IndexType, node_index};
 
 fn prop(g: Graph<(), u32>) -> bool {
     // filter out isolated nodes
@@ -161,9 +161,52 @@ fn retain_edges() {
 }
 
 #[test]
-fn qc_graphmap() {
-    fn prop(g: GraphMap<i32, ()>) -> bool {
+fn graph_remove_edge() {
+    fn prop<Ty: EdgeType>(mut g: Graph<(), (), Ty>, a: u8, b: u8) -> bool {
+        let a = node_index(a as usize);
+        let b = node_index(b as usize);
+        let edge = g.find_edge(a, b);
+        if !g.is_directed() {
+            assert_eq!(edge.is_some(), g.find_edge(b, a).is_some());
+        }
+        if let Some(ex) = edge {
+            assert!(g.remove_edge(ex).is_some());
+        }
+        assert_graph_consistent(&g);
+        assert!(g.find_edge(a, b).is_none());
+        assert!(g.neighbors(a).find(|x| *x == b).is_none());
+        if !g.is_directed() {
+            assert!(g.neighbors(b).find(|x| *x == a).is_none());
+        }
         true
     }
-    quickcheck::quickcheck(prop as fn(_) -> bool);
+    quickcheck::quickcheck(prop as fn(Graph<_, _, Undirected>, _, _) -> bool);
+    quickcheck::quickcheck(prop as fn(Graph<_, _, Directed>, _, _) -> bool);
+}
+
+#[test]
+fn graphmap_remove() {
+    fn prop(mut g: GraphMap<i8, ()>, a: i8, b: i8) -> bool {
+        let contains = g.contains_edge(a, b);
+        assert_eq!(contains, g.contains_edge(b, a));
+        assert_eq!(g.remove_edge(a, b).is_some(), contains);
+        assert!(!g.contains_edge(a, b) &&
+            g.neighbors(a).find(|x| *x == b).is_none() &&
+            g.neighbors(b).find(|x| *x == a).is_none());
+        assert!(g.remove_edge(a, b).is_none());
+        true
+    }
+    quickcheck::quickcheck(prop as fn(_, _, _) -> bool);
+}
+
+#[test]
+fn graphmap_add_remove() {
+    fn prop(mut g: GraphMap<i8, ()>, a: i8, b: i8) -> bool {
+        assert_eq!(g.contains_edge(a, b), !g.add_edge(a, b, ()));
+        g.remove_edge(a, b);
+        !g.contains_edge(a, b) &&
+            g.neighbors(a).find(|x| *x == b).is_none() &&
+            g.neighbors(b).find(|x| *x == a).is_none()
+    }
+    quickcheck::quickcheck(prop as fn(_, _, _) -> bool);
 }

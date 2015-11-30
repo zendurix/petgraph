@@ -211,7 +211,7 @@ impl<E, Ix: IndexType = DefIndex> Edge<E, Ix>
 ///
 /// ```
 /// use petgraph::Graph;
-/// 
+///
 /// let mut deps = Graph::<&str, &str>::new();
 /// let pg = deps.add_node("petgraph");
 /// let fb = deps.add_node("fixedbitset");
@@ -361,8 +361,6 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
     }
 
     /// Return the current node and edge capacity of the graph.
-    ///
-    /// Computes in **O(1)** time.
     pub fn capacity(&self) -> (usize, usize) {
         (self.nodes.capacity(), self.edges.capacity())
     }
@@ -390,7 +388,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
         Ty::is_directed()
     }
 
-    /// Add a node (also called vertex) with weight `w` to the graph.
+    /// Add a node (also called vertex) with associated data `weight` to the graph.
     ///
     /// Computes in **O(1)** time.
     ///
@@ -398,9 +396,9 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
     ///
     /// **Panics** if the Graph is at the maximum number of nodes for its index
     /// type.
-    pub fn add_node(&mut self, w: N) -> NodeIndex<Ix>
+    pub fn add_node(&mut self, weight: N) -> NodeIndex<Ix>
     {
-        let node = Node{weight: w, next: [EdgeIndex::end(), EdgeIndex::end()]};
+        let node = Node{weight: weight, next: [EdgeIndex::end(), EdgeIndex::end()]};
         let node_idx = NodeIndex::new(self.nodes.len());
         // check for max capacity, except if we use usize
         assert!(Ix::max().index() == !0 || NodeIndex::end() != node_idx);
@@ -420,7 +418,8 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
         self.nodes.get_mut(a.index()).map(|n| &mut n.weight)
     }
 
-    /// Add an edge from `a` to `b` to the graph, with its edge weight.
+    /// Add an edge from `a` to `b` to the graph, with its associated
+    /// data `weight`.
     ///
     /// **Note:** `Graph` allows adding parallel (“duplicate”) edges. If you want
     /// to avoid this, use [*.update_edge(a, b, weight)*](#method.update_edge) instead.
@@ -465,7 +464,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
     /// If the edge already exists, its weight is updated.
     ///
     /// Computes in **O(e')** time, where **e'** is the number of edges
-    /// connected to the vertices `a` (and `b`).
+    /// connected to `a` (and `b`, if the graph edges are undirected).
     ///
     /// Return the index of the affected edge.
     ///
@@ -646,7 +645,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
 
     /// Return an iterator of all neighbors that have an edge between them and `a`,
     /// in the specified direction.
-    /// If the graph is undirected, this is equivalent to *.neighbors(a)*.
+    /// If the graph's edges are undirected, this is equivalent to *.neighbors(a)*.
     ///
     /// Produces an empty iterator if the node doesn't exist.
     ///
@@ -664,7 +663,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
 
     /// Return an iterator of all neighbors that have an edge between them and `a`,
     /// in either direction.
-    /// If the graph is undirected, this is equivalent to *.neighbors(a)*.
+    /// If the graph's edges are undirected, this is equivalent to *.neighbors(a)*.
     ///
     /// Produces an empty iterator if the node doesn't exist.
     ///
@@ -694,7 +693,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
     /// Return an iterator of all neighbors that have an edge between them and `a`,
     /// in the specified direction, paired with the respective edge weights.
     ///
-    /// If the graph is undirected, this is equivalent to *.edges(a)*.
+    /// If the graph's edges are undirected, this is equivalent to *.edges(a)*.
     ///
     /// Produces an empty iterator if the node doesn't exist.
     ///
@@ -728,7 +727,7 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
     /// Lookup an edge from `a` to `b`.
     ///
     /// Computes in **O(e')** time, where **e'** is the number of edges
-    /// connected to the vertices `a` (and `b`).
+    /// connected to `a` (and `b`, if the graph edges are undirected).
     pub fn find_edge(&self, a: NodeIndex<Ix>, b: NodeIndex<Ix>) -> Option<EdgeIndex<Ix>>
     {
         if !self.is_directed() {
@@ -953,9 +952,10 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
         }
     }
 
-    /// Remove all nodes that return `false` from the `visit` closure.
+    /// Keep all nodes that return `true` from the `visit` closure,
+    /// remove the others.
     ///
-    /// `visit` provides a mutable reference to the graph, so that
+    /// `visit` is provided a mutable reference to the graph, so that
     /// the graph can be walked and associated data modified. You should
     /// not add or remove nodes.
     ///
@@ -972,9 +972,10 @@ impl<N, E, Ty=Directed, Ix=DefIndex> Graph<N, E, Ty, Ix>
         }
     }
 
-    /// Remove all edges that return `false` from the `visit` closure.
+    /// Keep all edges that return `true` from the `visit` closure,
+    /// remove the others.
     ///
-    /// `visit` provides a mutable reference to the graph, so that
+    /// `visit` is provided a mutable reference to the graph, so that
     /// the graph can be walked and associated data modified. You should
     /// not add or remove nodes or edges.
     ///
