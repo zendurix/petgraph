@@ -112,7 +112,7 @@ fn retain_nodes() {
         assert_eq!(removed, num_negs);
         assert_eq!(num_negs + g.node_count(), nodes);
         assert_eq!(num_pos_post, g.node_count());
-        if og.edge_count() < 30 {
+        if og.node_count() < 30 && og.edge_count() < 30 {
             // check against filter_map
             let filtered = og.filter_map(|_, w| if *w >= 0 { Some(*w) } else { None },
                                          |_, w| Some(*w));
@@ -202,7 +202,7 @@ fn graphmap_remove() {
 #[test]
 fn graphmap_add_remove() {
     fn prop(mut g: GraphMap<i8, ()>, a: i8, b: i8) -> bool {
-        assert_eq!(g.contains_edge(a, b), !g.add_edge(a, b, ()));
+        assert_eq!(g.contains_edge(a, b), g.add_edge(a, b, ()).is_some());
         g.remove_edge(a, b);
         !g.contains_edge(a, b) &&
             g.neighbors(a).find(|x| *x == b).is_none() &&
