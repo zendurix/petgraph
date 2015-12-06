@@ -19,6 +19,10 @@ __ http://bluss.github.io/petulant-avenger-graphlibrary/
 Recent Changes
 --------------
 
+- 0.2.1
+
+  - Add algorithm ``is_isomorphic_matching``
+
 - 0.2.0
 
   - New Features
@@ -34,6 +38,7 @@ Recent Changes
     - Graph::neighbors() for undirected graphs and Graph::neighbors_undirected
       for any graph now visit self loop edges once, not twice. (#31)
     - Renamed Graph::without_edges to Graph::externals
+    - Removed Graph::edges_both
     - GraphMap::add_edge now returns ``Option<E>``
     - Element type of ``GraphMap<N, E>::all_edges()`` changed to ``(N, N, &E)``
 
