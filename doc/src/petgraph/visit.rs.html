@@ -1246,10 +1246,10 @@
     <span class='doccomment'>/// Create a new **Topo**, using the graph&#39;s visitor map, and put all</span>
     <span class='doccomment'>/// initial nodes in the to visit list.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>G</span><span class='op'>&gt;</span>(<span class='ident'>graph</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>G</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
-        <span class='kw'>where</span> <span class='ident'>G</span>: <span class='ident'>Externals</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>Revisitable</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span>, <span class='ident'>Map</span><span class='op'>=</span><span class='ident'>VM</span><span class='op'>&gt;</span>,
+        <span class='kw'>where</span> <span class='ident'>G</span>: <span class='ident'>Externals</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>Visitable</span><span class='op'>&lt;</span><span class='ident'>NodeId</span><span class='op'>=</span><span class='ident'>N</span>, <span class='ident'>Map</span><span class='op'>=</span><span class='ident'>VM</span><span class='op'>&gt;</span>,
     {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>topo</span> <span class='op'>=</span> <span class='ident'>Self</span>::<span class='ident'>empty</span>(<span class='ident'>graph</span>);
-        <span class='ident'>topo</span>.<span class='ident'>reset</span>(<span class='ident'>graph</span>);
+        <span class='ident'>topo</span>.<span class='ident'>tovisit</span>.<span class='ident'>extend</span>(<span class='ident'>graph</span>.<span class='ident'>externals</span>(<span class='ident'>Incoming</span>));
         <span class='ident'>topo</span>
     }
 
