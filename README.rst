@@ -19,6 +19,14 @@ __ http://bluss.github.io/petulant-avenger-graphlibrary/
 Recent Changes
 --------------
 
+- 0.2.2
+
+  - Require Rust 1.5
+  - ``Dot`` passes on the alternate flag to node and edge label formatting
+  - Add ``Clone`` impl for some iterators
+  - Document edge iteration order for ``Graph::neighbors``
+  - Add *experimental feature* ``StableGraph``, using feature flag ``stable_graph``
+
 - 0.2.1
 
   - Add algorithm ``is_isomorphic_matching``
