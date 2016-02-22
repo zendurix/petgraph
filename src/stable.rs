@@ -90,12 +90,16 @@ impl<N, E, Ty, Ix> fmt::Debug for StableGraph<N, E, Ty, Ix> where
 
 impl<N, E> StableGraph<N, E, Directed> {
     /// Create a new `StableGraph` with directed edges.
+    ///
+    /// This is a convenience method. See `StableGraph::with_capacity`
+    /// or `StableGraph::default` for a constructor that is generic in all the
+    /// type parameters of `StableGraph`.
     pub fn new() -> Self {
         Self::with_capacity(0, 0)
     }
 }
 
-impl<N, E, Ty=Directed, Ix=DefIndex> StableGraph<N, E, Ty, Ix>
+impl<N, E, Ty, Ix> StableGraph<N, E, Ty, Ix>
     where Ty: EdgeType,
           Ix: IndexType,
 {
@@ -443,6 +447,14 @@ impl<N, E, Ty, Ix: IndexType> Clone for StableGraph<N, E, Ty, Ix>
             free_node: self.free_node,
             free_edge: self.free_edge,
         }
+    }
+
+    fn clone_from(&mut self, rhs: &Self) {
+        self.g.clone_from(&rhs.g);
+        self.node_count = rhs.node_count;
+        self.edge_count = rhs.edge_count;
+        self.free_node = rhs.free_node;
+        self.free_edge = rhs.free_edge;
     }
 }
 
