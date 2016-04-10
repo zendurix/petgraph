@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `toposort` fn in crate `petgraph`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, toposort">
+    <meta name="description" content="API documentation for the Rust `condensation` fn in crate `petgraph`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, condensation">
 
-    <title>petgraph 0.2.5 - petgraph::algo::toposort - Rust</title>
+    <title>petgraph 0.2.5 - petgraph::algo::condensation - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
@@ -28,7 +28,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><script>window.sidebarCurrent = {name: 'toposort', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a></p><script>window.sidebarCurrent = {name: 'condensation', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -43,18 +43,15 @@
     </nav>
 
     <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a>::<wbr><a class='fn' href=''>toposort</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>petgraph</a>::<wbr><a href='index.html'>algo</a>::<wbr><a class='fn' href=''>condensation</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-112' class='srclink' href='../../src/petgraph/src/algo.rs.html#118-124' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn toposort&lt;N, E, Ix&gt;(g: &amp;<a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, <a class='enum' href='../../petgraph/enum.Directed.html' title='petgraph::Directed'>Directed</a>, Ix&gt;) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;&gt; <span class='where'>where Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></pre><div class='docblock'><p>Perform a topological sort of a directed graph.</p>
+               </span><a id='src-143' class='srclink' href='../../src/petgraph/src/algo.rs.html#191-224' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn condensation&lt;N, E, Ty, Ix&gt;(g: <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt;, make_acyclic: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>) -&gt; <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;N&gt;, E, Ty, Ix&gt; <span class='where'>where Ty: <a class='trait' href='../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></pre><div class='docblock'><p>Condense every strongly connected component into a single node and return the result.</p>
 
-<p>Return a vector of nodes in topological order: each node is ordered
-before its successors.</p>
-
-<p>If the returned vec contains less than all the nodes of the graph, then
-the graph was cyclic.</p>
+<p>If <code>make_acyclic</code> is true, self-loops and multi edges are ignored, guaranteeing that
+the output is acyclic.</p>
 </div></section>
     <section id='search' class="content hidden"></section>
 

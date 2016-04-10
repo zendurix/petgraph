@@ -7,10 +7,11 @@
     <meta name="description" content="API documentation for the Rust `Graph` struct in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, Graph">
 
-    <title>petgraph 0.2.4 - petgraph::graph::Graph - Rust</title>
+    <title>petgraph 0.2.5 - petgraph::graph::Graph - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
+    
 
     
     
@@ -46,7 +47,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-818' class='srclink' href='../../src/petgraph/src/graph.rs.html#275-279' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-846' class='srclink' href='../../src/petgraph/src/graph.rs.html#275-279' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Graph&lt;N, E, Ty = <a class='enum' href='../../petgraph/enum.Directed.html' title='petgraph::Directed'>Directed</a>, Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a> = <a class='type' href='../../petgraph/graph/type.DefIndex.html' title='petgraph::graph::DefIndex'>DefIndex</a>&gt; {
     // some fields omitted
 }</pre><div class='docblock'><p><code>Graph&lt;N, E, Ty, Ix&gt;</code> is a graph datastructure using an adjacency list representation.</p>
@@ -317,6 +318,8 @@ edge indices.</p>
 <div class='docblock'><p>Access the internal node array.</p>
 </div><h4 id='method.raw_edges' class='method'><code>fn <a href='#method.raw_edges' class='fnname'>raw_edges</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a class='struct' href='../../petgraph/graph/struct.Edge.html' title='petgraph::graph::Edge'>Edge</a>&lt;E, Ix&gt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a></code></h4>
 <div class='docblock'><p>Access the internal edge array.</p>
+</div><h4 id='method.into_nodes_edges' class='method'><code>fn <a href='#method.into_nodes_edges' class='fnname'>into_nodes_edges</a>(self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a><a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../petgraph/graph/struct.Node.html' title='petgraph::graph::Node'>Node</a>&lt;N, Ix&gt;&gt;, <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../petgraph/graph/struct.Edge.html' title='petgraph::graph::Edge'>Edge</a>&lt;E, Ix&gt;&gt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a></code></h4>
+<div class='docblock'><p>Convert the graph into a vector of Nodes and a vector of Edges</p>
 </div><h4 id='method.first_edge' class='method'><code>fn <a href='#method.first_edge' class='fnname'>first_edge</a>(&amp;self, a: <a class='struct' href='../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;, dir: <a class='enum' href='../../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../petgraph/graph/struct.EdgeIndex.html' title='petgraph::graph::EdgeIndex'>EdgeIndex</a>&lt;Ix&gt;&gt;</code></h4>
 <div class='docblock'><p>Accessor for data structure internals: the first edge in the given direction.</p>
 </div><h4 id='method.next_edge' class='method'><code>fn <a href='#method.next_edge' class='fnname'>next_edge</a>(&amp;self, e: <a class='struct' href='../../petgraph/graph/struct.EdgeIndex.html' title='petgraph::graph::EdgeIndex'>EdgeIndex</a>&lt;Ix&gt;, dir: <a class='enum' href='../../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../petgraph/graph/struct.EdgeIndex.html' title='petgraph::graph::EdgeIndex'>EdgeIndex</a>&lt;Ix&gt;&gt;</code></h4>
