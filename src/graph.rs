@@ -883,6 +883,11 @@ impl<N, E, Ty, Ix> Graph<N, E, Ty, Ix>
         &self.edges
     }
 
+    /// Convert the graph into a vector of Nodes and a vector of Edges
+    pub fn into_nodes_edges(self) -> (Vec<Node<N, Ix>>, Vec<Edge<E, Ix>>) {
+        (self.nodes, self.edges)
+    }
+
     /// Accessor for data structure internals: the first edge in the given direction.
     pub fn first_edge(&self, a: NodeIndex<Ix>, dir: EdgeDirection) -> Option<EdgeIndex<Ix>>
     {
