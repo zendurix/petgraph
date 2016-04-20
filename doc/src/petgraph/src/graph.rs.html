@@ -1794,7 +1794,7 @@
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>Ord</span>, <span class='ident'>Hash</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>=</span><span class='ident'>DefIndex</span><span class='op'>&gt;</span>(<span class='ident'>Ix</span>);
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
@@ -1832,7 +1832,7 @@
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>PartialEq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>Ord</span>, <span class='ident'>Hash</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>=</span><span class='ident'>DefIndex</span><span class='op'>&gt;</span>(<span class='ident'>Ix</span>);
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
@@ -1881,7 +1881,7 @@
     <span class='ident'>next</span>: [<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>Node</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='doccomment'>/// Accessor for data structure internals: the first edge in the given direction.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
@@ -1901,7 +1901,7 @@
     <span class='ident'>node</span>: [<span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>],
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span> <span class='op'>=</span> <span class='ident'>DefIndex</span><span class='op'>&gt;</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='doccomment'>/// Accessor for data structure internals: the next edge for the given direction.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>next_edge</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
