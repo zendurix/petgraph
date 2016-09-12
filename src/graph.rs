@@ -333,16 +333,14 @@ fn index_twice<T>(slc: &mut [T], a: usize, b: usize) -> Pair<&mut T>
 {
     if a == b {
         slc.get_mut(a).map_or(Pair::None, Pair::One)
+    } else if a >= slc.len() || b >= slc.len() {
+        Pair::None
     } else {
-        if a >= slc.len() || b >= slc.len() {
-            Pair::None
-        } else {
-            // safe because a, b are in bounds and distinct
-            unsafe {
-                let ar = &mut *(slc.get_unchecked_mut(a) as *mut _);
-                let br = &mut *(slc.get_unchecked_mut(b) as *mut _);
-                Pair::Both(ar, br)
-            }
+        // safe because a, b are in bounds and distinct
+        unsafe {
+            let ar = &mut *(slc.get_unchecked_mut(a) as *mut _);
+            let br = &mut *(slc.get_unchecked_mut(b) as *mut _);
+            Pair::Both(ar, br)
         }
     }
 }
@@ -382,11 +380,6 @@ impl<N, E, Ty, Ix> Graph<N, E, Ty, Ix>
     {
         Graph{nodes: Vec::with_capacity(nodes), edges: Vec::with_capacity(edges),
               ty: PhantomData}
-    }
-
-    /// Return the current node and edge capacity of the graph.
-    pub fn capacity(&self) -> (usize, usize) {
-        (self.nodes.capacity(), self.edges.capacity())
     }
 
     /// Return the number of nodes (vertices) in the graph.
@@ -498,12 +491,9 @@ impl<N, E, Ty, Ix> Graph<N, E, Ty, Ix>
     pub fn update_edge(&mut self, a: NodeIndex<Ix>, b: NodeIndex<Ix>, weight: E) -> EdgeIndex<Ix>
     {
         if let Some(ix) = self.find_edge(a, b) {
-            match self.edge_weight_mut(ix) {
-                Some(ed) => {
-                    *ed = weight;
-                    return ix;
-                }
-                None => {}
+            if let Some(ed) = self.edge_weight_mut(ix) {
+                *ed = weight;
+                return ix;
             }
         }
         self.add_edge(a, b, weight)
@@ -546,11 +536,10 @@ impl<N, E, Ty, Ix> Graph<N, E, Ty, Ix>
     /// endpoint in the displaced node.
     pub fn remove_node(&mut self, a: NodeIndex<Ix>) -> Option<N>
     {
-        match self.nodes.get(a.index()) {
-            None => return None,
-            _ => {}
+        if self.nodes.get(a.index()).is_none() {
+            return None
         }
-        for d in DIRECTIONS.iter() {
+        for d in &DIRECTIONS {
             let k = *d as usize;
 
             // Remove all edges from and to this node.
@@ -582,7 +571,7 @@ impl<N, E, Ty, Ix> Graph<N, E, Ty, Ix>
         let new_index = a;
 
         // Adjust the starts of the out edges, and ends of the in edges.
-        for &d in DIRECTIONS.iter() {
+        for &d in &DIRECTIONS {
             let k = d as usize;
             for (_, curedge) in EdgesMut::new(&mut self.edges, swap_edges[k], d) {
                 debug_assert!(curedge.node[k] == old_index);
@@ -597,7 +586,7 @@ impl<N, E, Ty, Ix> Graph<N, E, Ty, Ix>
     fn change_edge_links(&mut self, edge_node: [NodeIndex<Ix>; 2], e: EdgeIndex<Ix>,
                          edge_next: [EdgeIndex<Ix>; 2])
     {
-        for &d in DIRECTIONS.iter() {
+        for &d in &DIRECTIONS {
             let k = d as usize;
             let node = match self.nodes.get_mut(edge_node[k].index()) {
                 Some(r) => r,
@@ -809,7 +798,7 @@ impl<N, E, Ty, Ix> Graph<N, E, Ty, Ix>
         match self.nodes.get(a.index()) {
             None => None,
             Some(node) => {
-                for &d in DIRECTIONS.iter() {
+                for &d in &DIRECTIONS {
                     let k = d as usize;
                     let mut edix = node.next[k];
                     while let Some(edge) = self.edges.get(edix.index()) {
@@ -1010,6 +999,65 @@ impl<N, E, Ty, Ix> Graph<N, E, Ty, Ix>
         for node in &mut self.nodes {
             node.next = [EdgeIndex::end(), EdgeIndex::end()];
         }
+    }
+
+    /// Return the current node and edge capacity of the graph.
+    pub fn capacity(&self) -> (usize, usize) {
+        (self.nodes.capacity(), self.edges.capacity())
+    }
+
+    /// Reserves capacity for at least `additional` more nodes to be inserted in
+    /// the graph. Graph may reserve more space to avoid frequent reallocations.
+    ///
+    /// **Panics** if the new capacity overflows `usize`.
+    pub fn reserve_nodes(&mut self, additional: usize) {
+        self.nodes.reserve(additional);
+    }
+
+    /// Reserves capacity for at least `additional` more edges to be inserted in
+    /// the graph. Graph may reserve more space to avoid frequent reallocations.
+    ///
+    /// **Panics** if the new capacity overflows `usize`.
+    pub fn reserve_edges(&mut self, additional: usize) {
+        self.edges.reserve(additional);
+    }
+
+    /// Reserves the minimum capacity for exactly `additional` more nodes to be
+    /// inserted in the graph. Does nothing if the capacity is already
+    /// sufficient.
+    ///
+    /// Prefer `reserve_nodes` if future insertions are expected.
+    ///
+    /// **Panics** if the new capacity overflows `usize`.
+    pub fn reserve_exact_nodes(&mut self, additional: usize) {
+        self.nodes.reserve_exact(additional);
+    }
+
+    /// Reserves the minimum capacity for exactly `additional` more edges to be
+    /// inserted in the graph.
+    /// Does nothing if the capacity is already sufficient.
+    ///
+    /// Prefer `reserve_edges` if future insertions are expected.
+    ///
+    /// **Panics** if the new capacity overflows `usize`.
+    pub fn reserve_exact_edges(&mut self, additional: usize) {
+        self.edges.reserve_exact(additional);
+    }
+
+    /// Shrinks the capacity of the underlying nodes collection as much as possible.
+    pub fn shrink_to_fit_nodes(&mut self) {
+        self.nodes.shrink_to_fit();
+    }
+
+    /// Shrinks the capacity of the underlying edges collection as much as possible.
+    pub fn shrink_to_fit_edges(&mut self) {
+        self.edges.shrink_to_fit();
+    }
+
+    /// Shrinks the capacity of the graph as much as possible.
+    pub fn shrink_to_fit(&mut self) {
+        self.nodes.shrink_to_fit();
+        self.edges.shrink_to_fit();
     }
 
     /// Keep all nodes that return `true` from the `visit` closure,
