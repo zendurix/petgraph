@@ -1720,6 +1720,54 @@
 <span id="1676">1676</span>
 <span id="1677">1677</span>
 <span id="1678">1678</span>
+<span id="1679">1679</span>
+<span id="1680">1680</span>
+<span id="1681">1681</span>
+<span id="1682">1682</span>
+<span id="1683">1683</span>
+<span id="1684">1684</span>
+<span id="1685">1685</span>
+<span id="1686">1686</span>
+<span id="1687">1687</span>
+<span id="1688">1688</span>
+<span id="1689">1689</span>
+<span id="1690">1690</span>
+<span id="1691">1691</span>
+<span id="1692">1692</span>
+<span id="1693">1693</span>
+<span id="1694">1694</span>
+<span id="1695">1695</span>
+<span id="1696">1696</span>
+<span id="1697">1697</span>
+<span id="1698">1698</span>
+<span id="1699">1699</span>
+<span id="1700">1700</span>
+<span id="1701">1701</span>
+<span id="1702">1702</span>
+<span id="1703">1703</span>
+<span id="1704">1704</span>
+<span id="1705">1705</span>
+<span id="1706">1706</span>
+<span id="1707">1707</span>
+<span id="1708">1708</span>
+<span id="1709">1709</span>
+<span id="1710">1710</span>
+<span id="1711">1711</span>
+<span id="1712">1712</span>
+<span id="1713">1713</span>
+<span id="1714">1714</span>
+<span id="1715">1715</span>
+<span id="1716">1716</span>
+<span id="1717">1717</span>
+<span id="1718">1718</span>
+<span id="1719">1719</span>
+<span id="1720">1720</span>
+<span id="1721">1721</span>
+<span id="1722">1722</span>
+<span id="1723">1723</span>
+<span id="1724">1724</span>
+<span id="1725">1725</span>
+<span id="1726">1726</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! `Graph&lt;N, E, Ty, Ix&gt;` is a graph datastructure using an adjacency list representation.</span>
 
@@ -1749,45 +1797,45 @@
 <span class='doccomment'>/// and convert index values.</span>
 <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>trait</span> <span class='ident'>IndexType</span> : <span class='ident'>Copy</span> <span class='op'>+</span> <span class='ident'>Ord</span> <span class='op'>+</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='op'>+</span> <span class='lifetime'>&#39;static</span>
 {
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>;
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span>;
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span>;
-    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span>;
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span>;
 }
 
 <span class='kw'>unsafe</span> <span class='kw'>impl</span> <span class='ident'>IndexType</span> <span class='kw'>for</span> <span class='ident'>usize</span> {
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='ident'>x</span> }
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> { <span class='ident'>x</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='op'>*</span><span class='self'>self</span> }
+    <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> { <span class='op'>*</span><span class='self'>self</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>usize</span>::<span class='ident'>MAX</span> }
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>usize</span>::<span class='ident'>MAX</span> }
 }
 
 <span class='kw'>unsafe</span> <span class='kw'>impl</span> <span class='ident'>IndexType</span> <span class='kw'>for</span> <span class='ident'>u32</span> {
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u32</span> }
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u32</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='op'>*</span><span class='self'>self</span> <span class='kw'>as</span> <span class='ident'>usize</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u32</span>::<span class='ident'>MAX</span> }
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u32</span>::<span class='ident'>MAX</span> }
 }
 
 <span class='kw'>unsafe</span> <span class='kw'>impl</span> <span class='ident'>IndexType</span> <span class='kw'>for</span> <span class='ident'>u16</span> {
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u16</span> }
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u16</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='op'>*</span><span class='self'>self</span> <span class='kw'>as</span> <span class='ident'>usize</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u16</span>::<span class='ident'>MAX</span> }
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u16</span>::<span class='ident'>MAX</span> }
 }
 
 <span class='kw'>unsafe</span> <span class='kw'>impl</span> <span class='ident'>IndexType</span> <span class='kw'>for</span> <span class='ident'>u8</span> {
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u8</span> }
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> { <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>u8</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='op'>*</span><span class='self'>self</span> <span class='kw'>as</span> <span class='ident'>usize</span> }
     <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
-    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u8</span>::<span class='ident'>MAX</span> }
+    <span class='kw'>fn</span> <span class='ident'>max</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span> { ::<span class='ident'>std</span>::<span class='ident'>u8</span>::<span class='ident'>MAX</span> }
 }
 
 <span class='doccomment'>/// Node identifier.</span>
@@ -1797,7 +1845,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
         <span class='ident'>NodeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>new</span>(<span class='ident'>x</span>))
     }
 
@@ -1808,7 +1856,7 @@
     }
 
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span>
     {
         <span class='ident'>NodeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>max</span>())
     }
@@ -1819,7 +1867,7 @@
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>ix</span>: <span class='ident'>Ix</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='ident'>NodeIndex</span>(<span class='ident'>ix</span>) }
+    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>ix</span>: <span class='ident'>Ix</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> { <span class='ident'>NodeIndex</span>(<span class='ident'>ix</span>) }
 }
 
 <span class='doccomment'>/// Short version of `NodeIndex::new`</span>
@@ -1835,7 +1883,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
 {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>x</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
         <span class='ident'>EdgeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>new</span>(<span class='ident'>x</span>))
     }
 
@@ -1848,7 +1896,7 @@
     <span class='doccomment'>/// An invalid `EdgeIndex` used to denote absence of an edge, for example</span>
     <span class='doccomment'>/// to end an adjacency list.</span>
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>end</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span> {
         <span class='ident'>EdgeIndex</span>(<span class='ident'>IndexType</span>::<span class='ident'>max</span>())
     }
 
@@ -2005,7 +2053,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='ident'>Graph</span><span class='op'>&lt;</span><span class='ident'>N</span>, <span class='ident'>E</span>, <span class='ident'>Ty</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     <span class='kw'>where</span> <span class='ident'>N</span>: <span class='ident'>Clone</span>, <span class='ident'>E</span>: <span class='ident'>Clone</span>,
 {
-    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
         <span class='ident'>Graph</span> {
             <span class='ident'>nodes</span>: <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>clone</span>(),
             <span class='ident'>edges</span>: <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>clone</span>(),
@@ -2013,7 +2061,7 @@
         }
     }
 
-    <span class='kw'>fn</span> <span class='ident'>clone_from</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>rhs</span>: <span class='kw-2'>&amp;</span><span class='kw'>Self</span>) {
+    <span class='kw'>fn</span> <span class='ident'>clone_from</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>rhs</span>: <span class='kw-2'>&amp;</span><span class='self'>Self</span>) {
         <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>clone_from</span>(<span class='kw-2'>&amp;</span><span class='ident'>rhs</span>.<span class='ident'>nodes</span>);
         <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>clone_from</span>(<span class='kw-2'>&amp;</span><span class='ident'>rhs</span>.<span class='ident'>edges</span>);
         <span class='self'>self</span>.<span class='ident'>ty</span> <span class='op'>=</span> <span class='ident'>rhs</span>.<span class='ident'>ty</span>;
@@ -2056,16 +2104,14 @@
 {
     <span class='kw'>if</span> <span class='ident'>a</span> <span class='op'>==</span> <span class='ident'>b</span> {
         <span class='ident'>slc</span>.<span class='ident'>get_mut</span>(<span class='ident'>a</span>).<span class='ident'>map_or</span>(<span class='ident'>Pair</span>::<span class='prelude-val'>None</span>, <span class='ident'>Pair</span>::<span class='ident'>One</span>)
+    } <span class='kw'>else</span> <span class='kw'>if</span> <span class='ident'>a</span> <span class='op'>&gt;=</span> <span class='ident'>slc</span>.<span class='ident'>len</span>() <span class='op'>||</span> <span class='ident'>b</span> <span class='op'>&gt;=</span> <span class='ident'>slc</span>.<span class='ident'>len</span>() {
+        <span class='ident'>Pair</span>::<span class='prelude-val'>None</span>
     } <span class='kw'>else</span> {
-        <span class='kw'>if</span> <span class='ident'>a</span> <span class='op'>&gt;=</span> <span class='ident'>slc</span>.<span class='ident'>len</span>() <span class='op'>||</span> <span class='ident'>b</span> <span class='op'>&gt;=</span> <span class='ident'>slc</span>.<span class='ident'>len</span>() {
-            <span class='ident'>Pair</span>::<span class='prelude-val'>None</span>
-        } <span class='kw'>else</span> {
-            <span class='comment'>// safe because a, b are in bounds and distinct</span>
-            <span class='kw'>unsafe</span> {
-                <span class='kw'>let</span> <span class='ident'>ar</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span>(<span class='ident'>slc</span>.<span class='ident'>get_unchecked_mut</span>(<span class='ident'>a</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> _);
-                <span class='kw'>let</span> <span class='ident'>br</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span>(<span class='ident'>slc</span>.<span class='ident'>get_unchecked_mut</span>(<span class='ident'>b</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> _);
-                <span class='ident'>Pair</span>::<span class='ident'>Both</span>(<span class='ident'>ar</span>, <span class='ident'>br</span>)
-            }
+        <span class='comment'>// safe because a, b are in bounds and distinct</span>
+        <span class='kw'>unsafe</span> {
+            <span class='kw'>let</span> <span class='ident'>ar</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span>(<span class='ident'>slc</span>.<span class='ident'>get_unchecked_mut</span>(<span class='ident'>a</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> _);
+            <span class='kw'>let</span> <span class='ident'>br</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span>(<span class='ident'>slc</span>.<span class='ident'>get_unchecked_mut</span>(<span class='ident'>b</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> _);
+            <span class='ident'>Pair</span>::<span class='ident'>Both</span>(<span class='ident'>ar</span>, <span class='ident'>br</span>)
         }
     }
 }
@@ -2076,7 +2122,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// This is a convenience method. Use `Graph::with_capacity` or `Graph::default` for</span>
     <span class='doccomment'>/// a constructor that is generic in all the type parameters of `Graph`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span>
     {
         <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
               <span class='ident'>ty</span>: <span class='ident'>PhantomData</span>}
@@ -2089,7 +2135,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// This is a convenience method. Use `Graph::with_capacity` or `Graph::default` for</span>
     <span class='doccomment'>/// a constructor that is generic in all the type parameters of `Graph`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new_undirected</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new_undirected</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span>
     {
         <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
               <span class='ident'>ty</span>: <span class='ident'>PhantomData</span>}
@@ -2101,15 +2147,10 @@
           <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
     <span class='doccomment'>/// Create a new `Graph` with estimated capacity.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>: <span class='ident'>usize</span>, <span class='ident'>edges</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>: <span class='ident'>usize</span>, <span class='ident'>edges</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span>
     {
         <span class='ident'>Graph</span>{<span class='ident'>nodes</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>nodes</span>), <span class='ident'>edges</span>: <span class='ident'>Vec</span>::<span class='ident'>with_capacity</span>(<span class='ident'>edges</span>),
               <span class='ident'>ty</span>: <span class='ident'>PhantomData</span>}
-    }
-
-    <span class='doccomment'>/// Return the current node and edge capacity of the graph.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>capacity</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> (<span class='ident'>usize</span>, <span class='ident'>usize</span>) {
-        (<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>capacity</span>(), <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>capacity</span>())
     }
 
     <span class='doccomment'>/// Return the number of nodes (vertices) in the graph.</span>
@@ -2221,12 +2262,9 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_edge</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>b</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>weight</span>: <span class='ident'>E</span>) <span class='op'>-&gt;</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     {
         <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>ix</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>find_edge</span>(<span class='ident'>a</span>, <span class='ident'>b</span>) {
-            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>edge_weight_mut</span>(<span class='ident'>ix</span>) {
-                <span class='prelude-val'>Some</span>(<span class='ident'>ed</span>) <span class='op'>=&gt;</span> {
-                    <span class='op'>*</span><span class='ident'>ed</span> <span class='op'>=</span> <span class='ident'>weight</span>;
-                    <span class='kw'>return</span> <span class='ident'>ix</span>;
-                }
-                <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {}
+            <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>ed</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edge_weight_mut</span>(<span class='ident'>ix</span>) {
+                <span class='op'>*</span><span class='ident'>ed</span> <span class='op'>=</span> <span class='ident'>weight</span>;
+                <span class='kw'>return</span> <span class='ident'>ix</span>;
             }
         }
         <span class='self'>self</span>.<span class='ident'>add_edge</span>(<span class='ident'>a</span>, <span class='ident'>b</span>, <span class='ident'>weight</span>)
@@ -2269,11 +2307,10 @@
     <span class='doccomment'>/// endpoint in the displaced node.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>remove_node</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>a</span>: <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>N</span><span class='op'>&gt;</span>
     {
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>None</span>,
-            _ <span class='op'>=&gt;</span> {}
+        <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()).<span class='ident'>is_none</span>() {
+            <span class='kw'>return</span> <span class='prelude-val'>None</span>
         }
-        <span class='kw'>for</span> <span class='ident'>d</span> <span class='kw'>in</span> <span class='ident'>DIRECTIONS</span>.<span class='ident'>iter</span>() {
+        <span class='kw'>for</span> <span class='ident'>d</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>DIRECTIONS</span> {
             <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='op'>*</span><span class='ident'>d</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
 
             <span class='comment'>// Remove all edges from and to this node.</span>
@@ -2305,7 +2342,7 @@
         <span class='kw'>let</span> <span class='ident'>new_index</span> <span class='op'>=</span> <span class='ident'>a</span>;
 
         <span class='comment'>// Adjust the starts of the out edges, and ends of the in edges.</span>
-        <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>d</span> <span class='kw'>in</span> <span class='ident'>DIRECTIONS</span>.<span class='ident'>iter</span>() {
+        <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>d</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>DIRECTIONS</span> {
             <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>d</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
             <span class='kw'>for</span> (_, <span class='ident'>curedge</span>) <span class='kw'>in</span> <span class='ident'>EdgesMut</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>edges</span>, <span class='ident'>swap_edges</span>[<span class='ident'>k</span>], <span class='ident'>d</span>) {
                 <span class='macro'>debug_assert</span><span class='macro'>!</span>(<span class='ident'>curedge</span>.<span class='ident'>node</span>[<span class='ident'>k</span>] <span class='op'>==</span> <span class='ident'>old_index</span>);
@@ -2320,12 +2357,12 @@
     <span class='kw'>fn</span> <span class='ident'>change_edge_links</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>edge_node</span>: [<span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>], <span class='ident'>e</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>,
                          <span class='ident'>edge_next</span>: [<span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>; <span class='number'>2</span>])
     {
-        <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>d</span> <span class='kw'>in</span> <span class='ident'>DIRECTIONS</span>.<span class='ident'>iter</span>() {
+        <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>d</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>DIRECTIONS</span> {
             <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>d</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
             <span class='kw'>let</span> <span class='ident'>node</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get_mut</span>(<span class='ident'>edge_node</span>[<span class='ident'>k</span>].<span class='ident'>index</span>()) {
                 <span class='prelude-val'>Some</span>(<span class='ident'>r</span>) <span class='op'>=&gt;</span> <span class='ident'>r</span>,
                 <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
-                    <span class='macro'>debug_assert</span><span class='macro'>!</span>(<span class='boolval'>false</span>, <span class='string'>&quot;Edge&#39;s endpoint dir={:?} index={:?} not found&quot;</span>,
+                    <span class='macro'>debug_assert</span><span class='macro'>!</span>(<span class='bool-val'>false</span>, <span class='string'>&quot;Edge&#39;s endpoint dir={:?} index={:?} not found&quot;</span>,
                                   <span class='ident'>d</span>, <span class='ident'>edge_node</span>[<span class='ident'>k</span>]);
                     <span class='kw'>return</span>
                 }
@@ -2532,7 +2569,7 @@
         <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>get</span>(<span class='ident'>a</span>.<span class='ident'>index</span>()) {
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=&gt;</span> {
-                <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>d</span> <span class='kw'>in</span> <span class='ident'>DIRECTIONS</span>.<span class='ident'>iter</span>() {
+                <span class='kw'>for</span> <span class='kw-2'>&amp;</span><span class='ident'>d</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>DIRECTIONS</span> {
                     <span class='kw'>let</span> <span class='ident'>k</span> <span class='op'>=</span> <span class='ident'>d</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
                     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>edix</span> <span class='op'>=</span> <span class='ident'>node</span>.<span class='ident'>next</span>[<span class='ident'>k</span>];
                     <span class='kw'>while</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>edge</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>get</span>(<span class='ident'>edix</span>.<span class='ident'>index</span>()) {
@@ -2690,9 +2727,9 @@
     <span class='doccomment'>/// assert_eq!(gr[c], 2.);</span>
     <span class='doccomment'>/// ```</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>index_twice_mut</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>U</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>i</span>: <span class='ident'>T</span>, <span class='ident'>j</span>: <span class='ident'>U</span>)
-        <span class='op'>-&gt;</span> (<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>&lt;</span><span class='kw'>Self</span> <span class='kw'>as</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Output</span>,
-            <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>&lt;</span><span class='kw'>Self</span> <span class='kw'>as</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>U</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Output</span>)
-        <span class='kw'>where</span> <span class='kw'>Self</span>: <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>U</span><span class='op'>&gt;</span>,
+        <span class='op'>-&gt;</span> (<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>&lt;</span><span class='self'>Self</span> <span class='kw'>as</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Output</span>,
+            <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>&lt;</span><span class='self'>Self</span> <span class='kw'>as</span> <span class='ident'>Index</span><span class='op'>&lt;</span><span class='ident'>U</span><span class='op'>&gt;&gt;</span>::<span class='ident'>Output</span>)
+        <span class='kw'>where</span> <span class='self'>Self</span>: <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='op'>+</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>U</span><span class='op'>&gt;</span>,
               <span class='ident'>T</span>: <span class='ident'>GraphIndex</span>,
               <span class='ident'>U</span>: <span class='ident'>GraphIndex</span>,
     {
@@ -2702,8 +2739,8 @@
         <span class='comment'>// Allow two mutable indexes here -- they are nonoverlapping</span>
         <span class='kw'>unsafe</span> {
             <span class='kw'>let</span> <span class='ident'>self_mut</span> <span class='op'>=</span> <span class='self'>self</span> <span class='kw'>as</span> <span class='op'>*</span><span class='kw-2'>mut</span> _;
-            (<span class='op'>&lt;</span><span class='kw'>Self</span> <span class='kw'>as</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>::<span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>self_mut</span>, <span class='ident'>i</span>),
-             <span class='op'>&lt;</span><span class='kw'>Self</span> <span class='kw'>as</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>U</span><span class='op'>&gt;&gt;</span>::<span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>self_mut</span>, <span class='ident'>j</span>))
+            (<span class='op'>&lt;</span><span class='self'>Self</span> <span class='kw'>as</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>::<span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>self_mut</span>, <span class='ident'>i</span>),
+             <span class='op'>&lt;</span><span class='self'>Self</span> <span class='kw'>as</span> <span class='ident'>IndexMut</span><span class='op'>&lt;</span><span class='ident'>U</span><span class='op'>&gt;&gt;</span>::<span class='ident'>index_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>self_mut</span>, <span class='ident'>j</span>))
         }
     }
 
@@ -2735,6 +2772,65 @@
         }
     }
 
+    <span class='doccomment'>/// Return the current node and edge capacity of the graph.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>capacity</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> (<span class='ident'>usize</span>, <span class='ident'>usize</span>) {
+        (<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>capacity</span>(), <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>capacity</span>())
+    }
+
+    <span class='doccomment'>/// Reserves capacity for at least `additional` more nodes to be inserted in</span>
+    <span class='doccomment'>/// the graph. Graph may reserve more space to avoid frequent reallocations.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// **Panics** if the new capacity overflows `usize`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reserve_nodes</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>additional</span>: <span class='ident'>usize</span>) {
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>reserve</span>(<span class='ident'>additional</span>);
+    }
+
+    <span class='doccomment'>/// Reserves capacity for at least `additional` more edges to be inserted in</span>
+    <span class='doccomment'>/// the graph. Graph may reserve more space to avoid frequent reallocations.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// **Panics** if the new capacity overflows `usize`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reserve_edges</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>additional</span>: <span class='ident'>usize</span>) {
+        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>reserve</span>(<span class='ident'>additional</span>);
+    }
+
+    <span class='doccomment'>/// Reserves the minimum capacity for exactly `additional` more nodes to be</span>
+    <span class='doccomment'>/// inserted in the graph. Does nothing if the capacity is already</span>
+    <span class='doccomment'>/// sufficient.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Prefer `reserve_nodes` if future insertions are expected.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// **Panics** if the new capacity overflows `usize`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reserve_exact_nodes</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>additional</span>: <span class='ident'>usize</span>) {
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>reserve_exact</span>(<span class='ident'>additional</span>);
+    }
+
+    <span class='doccomment'>/// Reserves the minimum capacity for exactly `additional` more edges to be</span>
+    <span class='doccomment'>/// inserted in the graph.</span>
+    <span class='doccomment'>/// Does nothing if the capacity is already sufficient.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Prefer `reserve_edges` if future insertions are expected.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// **Panics** if the new capacity overflows `usize`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>reserve_exact_edges</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>additional</span>: <span class='ident'>usize</span>) {
+        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>reserve_exact</span>(<span class='ident'>additional</span>);
+    }
+
+    <span class='doccomment'>/// Shrinks the capacity of the underlying nodes collection as much as possible.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>shrink_to_fit_nodes</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>shrink_to_fit</span>();
+    }
+
+    <span class='doccomment'>/// Shrinks the capacity of the underlying edges collection as much as possible.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>shrink_to_fit_edges</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
+        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>shrink_to_fit</span>();
+    }
+
+    <span class='doccomment'>/// Shrinks the capacity of the graph as much as possible.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>shrink_to_fit</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>shrink_to_fit</span>();
+        <span class='self'>self</span>.<span class='ident'>edges</span>.<span class='ident'>shrink_to_fit</span>();
+    }
+
     <span class='doccomment'>/// Keep all nodes that return `true` from the `visit` closure,</span>
     <span class='doccomment'>/// remove the others.</span>
     <span class='doccomment'>///</span>
@@ -2744,7 +2840,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// The order nodes are visited is not specified.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>retain_nodes</span><span class='op'>&lt;</span><span class='ident'>F</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='kw-2'>mut</span> <span class='ident'>visit</span>: <span class='ident'>F</span>)
-        <span class='kw'>where</span> <span class='ident'>F</span>: <span class='ident'>FnMut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='kw'>Self</span>, <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>
+        <span class='kw'>where</span> <span class='ident'>F</span>: <span class='ident'>FnMut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>Self</span>, <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>
     {
         <span class='kw'>for</span> <span class='ident'>index</span> <span class='kw'>in</span> <span class='self'>self</span>.<span class='ident'>node_indices</span>().<span class='ident'>rev</span>() {
             <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>visit</span>(<span class='self'>self</span>, <span class='ident'>index</span>) {
@@ -2764,7 +2860,7 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// The order edges are visited is not specified.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>retain_edges</span><span class='op'>&lt;</span><span class='ident'>F</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='kw-2'>mut</span> <span class='ident'>visit</span>: <span class='ident'>F</span>)
-        <span class='kw'>where</span> <span class='ident'>F</span>: <span class='ident'>FnMut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='kw'>Self</span>, <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>
+        <span class='kw'>where</span> <span class='ident'>F</span>: <span class='ident'>FnMut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>Self</span>, <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>
     {
         <span class='kw'>for</span> <span class='ident'>index</span> <span class='kw'>in</span> <span class='self'>self</span>.<span class='ident'>edge_indices</span>().<span class='ident'>rev</span>() {
             <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>visit</span>(<span class='self'>self</span>, <span class='ident'>index</span>) {
@@ -2793,13 +2889,13 @@
     <span class='doccomment'>///     (2, 3),</span>
     <span class='doccomment'>/// ]);</span>
     <span class='doccomment'>/// ```</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>from_edges</span><span class='op'>&lt;</span><span class='ident'>I</span><span class='op'>&gt;</span>(<span class='ident'>iterable</span>: <span class='ident'>I</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>from_edges</span><span class='op'>&lt;</span><span class='ident'>I</span><span class='op'>&gt;</span>(<span class='ident'>iterable</span>: <span class='ident'>I</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span>
         <span class='kw'>where</span> <span class='ident'>I</span>: <span class='ident'>IntoIterator</span>,
               <span class='ident'>I</span>::<span class='ident'>Item</span>: <span class='ident'>IntoWeightedEdge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;</span>,
               <span class='op'>&lt;</span><span class='ident'>I</span>::<span class='ident'>Item</span> <span class='kw'>as</span> <span class='ident'>IntoWeightedEdge</span><span class='op'>&lt;</span><span class='ident'>E</span><span class='op'>&gt;&gt;</span>::<span class='ident'>NodeId</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;&gt;</span>,
               <span class='ident'>N</span>: <span class='ident'>Default</span>,
     {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>g</span> <span class='op'>=</span> <span class='ident'>Self</span>::<span class='ident'>with_capacity</span>(<span class='number'>0</span>, <span class='number'>0</span>);
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>g</span> <span class='op'>=</span> <span class='self'>Self</span>::<span class='ident'>with_capacity</span>(<span class='number'>0</span>, <span class='number'>0</span>);
         <span class='ident'>g</span>.<span class='ident'>extend_with_edges</span>(<span class='ident'>iterable</span>);
         <span class='ident'>g</span>
     }
@@ -2971,7 +3067,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='ident'>Neighbors</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     <span class='kw'>where</span> <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
         <span class='ident'>Neighbors</span> { <span class='ident'>iter</span>: <span class='self'>self</span>.<span class='ident'>iter</span>.<span class='ident'>clone</span>() }
     }
 }
@@ -3001,7 +3097,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>EdgesMut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='kw'>where</span>
     <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>], <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span>
+    <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>edges</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='kw-2'>mut</span> [<span class='ident'>Edge</span><span class='op'>&lt;</span><span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>], <span class='ident'>next</span>: <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>, <span class='ident'>dir</span>: <span class='ident'>EdgeDirection</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span>
     {
         <span class='ident'>EdgesMut</span>{
             <span class='ident'>edges</span>: <span class='ident'>edges</span>,
@@ -3078,7 +3174,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='ident'>Edges</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>E</span>, <span class='ident'>Ix</span><span class='op'>&gt;</span>
     <span class='kw'>where</span> <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>
 {
-    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
         <span class='ident'>Edges</span> {
             <span class='ident'>skip_start</span>: <span class='self'>self</span>.<span class='ident'>skip_start</span>,
             <span class='ident'>edges</span>: <span class='self'>self</span>.<span class='ident'>edges</span>,
@@ -3181,7 +3277,7 @@
     <span class='kw'>where</span> <span class='ident'>Ty</span>: <span class='ident'>EdgeType</span>,
           <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>fn</span> <span class='ident'>default</span>() <span class='op'>-&gt;</span> <span class='kw'>Self</span> { <span class='ident'>Self</span>::<span class='ident'>with_capacity</span>(<span class='number'>0</span>, <span class='number'>0</span>) }
+    <span class='kw'>fn</span> <span class='ident'>default</span>() <span class='op'>-&gt;</span> <span class='self'>Self</span> { <span class='self'>Self</span>::<span class='ident'>with_capacity</span>(<span class='number'>0</span>, <span class='number'>0</span>) }
 }
 
 <span class='doccomment'>/// A  `GraphIndex` is a node or edge index.</span>
@@ -3196,14 +3292,14 @@
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='ident'>NodeIndex</span>::<span class='ident'>index</span>(<span class='op'>*</span><span class='self'>self</span>) }
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>is_node_index</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>true</span> }
+    <span class='kw'>fn</span> <span class='ident'>is_node_index</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='bool-val'>true</span> }
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>GraphIndex</span> <span class='kw'>for</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>index</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> { <span class='ident'>EdgeIndex</span>::<span class='ident'>index</span>(<span class='op'>*</span><span class='self'>self</span>) }
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>is_node_index</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='boolval'>false</span> }
+    <span class='kw'>fn</span> <span class='ident'>is_node_index</span>() <span class='op'>-&gt;</span> <span class='ident'>bool</span> { <span class='bool-val'>false</span> }
 }
 
 <span class='doccomment'>/// A “walker” object that can be used to step through the edge list of a node.</span>
@@ -3248,7 +3344,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> <span class='ident'>Clone</span> <span class='kw'>for</span> <span class='ident'>WalkNeighbors</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>
     <span class='kw'>where</span> <span class='ident'>Ix</span>: <span class='ident'>IndexType</span>,
 {
-    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>fn</span> <span class='ident'>clone</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
         <span class='ident'>WalkNeighbors</span> {
             <span class='ident'>skip_start</span>: <span class='self'>self</span>.<span class='ident'>skip_start</span>,
             <span class='ident'>next</span>: <span class='self'>self</span>.<span class='ident'>next</span>,
@@ -3355,7 +3451,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>NodeIndices</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> {
     <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>NodeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>;
 
-    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Self</span>::<span class='ident'>Item</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='self'>Self</span>::<span class='ident'>Item</span><span class='op'>&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>r</span>.<span class='ident'>next</span>().<span class='ident'>map</span>(<span class='ident'>node_index</span>)
     }
 
@@ -3365,7 +3461,7 @@
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>DoubleEndedIterator</span> <span class='kw'>for</span> <span class='ident'>NodeIndices</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>next_back</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Self</span>::<span class='ident'>Item</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>next_back</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='self'>Self</span>::<span class='ident'>Item</span><span class='op'>&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>r</span>.<span class='ident'>next_back</span>().<span class='ident'>map</span>(<span class='ident'>node_index</span>)
     }
 }
@@ -3380,7 +3476,7 @@
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>EdgeIndices</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> {
     <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>EdgeIndex</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span>;
 
-    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Self</span>::<span class='ident'>Item</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='self'>Self</span>::<span class='ident'>Item</span><span class='op'>&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>r</span>.<span class='ident'>next</span>().<span class='ident'>map</span>(<span class='ident'>edge_index</span>)
     }
 
@@ -3390,7 +3486,7 @@
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>Ix</span>: <span class='ident'>IndexType</span><span class='op'>&gt;</span> <span class='ident'>DoubleEndedIterator</span> <span class='kw'>for</span> <span class='ident'>EdgeIndices</span><span class='op'>&lt;</span><span class='ident'>Ix</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>next_back</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Self</span>::<span class='ident'>Item</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>next_back</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='self'>Self</span>::<span class='ident'>Item</span><span class='op'>&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>r</span>.<span class='ident'>next_back</span>().<span class='ident'>map</span>(<span class='ident'>edge_index</span>)
     }
 }
@@ -3423,6 +3519,8 @@
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 

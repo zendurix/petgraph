@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `Graphlike` trait in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, Graphlike">
 
-    <title>petgraph 0.2.6 - petgraph::visit::Graphlike - Rust</title>
+    <title>petgraph 0.2.8 - petgraph::visit::Graphlike - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
@@ -47,21 +47,21 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-2159' class='srclink' href='../../src/petgraph/src/visit.rs.html#29-31' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-2095' class='srclink' href='../../src/petgraph/src/visit.rs.html#29-31' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Graphlike {
     type <a href='#associatedtype.NodeId' class='type'>NodeId</a>: <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>;
 }</pre><div class='docblock'><p>Base trait for graphs that defines the node identifier.</p>
 </div>
             <h2 id='associated-types'>Associated Types</h2>
             <div class='methods'>
-        <h3 id='associatedtype.NodeId' class='method stab '><code>type <a href='#associatedtype.NodeId' class='type'>NodeId</a>: <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a></code></h3></div>
+        <h3 id='associatedtype.NodeId' class='method stab '><span id='NodeId.t' class='invisible'><code>type <a href='#associatedtype.NodeId' class='type'>NodeId</a>: <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a></code></span></h3></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
-    <li><code>impl&lt;N, E, Ty, Ix&gt; Graphlike for <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N, E, Ty, Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></li>
-<li><code>impl&lt;N, E, Ty, Ix&gt; Graphlike for <a class='struct' href='../../petgraph/graph/stable/struct.StableGraph.html' title='petgraph::graph::stable::StableGraph'>StableGraph</a>&lt;N, E, Ty, Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></li>
-<li><code>impl&lt;N: <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, E&gt; Graphlike for <a class='struct' href='../../petgraph/graphmap/struct.GraphMap.html' title='petgraph::graphmap::GraphMap'>GraphMap</a>&lt;N, E&gt;</code></li>
-<li><code>impl&lt;'a, G: <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a>&gt; Graphlike for <a class='struct' href='../../petgraph/visit/struct.AsUndirected.html' title='petgraph::visit::AsUndirected'>AsUndirected</a>&lt;&amp;'a G&gt;</code></li>
-<li><code>impl&lt;'a, G: <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a>&gt; Graphlike for <a class='struct' href='../../petgraph/visit/struct.Reversed.html' title='petgraph::visit::Reversed'>Reversed</a>&lt;&amp;'a G&gt;</code></li>
+    <li><code>impl&lt;N,&nbsp;E,&nbsp;Ty,&nbsp;Ix&gt; Graphlike for <a class='struct' href='../../petgraph/graph/struct.Graph.html' title='petgraph::graph::Graph'>Graph</a>&lt;N,&nbsp;E,&nbsp;Ty,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></li>
+<li><code>impl&lt;N,&nbsp;E,&nbsp;Ty,&nbsp;Ix&gt; Graphlike for <a class='struct' href='../../petgraph/graph/stable/struct.StableGraph.html' title='petgraph::graph::stable::StableGraph'>StableGraph</a>&lt;N,&nbsp;E,&nbsp;Ty,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></li>
+<li><code>impl&lt;N:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>,&nbsp;E&gt; Graphlike for <a class='struct' href='../../petgraph/graphmap/struct.GraphMap.html' title='petgraph::graphmap::GraphMap'>GraphMap</a>&lt;N,&nbsp;E&gt;</code></li>
+<li><code>impl&lt;'a,&nbsp;G:&nbsp;<a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a>&gt; Graphlike for <a class='struct' href='../../petgraph/visit/struct.AsUndirected.html' title='petgraph::visit::AsUndirected'>AsUndirected</a>&lt;&amp;'a G&gt;</code></li>
+<li><code>impl&lt;'a,&nbsp;G:&nbsp;<a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a>&gt; Graphlike for <a class='struct' href='../../petgraph/visit/struct.Reversed.html' title='petgraph::visit::Reversed'>Reversed</a>&lt;&amp;'a G&gt;</code></li>
 </ul><script type="text/javascript" async
                          src="../../implementors/petgraph/visit/trait.Graphlike.js">
                  </script></section>
@@ -87,6 +87,8 @@
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
