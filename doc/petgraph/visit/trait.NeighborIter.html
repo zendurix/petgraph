@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `NeighborIter` trait in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, NeighborIter">
 
-    <title>petgraph 0.2.8 - petgraph::visit::NeighborIter - Rust</title>
+    <title>petgraph 0.2.9 - petgraph::visit::NeighborIter - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
@@ -47,7 +47,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-2097' class='srclink' href='../../src/petgraph/src/visit.rs.html#34-39' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-1562' class='srclink' href='../../src/petgraph/src/visit.rs.html#34-39' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait NeighborIter&lt;'a&gt;: <a class='trait' href='../../petgraph/visit/trait.Graphlike.html' title='petgraph::visit::Graphlike'>Graphlike</a> {
     type <a href='#associatedtype.Iter' class='type'>Iter</a>: <a class='trait' href='https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html' title='core::iter::iterator::Iterator'>Iterator</a>&lt;Item=Self::NodeId&gt;;
     fn <a href='#tymethod.neighbors' class='fnname'>neighbors</a>(&amp;'a self, n: Self::NodeId) -&gt; Self::Iter;

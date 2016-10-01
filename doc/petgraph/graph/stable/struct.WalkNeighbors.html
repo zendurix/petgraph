@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `WalkNeighbors` struct in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, WalkNeighbors">
 
-    <title>petgraph 0.2.8 - petgraph::graph::stable::WalkNeighbors - Rust</title>
+    <title>petgraph 0.2.9 - petgraph::graph::stable::WalkNeighbors - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
@@ -47,10 +47,8 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-1749' class='srclink' href='../../../src/petgraph/src/stable.rs.html#615-617' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct WalkNeighbors&lt;Ix&gt; {
-    // some fields omitted
-}</pre><div class='docblock'><p>A “walker” object that can be used to step through the edge list of a node.</p>
+               </span><a id='src-1355' class='srclink' href='../../../src/petgraph/src/stable.rs.html#615-617' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct WalkNeighbors&lt;Ix&gt; { /* fields omitted */ }</pre><div class='docblock'><p>A “walker” object that can be used to step through the edge list of a node.</p>
 
 <p>See <a href="struct.Neighbors.html#method.detach"><em>.detach()</em></a> for more information.</p>
 
@@ -83,8 +81,8 @@ in the following example:</p>
 <span class='comment'>// check the result</span>
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>gr</span>[<span class='ident'>a</span>], <span class='number'>0.</span>);
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>gr</span>[<span class='ident'>b</span>], <span class='number'>4.</span>);
-<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>gr</span>[<span class='ident'>c</span>], <span class='number'>2.</span>);</pre>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;Ix:&nbsp;<a class='trait' href='../../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a>&gt; <a class='struct' href='../../../petgraph/graph/stable/struct.WalkNeighbors.html' title='petgraph::graph::stable::WalkNeighbors'>WalkNeighbors</a>&lt;Ix&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-1752' class='srclink' href='../../../src/petgraph/src/stable.rs.html#619-642' title='goto source code'>[src]</a></span></h3>
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>gr</span>[<span class='ident'>c</span>], <span class='number'>2.</span>);<a class='test-arrow' target='_blank' href=''>Run</a></pre>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;Ix:&nbsp;<a class='trait' href='../../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a>&gt; <a class='struct' href='../../../petgraph/graph/stable/struct.WalkNeighbors.html' title='petgraph::graph::stable::WalkNeighbors'>WalkNeighbors</a>&lt;Ix&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-1358' class='srclink' href='../../../src/petgraph/src/stable.rs.html#619-642' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.next' class='method'><span id='next.v' class='invisible'><code>fn <a href='#method.next' class='fnname'>next</a>&lt;N,&nbsp;E,&nbsp;Ty:&nbsp;<a class='trait' href='../../../petgraph/trait.EdgeType.html' title='petgraph::EdgeType'>EdgeType</a>&gt;(&amp;mut self, g: &amp;<a class='struct' href='../../../petgraph/graph/stable/struct.StableGraph.html' title='petgraph::graph::stable::StableGraph'>StableGraph</a>&lt;N,&nbsp;E,&nbsp;Ty,&nbsp;Ix&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a><a class='struct' href='../../../petgraph/graph/struct.EdgeIndex.html' title='petgraph::graph::EdgeIndex'>EdgeIndex</a>&lt;Ix&gt;, <a class='struct' href='../../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a>&gt;</code></span></h4>
 <div class='docblock'><p>Step to the next edge and its endpoint node in the walk for graph <code>g</code>.</p>
 

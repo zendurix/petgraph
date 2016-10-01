@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `Neighbors` struct in crate `petgraph`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, Neighbors">
 
-    <title>petgraph 0.2.8 - petgraph::graph::stable::Neighbors - Rust</title>
+    <title>petgraph 0.2.9 - petgraph::graph::stable::Neighbors - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
@@ -47,20 +47,18 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-1723' class='srclink' href='../../../src/petgraph/src/stable.rs.html#523-530' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct Neighbors&lt;'a,&nbsp;E:&nbsp;'a,&nbsp;Ix:&nbsp;'a&nbsp;=&nbsp;<a class='type' href='../../../petgraph/graph/type.DefIndex.html' title='petgraph::graph::DefIndex'>DefIndex</a>&gt; <span class='where'>where Ix: <a class='trait' href='../../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span> {
-    // some fields omitted
-}</pre><div class='docblock'><p>Iterator over the neighbors of a node.</p>
+               </span><a id='src-1331' class='srclink' href='../../../src/petgraph/src/stable.rs.html#523-530' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Neighbors&lt;'a,&nbsp;E:&nbsp;'a,&nbsp;Ix:&nbsp;'a&nbsp;=&nbsp;<a class='type' href='../../../petgraph/graph/type.DefIndex.html' title='petgraph::graph::DefIndex'>DefIndex</a>&gt; <span class='where'>where Ix: <a class='trait' href='../../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span> { /* fields omitted */ }</pre><div class='docblock'><p>Iterator over the neighbors of a node.</p>
 
 <p>Iterator element type is <code>NodeIndex</code>.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a,&nbsp;E,&nbsp;Ix&gt; <a class='struct' href='../../../petgraph/graph/stable/struct.Neighbors.html' title='petgraph::graph::stable::Neighbors'>Neighbors</a>&lt;'a,&nbsp;E,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-1731' class='srclink' href='../../../src/petgraph/src/stable.rs.html#532-548' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a,&nbsp;E,&nbsp;Ix&gt; <a class='struct' href='../../../petgraph/graph/stable/struct.Neighbors.html' title='petgraph::graph::stable::Neighbors'>Neighbors</a>&lt;'a,&nbsp;E,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-1339' class='srclink' href='../../../src/petgraph/src/stable.rs.html#532-548' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.detach' class='method'><span id='detach.v' class='invisible'><code>fn <a href='#method.detach' class='fnname'>detach</a>(&amp;self) -&gt; <a class='struct' href='../../../petgraph/graph/stable/struct.WalkNeighbors.html' title='petgraph::graph::stable::WalkNeighbors'>WalkNeighbors</a>&lt;Ix&gt;</code></span></h4>
 <div class='docblock'><p>Return a “walker” object that can be used to step through the
 neighbors and edges from the origin node.</p>
 
 <p>Note: The walker does not borrow from the graph, this is to allow mixing
 edge walking with mutating the graph&#39;s weights.</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a,&nbsp;E,&nbsp;Ix&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html' title='core::iter::iterator::Iterator'>Iterator</a> for <a class='struct' href='../../../petgraph/graph/stable/struct.Neighbors.html' title='petgraph::graph::stable::Neighbors'>Neighbors</a>&lt;'a,&nbsp;E,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-1737' class='srclink' href='../../../src/petgraph/src/stable.rs.html#550-578' title='goto source code'>[src]</a></span></h3>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a,&nbsp;E,&nbsp;Ix&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html' title='core::iter::iterator::Iterator'>Iterator</a> for <a class='struct' href='../../../petgraph/graph/stable/struct.Neighbors.html' title='petgraph::graph::stable::Neighbors'>Neighbors</a>&lt;'a,&nbsp;E,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../../../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-1345' class='srclink' href='../../../src/petgraph/src/stable.rs.html#550-578' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Item' class='type'><span id='Item.t' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html#associatedtype.Item' class='type'>Item</a> = <a class='struct' href='../../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;</code></span></h4>
 <div class='docblock'><p>The type of the elements being iterated over.</p>
 </div><h4 id='method.next' class='method'><span id='next.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/iter/iterator/trait.Iterator.html#tymethod.next' class='fnname'>next</a>(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../../petgraph/graph/struct.NodeIndex.html' title='petgraph::graph::NodeIndex'>NodeIndex</a>&lt;Ix&gt;&gt;</code></span></h4>
