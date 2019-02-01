@@ -1,6 +1,9 @@
 //! Simple graphviz dot file format output.
-
+#[cfg(not(feature = "no_std"))]
 use std::fmt::{self, Display, Write};
+
+#[cfg(feature = "no_std")]
+use core::fmt::{self, Display, Write};
 
 use crate::visit::{
     Data, EdgeRef, GraphBase, GraphProp, GraphRef, IntoEdgeReferences, IntoNodeReferences,
