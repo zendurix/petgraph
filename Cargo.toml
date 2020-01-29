@@ -5,8 +5,7 @@ version = "0.5.0"
 license = "MIT/Apache-2.0"
 authors = [
 "bluss",
-"mitchmindtree",
-"jonimake"
+"mitchmindtree"
 ]
 
 description = "Graph data structure library. Provides graph types and graph algorithms."
