@@ -11,13 +11,14 @@ jobs:
         - CHECKFMT=1
     - rust: beta
       env:
-      - FEATURES='default'
+       - FEATURES='default'
     - rust: nightly
       env:
         - FEATURES='default'
     - rust: nightly
       env:
-      - FEATURES='no_std'
+       - ALL='--package petgraph'
+       - FEATURES='no_std'
     - rust: nightly
       env:
        - FEATURES='unstable quickcheck default'
