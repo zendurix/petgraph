@@ -4,12 +4,16 @@ jobs:
     - rust: 1.37.0
       env:
       - ALL=' '
+      - FEATURES='std'
     - rust: stable
       env:
-        - FEATURES='unstable quickcheck'
+        - FEATURES='unstable quickcheck std'
         - CHECKFMT=1
     - rust: beta
+      - FEATURES='std'
     - rust: nightly
+      env:
+        - FEATURES='std'
     - rust: nightly
       env:
       - FEATURES='no_std'
