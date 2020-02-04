@@ -32,11 +32,10 @@ before_script:
       fi
 script:
   - |
-      cargo build --verbose --no-default-features --features=std &&
-      cargo test --verbose --no-default-features --features=std &&
-      cargo build --verbose --features "$FEATURES" &&
-      cargo test ${ALL:---all} --verbose --features "$FEATURES" &&
+      cargo build --verbose --no-default-features --features "$FEATURES" &&
+      cargo test ${ALL:---all} --verbose --no-default-features --features "$FEATURES" &&
       if [ "${CHECKFMT}" == "1"]; then
         cargo +stable fmt -- --check
       fi
+
 
