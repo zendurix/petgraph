@@ -52,7 +52,7 @@ pub use self::traversal::*;
 
 use fixedbitset::FixedBitSet;
 
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 use std::{
     collections::HashSet,
     hash::{BuildHasher, Hash},
@@ -615,7 +615,7 @@ where
     }
 }
 
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 impl<N, S> VisitMap<N> for HashSet<N, S>
 where
     N: Hash + Eq,
