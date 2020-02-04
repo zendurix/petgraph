@@ -20,7 +20,7 @@ jobs:
       - FEATURES='no_std'
     - rust: nightly
       env:
-       - FEATURES='unstable quickcheck'
+       - FEATURES='unstable quickcheck std'
        - BENCH=1
 branches:
   only:
