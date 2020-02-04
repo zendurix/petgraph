@@ -10,6 +10,7 @@ jobs:
         - FEATURES='unstable quickcheck std'
         - CHECKFMT=1
     - rust: beta
+      env:
       - FEATURES='std'
     - rust: nightly
       env:
