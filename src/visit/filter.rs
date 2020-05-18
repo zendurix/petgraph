@@ -9,8 +9,6 @@ use std::{collections::HashSet, marker::PhantomData};
 use alloc::collections::BTreeSet as HashSet;
 
 use fixedbitset::FixedBitSet;
-use std::collections::HashSet;
-use std::marker::PhantomData;
 
 use crate::data::DataMap;
 use crate::visit::{Data, NodeCompactIndexable, NodeCount};
@@ -76,7 +74,7 @@ where
         self.is_visited(&n)
     }
 }
-
+#[cfg(feature = "std")]
 impl<N, S> FilterNode<N> for &HashSet<N, S>
 where
     HashSet<N, S>: VisitMap<N>,

@@ -58,9 +58,6 @@ use std::{
     hash::{BuildHasher, Hash},
 };
 
-#[cfg(feature = "no_std")]
-use core::hash::Hash;
-
 #[cfg(feature = "alloc")]
 use alloc::collections::BTreeSet as HashSet;
 

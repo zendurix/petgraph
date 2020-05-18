@@ -5,6 +5,9 @@ use std::fmt::{self, Display, Write};
 #[cfg(feature = "no_std")]
 use core::fmt::{self, Display, Write};
 
+#[cfg(feature= "alloc")]
+use alloc::string::{String, ToString};
+
 use crate::visit::{
     Data, EdgeRef, GraphBase, GraphProp, GraphRef, IntoEdgeReferences, IntoNodeReferences,
     NodeIndexable, NodeRef,
@@ -265,7 +268,15 @@ mod test {
     use super::{Config, Dot, Escaper};
     use crate::prelude::Graph;
     use crate::visit::NodeRef;
+
+    #[cfg(feature= "std")]
     use std::fmt::Write;
+
+    #[cfg(feature= "no_std")]
+    use core::fmt::Write;
+
+    #[cfg(feature= "alloc")]
+    use alloc::string::String;
 
     #[test]
     fn test_escape() {
