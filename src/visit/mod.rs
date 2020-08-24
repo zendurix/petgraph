@@ -53,10 +53,9 @@ pub use self::traversal::*;
 use fixedbitset::FixedBitSet;
 
 #[cfg(feature = "std")]
-use std::{
-    collections::HashSet,
-    hash::{BuildHasher, Hash},
-};
+use std::{collections::HashSet, hash::BuildHasher};
+
+use core::hash::Hash;
 
 #[cfg(feature = "alloc")]
 use alloc::collections::BTreeSet as HashSet;

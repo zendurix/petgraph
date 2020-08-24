@@ -98,7 +98,7 @@ where
     pub fn immediately_dominated_by(&self, node: N) -> DominatedByIter<N> {
         DominatedByIter {
             iter: self.dominators.iter(),
-            node: node
+            node: node,
         }
     }
 }
