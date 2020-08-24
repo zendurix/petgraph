@@ -16,10 +16,11 @@
 use alloc::{
     collections::{BTreeMap as HashMap, BTreeSet as HashSet},
     vec::Vec,
+
 };
 
 #[cfg(feature = "no_std")]
-use core::{cmp::Ordering, hash::Hash, usize};
+use core::{cmp::Ordering, hash::Hash, usize, iter::Iterator};
 
 #[cfg(feature = "std")]
 use std::{
@@ -150,8 +151,8 @@ where
 
     /// Iterate over all nodes immediately dominated by the given node (not
     /// including the given node itself).
-    pub fn immediately_dominated_by(&self, node: N) -> DominatorsIter<N> {
-        DominatorsIter {
+    pub fn immediately_dominated_by(&self, node: N) -> DominatedByIter<N> {
+        DominatedByIter {
             iter: self.dominators.iter(),
             node: node
         }
