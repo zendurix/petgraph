@@ -98,7 +98,7 @@ mod test {
     use core::iter::FromIterator;
 
     #[cfg(feature = "std")]
-    use std::{collections::HashSet};
+    use std::collections::HashSet;
 
     #[cfg(feature = "alloc")]
     use alloc::{collections::BTreeSet as HashSet, vec::Vec};

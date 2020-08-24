@@ -7,13 +7,22 @@
 pub mod dominators;
 
 #[cfg(feature = "std")]
-use std::{cmp::min, collections::{BinaryHeap, HashMap, VecDeque}, fmt::Debug, ops::Add};
+use std::{
+    cmp::min,
+    collections::{BinaryHeap, HashMap, VecDeque},
+    fmt::Debug,
+    ops::Add,
+};
 
 #[cfg(feature = "no_std")]
 use core::{cmp::min, fmt::Debug, ops::Add};
 
 #[cfg(feature = "alloc")]
-use alloc::{collections::{BinaryHeap, BTreeMap as HashMap}, vec::Vec, collections::vec_deque::VecDeque};
+use alloc::{
+    collections::vec_deque::VecDeque,
+    collections::{BTreeMap as HashMap, BinaryHeap},
+    vec::Vec,
+};
 
 use crate::prelude::*;
 

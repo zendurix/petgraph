@@ -3,23 +3,23 @@
 #[cfg(feature = "std")]
 use std::{
     cmp::max,
+    cmp::Ordering,
     iter::{Enumerate, Zip},
     marker::PhantomData,
     ops::{Index, IndexMut, Range},
     slice::Iter as SliceIter,
     slice::Windows,
-    cmp::Ordering
 };
 
 #[cfg(feature = "no_std")]
 use core::{
     cmp::max,
+    cmp::Ordering,
     iter::{Enumerate, Zip},
     marker::PhantomData,
     ops::{Index, IndexMut, Range},
     slice::Iter as SliceIter,
     slice::Windows,
-    cmp::Ordering
 };
 
 #[cfg(feature = "alloc")]
@@ -759,11 +759,11 @@ mod tests {
     use super::Csr;
     use crate::algo::bellman_ford;
     use crate::algo::tarjan_scc;
-    #[cfg(feature = "alloc")]
-    use alloc::vec::Vec;
     use crate::visit::Dfs;
     use crate::visit::VisitMap;
     use crate::Undirected;
+    #[cfg(feature = "alloc")]
+    use alloc::vec::Vec;
 
     #[test]
     fn csr1() {

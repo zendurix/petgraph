@@ -1,10 +1,8 @@
-
-
 use super::visit::{EdgeRef, IntoEdges, NodeCount, NodeIndexable, Visitable};
 use crate::algo::Measure;
 use crate::scored::MinScored;
 #[cfg(feature = "alloc")]
-use alloc::{vec::Vec, collections::BinaryHeap};
+use alloc::{collections::BinaryHeap, vec::Vec};
 
 #[cfg(feature = "std")]
 use std::collections::{BinaryHeap, HashMap};
@@ -12,7 +10,7 @@ use std::collections::{BinaryHeap, HashMap};
 use core::hash::Hash;
 
 #[cfg(not(feature = "std"))]
-use hashbrown::{hash_map::HashMap};
+use hashbrown::hash_map::HashMap;
 
 /// \[Generic\] k'th shortest path algorithm.
 ///
