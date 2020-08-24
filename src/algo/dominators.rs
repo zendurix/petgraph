@@ -147,6 +147,15 @@ where
             None
         }
     }
+
+    /// Iterate over all nodes immediately dominated by the given node (not
+    /// including the given node itself).
+    pub fn immediately_dominated_by(&self, node: N) -> DominatorsIter<N> {
+        DominatorsIter {
+            iter: self.dominators.iter(),
+            node: node
+        }
+    }
 }
 
 /// Iterator for a node's dominators.
@@ -499,5 +508,9 @@ mod tests {
             None::<()>,
             doms.strict_dominators(99).map(|_| unreachable!())
         );
+
+        let dom_by: Vec<_> = doms.immediately_dominated_by(1).collect();
+        assert_eq!(vec![2], dom_by);
+        assert_eq!(None, doms.immediately_dominated_by(99).next());
     }
 }

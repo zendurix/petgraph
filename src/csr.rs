@@ -8,6 +8,7 @@ use std::{
     ops::{Index, IndexMut, Range},
     slice::Iter as SliceIter,
     slice::Windows,
+    cmp::Ordering
 };
 
 #[cfg(feature = "no_std")]
@@ -18,6 +19,7 @@ use core::{
     ops::{Index, IndexMut, Range},
     slice::Iter as SliceIter,
     slice::Windows,
+    cmp::Ordering
 };
 
 #[cfg(feature = "alloc")]
@@ -179,8 +181,9 @@ where
     {
         let max_node_id = match edges
             .iter()
-            .map(|edge| match edge.clone().into_weighted_edge() {
-                (x, y, _) => max(x.index(), y.index()),
+            .map(|edge| {
+                let (x, y, _) = edge.clone().into_weighted_edge();
+                max(x.index(), y.index())
             })
             .max()
         {
@@ -333,10 +336,10 @@ where
         let (index, neighbors) = self.neighbors_of(a);
         if neighbors.len() < BINARY_SEARCH_CUTOFF {
             for (i, elt) in neighbors.iter().enumerate() {
-                if b == *elt {
-                    return Ok(i + index);
-                } else if *elt > b {
-                    return Err(i + index);
+                match elt.cmp(&b) {
+                    Ordering::Equal => return Ok(i + index),
+                    Ordering::Greater => return Err(i + index),
+                    Ordering::Less => {}
                 }
             }
             Err(neighbors.len() + index)
