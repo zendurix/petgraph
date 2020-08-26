@@ -850,7 +850,7 @@ fn ensure_len<T: Default>(v: &mut Vec<T>, size: usize) {
 struct IdStorage<T> {
     elements: Vec<Option<T>>,
     upper_bound: usize,
-    removed_ids: IndexSet<usize>,
+    removed_ids: IndexSet<usize, RandomState>,
 }
 
 impl<T> IdStorage<T> {
@@ -858,7 +858,7 @@ impl<T> IdStorage<T> {
         IdStorage {
             elements: Vec::with_capacity(capacity),
             upper_bound: 0,
-            removed_ids: IndexSet::new(),
+            removed_ids: IndexSet::with_capacity_and_hasher(0, RandomState::default()),
         }
     }
 
@@ -924,7 +924,7 @@ impl<T> IndexMut<usize> for IdStorage<T> {
 
 struct IdIterator<'a> {
     upper_bound: usize,
-    removed_ids: &'a IndexSet<usize>,
+    removed_ids: &'a IndexSet<usize, RandomState>,
     current: Option<usize>,
 }
 

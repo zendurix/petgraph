@@ -210,12 +210,10 @@ pub mod lib {
     pub use std::sync::Arc;
 
 
-     //#[cfg(not(feature = "std"))]
-     //pub use alloc::collections::{BTreeSet, BinaryHeap, VecDeque};
-     //#[cfg(feature = "std")]
-     //pub use std::collections::{hash_map, hash_set, BTreeSet, BinaryHeap, VecDeque};
-
-
+    #[cfg(feature = "std")]
+    pub use std::collections::hash_map::RandomState;
+    #[cfg(not(feature = "std"))]
+    pub use hashbrown::hash_map::DefaultHashBuilder as RandomState;
 
 
     #[cfg(feature = "std")]
