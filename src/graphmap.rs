@@ -15,6 +15,9 @@ use std::slice::Iter;
 
 use crate::{Directed, Direction, EdgeType, Incoming, Outgoing, Undirected};
 
+
+use crate::lib::*;
+
 use crate::graph::node_index;
 use crate::graph::Graph;
 use crate::visit::{IntoEdgeReferences, IntoEdges, NodeCompactIndexable};
@@ -580,6 +583,7 @@ where
     edges: &'a IndexMap<(N, N), E>,
     iter: Neighbors<'a, N, Ty>,
 }
+
 
 impl<'a, N, E, Ty> Iterator for Edges<'a, N, E, Ty>
 where

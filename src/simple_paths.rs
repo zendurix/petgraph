@@ -3,6 +3,9 @@ use std::{
     iter::{from_fn, FromIterator},
 };
 
+#[cfg(not(feature = "std"))]
+use crate::lib::*;
+
 use indexmap::IndexSet;
 
 use crate::{

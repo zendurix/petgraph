@@ -10,6 +10,8 @@ use indexmap::IndexSet;
 
 use fixedbitset::FixedBitSet;
 
+use crate::lib::*;
+
 use crate::{Directed, Direction, EdgeType, IntoWeightedEdge, Outgoing, Undirected};
 
 use crate::graph::NodeIndex as GraphNodeIndex;
